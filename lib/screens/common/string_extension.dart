@@ -65,4 +65,14 @@ extension StringExtensions on String {
   String clearExceptionKey() {
     return replaceAll('Exception: ', '');
   }
+
+
+}
+extension NullableStringExtensions on String? {
+  bool get isEmptyOrNull {
+    return this?.isEmpty ?? true;
+  }
+
+  bool get isNotNullAndNotEmpty => !isEmptyOrNull;
+
 }

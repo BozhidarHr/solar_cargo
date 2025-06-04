@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:solar_cargo/screens/common/string_extension.dart';
+import 'package:solar_cargo/screens/login/view/login_screen.dart';
 import 'package:solar_cargo/screens/main_screen.dart';
 
 import '../screens/home_screen.dart';
@@ -15,6 +16,7 @@ class Routes {
     RouteList.home: (context) => const HomeScreen(),
     RouteList.mainScreen: (context) => const MainScreen(),
     RouteList.tesseract: (context) => TesseractOCRScreen(),
+    RouteList.login: (context) => LoginScreen(),
     RouteList.viewReports: (context) {
       return const ViewReportsScreen();
     }

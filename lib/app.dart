@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:solar_cargo/providers/auth_provider.dart';
 import 'package:solar_cargo/routes/routes.dart';
+import 'package:solar_cargo/screens/home_screen.dart';
+import 'package:solar_cargo/screens/login/view/login_screen.dart';
 
 import 'generated/l10n.dart';
 
@@ -17,7 +21,8 @@ class MyApp extends StatelessWidget {
     //
     // The ListenableBuilder Widget listens to the SettingsController for changes.
     // Whenever the user updates their settings, the MaterialApp is rebuilt.
-
+    return Consumer<AuthProvider>(
+        builder: (context, auth, _) {
     return MaterialApp(
       routes: Routes.getAll(),
       onGenerateRoute: Routes.getRouteGenerate,
@@ -55,9 +60,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(),
       darkTheme: ThemeData.dark(),
 debugShowCheckedModeBanner: false,
-
+      home: auth.isLoggedIn ? const HomeScreen() : const LoginScreen(),
 // Define a function to handle named routes in order to support
 // Flutter web url navigation and deep linking.
+    );
+        },
     );
   }
 }

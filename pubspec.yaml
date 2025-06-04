@@ -21,6 +21,8 @@ dependencies:
   mobile_scanner: ^3.0.0
   flutter_tesseract_ocr: ^0.4.28
   logger: ^2.5.0
+  hexcolor: ^3.0.1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
