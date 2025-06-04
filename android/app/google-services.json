@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "573241941919",
+    "project_id": "solar_cargo-dfbea",
+    "storage_bucket": "solar_cargo-dfbea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:573241941919:android:e8eb60c9d541649cfaa7aa",
+        "android_client_info": {
+          "package_name": "com.example.solar_cargo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnrcLkiSZ1bvSkY4qtPtSL24BVAJt_K80"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
