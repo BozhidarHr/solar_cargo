@@ -1,3 +1,5 @@
+import 'dart:io';
+
 class DeliveryReport {
   final int? id;
   final String? location;
@@ -9,10 +11,17 @@ class DeliveryReport {
   final String? licencePlateTruck;
   final String? licencePlateTrailer;
   final String? weatherConditions;
+  final String? truckLicencePlatePath;
+  final String? trailerLicencePlatePath;
   final String? comments;
   final String? createdAt;
   final String? updatedAt;
   final int? user;
+
+  // Files to upload (not coming from API response, but set by app when needed)
+  File? truckLicencePlateFile;
+  File? trailerLicencePlateFile;
+
 
   DeliveryReport({
     this.id,
@@ -25,10 +34,14 @@ class DeliveryReport {
     this.licencePlateTruck,
     this.licencePlateTrailer,
     this.weatherConditions,
+    this.truckLicencePlatePath,
+    this.trailerLicencePlatePath,
     this.comments,
     this.createdAt,
     this.updatedAt,
     this.user,
+    this.truckLicencePlateFile,
+    this.trailerLicencePlateFile,
   });
 
   factory DeliveryReport.fromJson(Map<String, dynamic> json) {
@@ -43,6 +56,9 @@ class DeliveryReport {
       licencePlateTruck: json['licence_plate_truck'],
       licencePlateTrailer: json['licence_plate_trailer'],
       weatherConditions: json['weather_conditions'],
+      truckLicencePlatePath: json['truck_license_plate_image'],
+      trailerLicencePlatePath: json['trailer_license_plate_image'],
+
       comments: json['comments'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
@@ -62,6 +78,8 @@ class DeliveryReport {
       'licence_plate_truck': licencePlateTruck,
       'licence_plate_trailer': licencePlateTrailer,
       'weather_conditions': weatherConditions,
+      'truck_license_plate_image': truckLicencePlateFile,
+      'trailer_license_plate_image': truckLicencePlateFile,
       'comments': comments,
       'created_at': createdAt,
       'updated_at': updatedAt,

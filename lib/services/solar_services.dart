@@ -43,4 +43,30 @@ class SolarServices {
       rethrow;
     }
   }
+
+  Future<DeliveryReport> createDeliveryReports() async {
+    try {
+      var url = SolarHelper.buildUrl(
+        domain,
+        '/delivery-reports',
+      );
+      var response = await http.post(url!, headers: {
+        HttpHeaders.authorizationHeader: accessToken
+      });
+      var responseBody = convert.jsonDecode(response.body);
+
+      if (response.statusCode != 200) {
+        if (responseBody is Map && responseBody['message'] != null) {
+          throw Exception(SolarHelper.getErrorMessage(responseBody));
+        }
+        throw Exception(
+            'Unknown error occurred with status code ${response.statusCode}');
+      }
+      return DeliveryReport.fromJson(responseBody);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+
 }

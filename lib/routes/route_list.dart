@@ -4,4 +4,6 @@ class RouteList {
   static const String tesseract = '/tesseract';
   static const String viewReports = '/view_reports';
   static const String login = '/login';
+  static const String reportDetails = '/report_details';
+  static const String createReport = '/create_report';
 }

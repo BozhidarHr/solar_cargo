@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
 import '../routes/route_list.dart';
 import 'common/constants.dart';
 
@@ -26,7 +25,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-             Icon(Icons.analytics, size: 80, color: HexColor(kPrimaryGreenColor)),
+             Icon(Icons.analytics, size: 80, color: Theme.of(context).primaryColor),
             const SizedBox(height: 24),
             const Text(
               'Welcome to the Dashboard',
@@ -41,12 +40,12 @@ class HomeScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.of(context).pushNamed(RouteList.viewReports);
+                  Navigator.of(context).pushNamed(RouteList.createReport);
                 },
                 icon: const Icon(Icons.bar_chart),
-                label: const Text('View Reports'),
+                label: const Text('New Report'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: HexColor(kPrimaryGreenColor),
+                  backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   textStyle: const TextStyle(fontSize: 16),
@@ -57,6 +56,27 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
+
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(RouteList.viewReports);
+                },
+                icon: const Icon(Icons.bar_chart),
+                label: const Text('View Reports'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  textStyle: const TextStyle(fontSize: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+
           ],
         ),
       ),
