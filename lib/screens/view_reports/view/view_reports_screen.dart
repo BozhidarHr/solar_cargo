@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:solar_cargo/screens/common/string_extension.dart';
 import 'package:solar_cargo/screens/view_reports/viewmodel/view_reports_view_model.dart';
 
 import '../../../services/api_response.dart';
-import '../../common/constants.dart';
 import '../../common/loading_widget.dart';
 import '../model/delivery_report.dart';
 
@@ -31,7 +29,7 @@ class _ViewReportsScreenState extends State<ViewReportsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Delivery Reports'),
-        backgroundColor: HexColor(kPrimaryGreenColor),
+        backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),
       body: Selector<ViewReportsViewModel, ApiResponse<dynamic>>(
@@ -62,7 +60,7 @@ class _ViewReportsScreenState extends State<ViewReportsScreen> {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(color: HexColor(kPrimaryGreenColor).withOpacity(0.3)),
+            border: Border.all(color: Theme.of(context).primaryColor.withOpacity(0.3)),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
@@ -85,7 +83,7 @@ class _ViewReportsScreenState extends State<ViewReportsScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: HexColor(kPrimaryGreenColor),
+                    color: Theme.of(context).primaryColor,
                   ),
                 ),
                 const SizedBox(height: 8),

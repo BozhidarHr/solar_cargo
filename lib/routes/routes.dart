@@ -3,6 +3,7 @@ import 'package:solar_cargo/screens/common/string_extension.dart';
 import 'package:solar_cargo/screens/login/view/login_screen.dart';
 import 'package:solar_cargo/screens/main_screen.dart';
 
+import '../screens/create_report/view/create_report_screen.dart';
 import '../screens/tesseract_ocr_screen.dart';
 import '../screens/view_reports/view/view_reports_screen.dart';
 import '../widgets/error_widget.dart';
@@ -32,6 +33,11 @@ class Routes {
         return _buildRoute(
           settings,
           (context) => const ViewReportsScreen(),
+        );
+      case RouteList.createReport:
+        return _buildRoute(
+          settings,
+              (context) => const CreateDeliveryReportScreen(),
         );
     }
     return _errorRoute();
