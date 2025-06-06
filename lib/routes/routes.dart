@@ -3,29 +3,31 @@ import 'package:solar_cargo/screens/common/string_extension.dart';
 import 'package:solar_cargo/screens/login/view/login_screen.dart';
 import 'package:solar_cargo/screens/main_screen.dart';
 
-import '../screens/home_screen.dart';
 import '../screens/tesseract_ocr_screen.dart';
 import '../screens/view_reports/view/view_reports_screen.dart';
 import '../widgets/error_widget.dart';
 import 'route_list.dart';
 
 class Routes {
-  static Map<String, WidgetBuilder> getAll() => _routes;
-
-  static final Map<String, WidgetBuilder> _routes = {
-    RouteList.home: (context) => const HomeScreen(),
-    RouteList.mainScreen: (context) => const MainScreen(),
-    RouteList.tesseract: (context) => TesseractOCRScreen(),
-    RouteList.login: (context) => LoginScreen(),
-    RouteList.viewReports: (context) {
-      return const ViewReportsScreen();
-    }
-  };
-
   static Route getRouteGenerate(RouteSettings settings) {
     var routingData = settings.name!.getRoutingData;
 
     switch (routingData.route) {
+      case RouteList.tesseract:
+        return _buildRoute(
+          settings,
+          (context) => TesseractOCRScreen(),
+        );
+      case RouteList.login:
+        return _buildRoute(
+          settings,
+          (context) => const LoginScreen(),
+        );
+      case RouteList.mainScreen:
+        return _buildRoute(
+          settings,
+          (context) => const MainScreen(),
+        );
       case RouteList.viewReports:
         return _buildRoute(
           settings,
