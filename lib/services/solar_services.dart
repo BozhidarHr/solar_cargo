@@ -20,7 +20,7 @@ class SolarServices {
     try {
       var url = SolarHelper.buildUrl(
         domain,
-        '/auth/login',
+        '/auth/login/',
       );
       var body = {
         'username': username,
@@ -48,7 +48,7 @@ class SolarServices {
             'Unknown error occurred with status code ${response.statusCode}');
       }
 
-      final apiKey = responseBody?['api-key'];
+      final apiKey = responseBody?['api_key'];
 
       if (apiKey == null || apiKey.isEmpty) {
         throw Exception('API key not found in response');
