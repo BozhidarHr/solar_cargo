@@ -59,6 +59,56 @@ class S {
   String get appTitle {
     return Intl.message('Solar-cargo', name: 'appTitle', desc: '', args: []);
   }
+
+  /// `Login`
+  String get login {
+    return Intl.message('Login', name: 'login', desc: '', args: []);
+  }
+
+  /// `Email address`
+  String get email {
+    return Intl.message('Email address', name: 'email', desc: '', args: []);
+  }
+
+  /// `Password`
+  String get password {
+    return Intl.message('Password', name: 'password', desc: '', args: []);
+  }
+
+  /// `An error occurred, please try again.`
+  String get errorTryAgain {
+    return Intl.message(
+      'An error occurred, please try again.',
+      name: 'errorTryAgain',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Close`
+  String get close {
+    return Intl.message('Close', name: 'close', desc: '', args: []);
+  }
+
+  /// `Please fill in all fields.`
+  String get fillFieldsError {
+    return Intl.message(
+      'Please fill in all fields.',
+      name: 'fillFieldsError',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `User with matching login credentials not found.`
+  String get userNotFound {
+    return Intl.message(
+      'User with matching login credentials not found.',
+      name: 'userNotFound',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

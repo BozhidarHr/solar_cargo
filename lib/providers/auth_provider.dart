@@ -1,8 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+
+import '../screens/common/logger.dart';
+import '../services/services.dart';
 
 class AuthProvider with ChangeNotifier {
   final _storage = const FlutterSecureStorage();
@@ -11,6 +12,14 @@ class AuthProvider with ChangeNotifier {
 
   bool get isLoggedIn => _isLoggedIn;
 
+
+  final Services _service = Services();
+
+  bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
   AuthProvider() {
     _checkLogin();
   }
@@ -37,21 +46,27 @@ class AuthProvider with ChangeNotifier {
     return response.statusCode == 200;
   }
 
-  Future<bool> login(String username, String password) async {
-    final response = await http.post(
-      Uri.parse('https://your-api.com/login'),
-      body: {'username': username, 'password': password},
-    );
+  Future<void> login(String username, String password) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      _token = data['token'];
+    try {
+      final String apiKey = await _service.api.login(username, password);
+
+      // Assign token and update login status
+      _token = apiKey;
       _isLoggedIn = true;
+
       await _storage.write(key: 'auth_token', value: _token);
-      notifyListeners();
-      return true;
+    } catch (e) {
+      logger.w(
+        'login(catch): ${e.toString()}',
+      );
+      _errorMessage = e.toString();
     }
-    return false;
+    _isLoading = false;
+    notifyListeners();
   }
 
   Future<void> logout() async {
@@ -62,6 +77,11 @@ class AuthProvider with ChangeNotifier {
   }
 
   String? get token => _token;
+
+  void clearError() {
+    _errorMessage = null;
+    notifyListeners();
+  }
 
   void forceLogout() => logout();
 }

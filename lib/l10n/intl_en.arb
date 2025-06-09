@@ -1,3 +1,10 @@
 {"@@locale": "en",
-  "appTitle": "Solar-cargo"
+  "appTitle": "Solar-cargo",
+  "login": "Login",
+  "email": "Email address",
+  "password": "Password",
+  "errorTryAgain": "An error occurred, please try again.",
+  "close": "Close",
+  "fillFieldsError": "Please fill in all fields.",
+  "userNotFound": "User with matching login credentials not found."
 }

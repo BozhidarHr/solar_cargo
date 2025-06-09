@@ -23,6 +23,8 @@ dependencies:
   hexcolor: ^3.0.1
   flutter_secure_storage: ^9.0.0
   flutter_svg: 2.0.10+1
+  flash: 3.1.0
+  lottie: ^3.1.2
 
 dev_dependencies:
   flutter_test:
@@ -39,5 +41,6 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/icons/miscellaneous/
+    - assets/lottie/
 flutter_intl:
   enabled: true
