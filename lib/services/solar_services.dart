@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:solar_cargo/services/solar_helper.dart';
 
-import '../screens/common/logger.dart';
+import '../models/jwt_keys.dart';
 import '../screens/view_reports/model/delivery_report.dart';
 
 class SolarServices {
@@ -16,11 +16,13 @@ class SolarServices {
     required this.accessToken,
   });
 
-  Future<String> login(String username, String password) async {
+  String? _customerToken;
+
+  Future<JwtKeys> login(String username, String password) async {
     try {
       var url = SolarHelper.buildUrl(
         domain,
-        '/auth/login/',
+        '/auth/login',
       );
       var body = {
         'username': username,
@@ -29,10 +31,7 @@ class SolarServices {
       var response = await http.post(
         url!,
         body: convert.jsonEncode(body),
-        headers: {
-          HttpHeaders.authorizationHeader: accessToken,
-          HttpHeaders.contentTypeHeader: 'application/json'
-        },
+        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
       );
 
       if (response.body.isEmpty) {
@@ -48,18 +47,58 @@ class SolarServices {
             'Unknown error occurred with status code ${response.statusCode}');
       }
 
-      final apiKey = responseBody?['api_key'];
+      final refreshToken = responseBody?['refresh'];
+      final bearerToken = responseBody?['access'];
 
-      if (apiKey == null || apiKey.isEmpty) {
-        throw Exception('API key not found in response');
+      if (bearerToken == null || bearerToken.isEmpty) {
+        throw Exception('Bearer token not found in response');
       }
-
-      return apiKey;
+      _customerToken = bearerToken;
+      return JwtKeys(
+        bearerToken: bearerToken,
+        refreshToken: refreshToken,
+      );
     } catch (e) {
-      printLog('Error in login: $e');
       rethrow;
     }
   }
+
+  Future<String> updateToken(String refreshToken) async {
+    try {
+      var url = SolarHelper.buildUrl(
+        domain,
+        '/auth/refresh',
+      );
+      var body = {
+        "refresh": refreshToken
+      };
+      var response = await http.post(
+        url!,
+        body: convert.jsonEncode(body),
+        headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+      );
+
+      if (response.body.isEmpty) {
+        throw Exception('Empty response from server');
+      }
+      var responseBody = convert.jsonDecode(response.body);
+
+      if (response.statusCode != 200) {
+        if (responseBody is Map && responseBody['message'] != null) {
+          throw Exception(SolarHelper.getErrorMessage(responseBody));
+        }
+        throw Exception(
+            'Unknown error occurred with status code ${response.statusCode}');
+      }
+
+      final bearerToken = responseBody?['access'];
+      _customerToken = bearerToken;
+      return bearerToken;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
 
   Future<List<DeliveryReport>> fetchDeliveryReports() async {
     try {
@@ -67,8 +106,8 @@ class SolarServices {
         domain,
         '/delivery-reports',
       );
-      var response = await http
-          .get(url!, headers: {HttpHeaders.authorizationHeader: accessToken});
+      var response = await http.get(url!,
+          headers: {HttpHeaders.authorizationHeader: 'Bearer $_customerToken'});
       var responseBody = convert.jsonDecode(response.body);
       var list = <DeliveryReport>[];
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:solar_cargo/screens/common/string_extension.dart';
+import 'package:solar_cargo/screens/home_screen.dart';
 import 'package:solar_cargo/screens/login/view/login_screen.dart';
-import 'package:solar_cargo/screens/main_screen.dart';
 
 import '../screens/create_report/view/create_report_screen.dart';
 import '../screens/view_reports/view/view_reports_screen.dart';
@@ -13,16 +13,21 @@ class Routes {
     var routingData = settings.name!.getRoutingData;
 
     switch (routingData.route) {
+      case RouteList.home:
+        return _buildRoute(
+          settings,
+              (context) => const HomeScreen(),
+        );
       case RouteList.login:
         return _buildRoute(
           settings,
           (context) => const LoginScreen(),
         );
-      case RouteList.mainScreen:
-        return _buildRoute(
-          settings,
-          (context) => const MainScreen(),
-        );
+      // case RouteList.mainScreen:
+      //   return _buildRoute(
+      //     settings,
+      //     (context) => const MainScreen(),
+      //   );
       case RouteList.viewReports:
         return _buildRoute(
           settings,

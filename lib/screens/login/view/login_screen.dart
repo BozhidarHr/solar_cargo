@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
         });
         if (model.isLoggedIn) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            Navigator.pushReplacementNamed(context, RouteList.mainScreen);
+            Navigator.pushReplacementNamed(context, RouteList.home);
           });
         }
 

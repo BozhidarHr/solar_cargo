@@ -11,6 +11,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+
         ChangeNotifierProvider(create: (_) => ViewReportsViewModel()),
         ChangeNotifierProvider(create: (_) => CreateReportViewModel()),
 
