@@ -69,6 +69,14 @@ class MyApp extends StatelessWidget {
 // SettingsController to display the correct theme.
           theme: ThemeData(
             primaryColor: const Color(0xFF6AB43E),
+            scaffoldBackgroundColor: const Color(0xFF081C15),
+            textTheme: const TextTheme(
+              labelMedium: TextStyle(fontSize: 12),
+              bodyMedium: TextStyle(fontSize: 14),
+              titleMedium: TextStyle(fontSize: 16),
+              displayMedium: TextStyle(fontSize: 18),
+              headlineMedium: TextStyle(fontSize: 20),
+            ),
             // Example primary color
           ),
           darkTheme: ThemeData.dark(),

@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
         title: SizedBox(
           height: 40,
           child: Image.asset(
-            kLogo,
+            kLogoImage,
             fit: BoxFit.contain,
           ),
         ),

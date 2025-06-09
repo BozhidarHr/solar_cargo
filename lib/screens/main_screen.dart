@@ -1,6 +1,6 @@
 // lib/main_screen.dart
 import 'package:flutter/material.dart';
-import 'package:solar_cargo/screens/tesseract_ocr_screen.dart';
+import 'package:solar_cargo/screens/create_report/view/create_report_screen.dart';
 
 import 'home_screen.dart';
 
@@ -16,8 +16,7 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _pages = [
     const HomeScreen(),
-    TesseractOCRScreen(),
-
+const CreateDeliveryReportScreen(),
   ];
 
   void _onTabTapped(int index) {

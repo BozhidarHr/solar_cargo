@@ -4,7 +4,6 @@ import 'package:solar_cargo/screens/login/view/login_screen.dart';
 import 'package:solar_cargo/screens/main_screen.dart';
 
 import '../screens/create_report/view/create_report_screen.dart';
-import '../screens/tesseract_ocr_screen.dart';
 import '../screens/view_reports/view/view_reports_screen.dart';
 import '../widgets/error_widget.dart';
 import 'route_list.dart';
@@ -14,11 +13,6 @@ class Routes {
     var routingData = settings.name!.getRoutingData;
 
     switch (routingData.route) {
-      case RouteList.tesseract:
-        return _buildRoute(
-          settings,
-          (context) => TesseractOCRScreen(),
-        );
       case RouteList.login:
         return _buildRoute(
           settings,
