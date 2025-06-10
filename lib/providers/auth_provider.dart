@@ -1,15 +1,13 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:solar_cargo/models/jwt_keys.dart';
 
+import '../models/jwt_keys.dart';
+import '../models/token_storage.dart';
 import '../screens/common/logger.dart';
 import '../services/services.dart';
 
 class AuthProvider with ChangeNotifier {
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
   final Services _service = Services();
+  final TokenStorage _tokenStorage = TokenStorage();
 
   String? _bearerToken;
   String? _refreshToken;
@@ -18,61 +16,60 @@ class AuthProvider with ChangeNotifier {
   String? _errorMessage;
 
   bool get isLoggedIn => _isLoggedIn;
-
   bool get isLoading => _isLoading;
-
   String? get errorMessage => _errorMessage;
 
-  bool _isInitialized = false;
-  bool get isInitialized => _isInitialized;
-
-  Future<void> initialize() async {
-    await _checkLogin();
-    _isInitialized = true;
-    notifyListeners();
+  // --- Initialization ---
+  AuthProvider() {
+    initialize();
   }
 
-  Future<void> _checkLogin() async {
-    _bearerToken = await _readToken('bearer_token');
+  Future<void> initialize() async {
+    _setLoading(true);
+    await _checkLoginStatus();
+    _setLoading(false);
+  }
+
+  Future<void> _checkLoginStatus() async {
+    _bearerToken = await _tokenStorage.read(TokenType.bearer);
+
     if (_bearerToken != null) {
-      final isValid = await _validateToken();
+      final isValid = await _refreshBearerToken();
       if (isValid) {
         _setLoggedIn(true);
       } else {
-        await logout();
+        await logout(); // logout() already calls _setLoggedIn(false)
       }
     } else {
       _setLoggedIn(false);
     }
   }
 
-  Future<bool> _validateToken() async {
+  Future<bool> _refreshBearerToken() async {
     try {
-      final refreshToken = await _readToken('refresh_token');
-      if (refreshToken == null) return false;
+      _refreshToken = await _tokenStorage.read(TokenType.refresh);
+      if (_refreshToken == null) return false;
 
-      final String bearerToken = await _service.api.updateToken(refreshToken);
-
-      // Persist new bearer token
-      await _writeToken('bearer_token', bearerToken);
-
+      _bearerToken = await _service.api.updateToken(_refreshToken!);
+      await _tokenStorage.write(TokenType.bearer, _bearerToken);
       return true;
     } catch (e) {
-      logger.w('validateToken error: $e');
+      logger.w('Token validation failed: $e');
       return false;
     }
   }
 
+  // --- Login / Logout ---
   Future<void> login(String username, String password) async {
     _setLoading(true);
     _clearError();
 
     try {
-      final JwtKeys jwtKeys = await _service.api.login(username, password);
-      await _persistTokens(jwtKeys);
+      final jwt = await _service.api.login(username, password);
+      await _saveTokens(jwt);
       _setLoggedIn(true);
     } catch (e) {
-      logger.w('login error: $e');
+      logger.w('Login error: $e');
       _setError(e.toString());
     } finally {
       _setLoading(false);
@@ -80,33 +77,27 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> logout() async {
-    await _clearTokens();
+    _bearerToken = null;
+    _refreshToken = null;
+    await _tokenStorage.clearAll();
     _setLoggedIn(false);
   }
+
+  void forceLogout() => logout();
 
   void clearError() {
     _clearError();
     notifyListeners();
   }
 
-  void forceLogout() => logout();
+  // --- Private Methods ---
 
-  // --- Private methods ---
+  Future<void> _saveTokens(JwtKeys jwt) async {
+    _bearerToken = jwt.bearerToken;
+    _refreshToken = jwt.refreshToken;
 
-  Future<void> _persistTokens(JwtKeys jwtKeys) async {
-    _bearerToken = jwtKeys.bearerToken;
-    _refreshToken = jwtKeys.refreshToken;
-
-    await _writeToken('bearer_token', _bearerToken);
-    await _writeToken('refresh_token', _refreshToken);
-  }
-
-  Future<void> _clearTokens() async {
-    _bearerToken = null;
-    _refreshToken = null;
-
-    await _deleteToken('bearer_token');
-    await _deleteToken('refresh_token');
+    await _tokenStorage.write(TokenType.bearer, _bearerToken);
+    await _tokenStorage.write(TokenType.refresh, _refreshToken);
   }
 
   void _setLoggedIn(bool value) {
@@ -126,21 +117,5 @@ class AuthProvider with ChangeNotifier {
 
   void _clearError() {
     _errorMessage = null;
-  }
-
-  // --- Token persistence helpers ---
-
-  Future<void> _writeToken(String key, String? value) async {
-    if (value != null) {
-      await _storage.write(key: key, value: value);
-    }
-  }
-
-  Future<String?> _readToken(String key) async {
-    return await _storage.read(key: key);
-  }
-
-  Future<void> _deleteToken(String key) async {
-    await _storage.delete(key: key);
   }
 }

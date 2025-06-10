@@ -23,11 +23,11 @@ class Routes {
           settings,
           (context) => const LoginScreen(),
         );
-      // case RouteList.mainScreen:
-      //   return _buildRoute(
-      //     settings,
-      //     (context) => const MainScreen(),
-      //   );
+      case RouteList.reportDetails:
+        return _buildRoute(
+          settings,
+          (context) => const ViewReportsScreen(),
+        );
       case RouteList.viewReports:
         return _buildRoute(
           settings,

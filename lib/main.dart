@@ -6,15 +6,19 @@ import 'package:solar_cargo/screens/view_reports/viewmodel/view_reports_view_mod
 
 import 'app.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize AuthProvider before runApp
+  final authProvider = AuthProvider();
+  await authProvider.initialize();
+
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-
+        ChangeNotifierProvider<AuthProvider>.value(value: authProvider),
         ChangeNotifierProvider(create: (_) => ViewReportsViewModel()),
         ChangeNotifierProvider(create: (_) => CreateReportViewModel()),
-
       ],
       child: const MyApp(),
     ),
