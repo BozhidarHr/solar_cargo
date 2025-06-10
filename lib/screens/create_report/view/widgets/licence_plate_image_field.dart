@@ -1,16 +1,17 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class LicencePlateImageField extends StatefulWidget {
   final String label;
   final void Function(File?) onImageSelected;
+  final File? initialImage;
 
   const LicencePlateImageField({
     super.key,
     required this.label,
     required this.onImageSelected,
+    this.initialImage,
   });
 
   @override
@@ -21,14 +22,16 @@ class _LicencePlateImageFieldState extends State<LicencePlateImageField> {
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
 
-  Future<void> _pickImage(ImageSource source) async {
-    final pickedFile =
-    await _picker.pickImage(source: source, imageQuality: 80);
+  @override
+  void initState() {
+    super.initState();
+    _selectedImage = widget.initialImage;
+  }
 
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(source: source, imageQuality: 80);
     if (pickedFile != null) {
-      setState(() {
-        _selectedImage = File(pickedFile.path);
-      });
+      setState(() => _selectedImage = File(pickedFile.path));
       widget.onImageSelected(_selectedImage);
     }
   }
@@ -36,30 +39,28 @@ class _LicencePlateImageFieldState extends State<LicencePlateImageField> {
   void _showImageSourceActionSheet() {
     showModalBottomSheet(
       context: context,
-      builder: (_) {
-        return SafeArea(
-          child: Wrap(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.camera_alt),
-                title: const Text('Take Photo'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _pickImage(ImageSource.camera);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Choose from Gallery'),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _pickImage(ImageSource.gallery);
-                },
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (_) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Take Photo'),
+              onTap: () {
+                Navigator.of(context).pop();
+                _pickImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Choose from Gallery'),
+              onTap: () {
+                Navigator.of(context).pop();
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -102,8 +103,7 @@ class _LicencePlateImageFieldState extends State<LicencePlateImageField> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 ),
                 child: const Text('Browse'),
               ),

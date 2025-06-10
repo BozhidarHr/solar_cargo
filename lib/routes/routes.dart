@@ -36,7 +36,7 @@ class Routes {
       case RouteList.createReport:
         return _buildRoute(
           settings,
-              (context) => const CreateDeliveryReportScreen(),
+              (context) =>  CreateDeliveryReportScreen(),
         );
     }
     return _errorRoute();

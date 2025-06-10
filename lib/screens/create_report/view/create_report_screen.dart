@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_step1.dart';
 import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_step2.dart';
 import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_step3.dart';
 import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_step4.dart';
+import 'package:solar_cargo/screens/create_report/view/widgets/create_report_controllers_mixin.dart';
 
-import '../../view_reports/model/delivery_report.dart';
-
-enum Step1Field {
-  pvPlantLocation,
-  checkingCompany,
-  supplier,
-  deliverySlipNo,
-  logisticsCompany,
-  containerNo,
-  weatherConditions,
-}
+import '../../common/flash_helper.dart';
+import '../viewmodel/create_report_view_model.dart';
 
 class CreateDeliveryReportScreen extends StatefulWidget {
   const CreateDeliveryReportScreen({super.key});
@@ -23,54 +16,59 @@ class CreateDeliveryReportScreen extends StatefulWidget {
   State<CreateDeliveryReportScreen> createState() =>
       _CreateDeliveryReportScreenState();
 }
-
-class _CreateDeliveryReportScreenState
-    extends State<CreateDeliveryReportScreen> {
+class _CreateDeliveryReportScreenState extends State<CreateDeliveryReportScreen>
+    with CreateReportControllersMixin {
   int _currentStep = 0;
-  final List<GlobalKey<FormState>> _formKeys =
-      List.generate(4, (_) => GlobalKey<FormState>());
+  late final CreateReportViewModel _viewModel;
 
-  final Map<Step1Field, TextEditingController> _step1Controllers = {
-    for (var field in Step1Field.values) field: TextEditingController(),
-  };
-  final DeliveryReport reportData = DeliveryReport();
+  bool get _isLastStep => _currentStep == formKeys.length - 1;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _viewModel = Provider.of<CreateReportViewModel>(context, listen: false);
+    });
+  }
+
   @override
   void dispose() {
-    for (final controller in _step1Controllers.values) {
+    for (final controller in step1Controllers.values) {
       controller.dispose();
     }
     super.dispose();
   }
+
+  bool _validateStep() {
+    final valid = formKeys[_currentStep].currentState?.validate() ?? false;
+    if (_currentStep == 0 &&
+        (_viewModel.truckLicensePlateImage == null || _viewModel.trailerLicensePlateImage == null)) {
+      FlashHelper.errorMessage(
+        message: "Please select license plate images.",
+        context,
+      );
+      return false;
+    }
+    return valid;
+  }
+
   void _nextStep() {
-    if (_formKeys[_currentStep].currentState!.validate()) {
-      if (_currentStep == 0) {
-        reportData.location = _step1Controllers[Step1Field.pvPlantLocation]!.text;
-        reportData.checkingCompany = _step1Controllers[Step1Field.checkingCompany]!.text;
-        reportData.supplier = _step1Controllers[Step1Field.supplier]!.text;
-        reportData.deliverySlipNumber = _step1Controllers[Step1Field.deliverySlipNo]!.text;
-        reportData.logisticCompany = _step1Controllers[Step1Field.logisticsCompany]!.text;
-        reportData.containerNumber = _step1Controllers[Step1Field.containerNo]!.text;
-        reportData.weatherConditions = _step1Controllers[Step1Field.weatherConditions]!.text;
+    if (!_validateStep()) return;
+    if (_currentStep == 0) {
+      _viewModel.setStep1Data(
+        step1Controllers: step1Controllers,
+      );
+    }
 
-        // You could also assign license plate images here if Step1Form exposes them
-      }
-
-      if (_currentStep < 3) {
-        setState(() {
-          _currentStep++;
-        });
-      } else {
-        // Submit form
-      }
+    if (!_isLastStep) {
+      setState(() => _currentStep++);
+    } else {
+      // Submit logic here
     }
   }
 
   void _previousStep() {
-    if (_currentStep > 0) {
-      setState(() {
-        _currentStep--;
-      });
-    }
+    if (_currentStep > 0) setState(() => _currentStep--);
   }
 
   @override
@@ -86,10 +84,13 @@ class _CreateDeliveryReportScreenState
         child: IndexedStack(
           index: _currentStep,
           children: [
-            Step1Form(formKey: _formKeys[0], controllers: _step1Controllers),
-            Step2Form(formKey: _formKeys[1]),
-            Step3Form(formKey: _formKeys[2]),
-            Step4Form(formKey: _formKeys[3]),
+            Step1Form(
+              formKey: formKeys[0],
+              controllers: step1Controllers,
+            ),
+            Step2Form(formKey: formKeys[1]),
+            Step3Form(formKey: formKeys[2]),
+            Step4Form(formKey: formKeys[3]),
           ],
         ),
       ),
@@ -125,8 +126,8 @@ class _CreateDeliveryReportScreenState
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                onPressed: () => _nextStep,
-                child: Text(_currentStep == 3 ? 'Submit' : 'Next Step'),
+                onPressed: _nextStep,
+                child: Text(_isLastStep ? 'Submit' : 'Next Step'),
               ),
             ),
           ],
