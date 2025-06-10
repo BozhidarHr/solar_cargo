@@ -145,7 +145,7 @@ class _ReportListItem extends StatelessWidget {
       decoration: BoxDecoration(
         color: kFormFieldBackgroundColor,
         border: Border.all(color: theme.primaryColor.withOpacity(0.3)),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -155,7 +155,7 @@ class _ReportListItem extends StatelessWidget {
         ],
       ),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         onTap: () {
           // TODO: Navigate to detail screen if needed
         },
@@ -220,7 +220,7 @@ Widget _createNewReportButton({
         padding: const EdgeInsets.symmetric(vertical: 16),
         textStyle: const TextStyle(fontSize: 16),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
     ),

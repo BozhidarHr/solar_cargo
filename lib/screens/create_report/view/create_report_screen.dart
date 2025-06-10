@@ -1,22 +1,19 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_step1.dart';
+import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_step2.dart';
+import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_step3.dart';
+import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_step4.dart';
 
 import '../../view_reports/model/delivery_report.dart';
-import '../viewmodel/create_report_view_model.dart';
-import 'widgets/licence_plate_image_field.dart';
 
-enum DeliveryReportField {
-  location,
+enum Step1Field {
+  pvPlantLocation,
   checkingCompany,
   supplier,
-  deliverySlipNumber,
-  logisticCompany,
-  containerNumber,
-  licencePlateTruck,
-  licencePlateTrailer,
+  deliverySlipNo,
+  logisticsCompany,
+  containerNo,
   weatherConditions,
-  comments,
 }
 
 class CreateDeliveryReportScreen extends StatefulWidget {
@@ -29,191 +26,110 @@ class CreateDeliveryReportScreen extends StatefulWidget {
 
 class _CreateDeliveryReportScreenState
     extends State<CreateDeliveryReportScreen> {
-  final _formKey = GlobalKey<FormState>();
+  int _currentStep = 0;
+  final List<GlobalKey<FormState>> _formKeys =
+      List.generate(4, (_) => GlobalKey<FormState>());
 
-  File? _truckImage;
-  File? _trailerImage;
-  late final CreateReportViewModel createReportViewModel;
-
-  // Controllers with enum keys
-  final Map<DeliveryReportField, TextEditingController> _controllers = {
-    for (var field in DeliveryReportField.values) field: TextEditingController(),
+  final Map<Step1Field, TextEditingController> _step1Controllers = {
+    for (var field in Step1Field.values) field: TextEditingController(),
   };
-@override
-  void initState() {
-    createReportViewModel = Provider.of<CreateReportViewModel>(
-      context,
-      listen: false,
-    );
-    super.initState();
-  }
+  final DeliveryReport reportData = DeliveryReport();
   @override
   void dispose() {
-    // Dispose all controllers
-    for (final controller in _controllers.values) {
+    for (final controller in _step1Controllers.values) {
       controller.dispose();
     }
     super.dispose();
   }
+  void _nextStep() {
+    if (_formKeys[_currentStep].currentState!.validate()) {
+      if (_currentStep == 0) {
+        reportData.location = _step1Controllers[Step1Field.pvPlantLocation]!.text;
+        reportData.checkingCompany = _step1Controllers[Step1Field.checkingCompany]!.text;
+        reportData.supplier = _step1Controllers[Step1Field.supplier]!.text;
+        reportData.deliverySlipNumber = _step1Controllers[Step1Field.deliverySlipNo]!.text;
+        reportData.logisticCompany = _step1Controllers[Step1Field.logisticsCompany]!.text;
+        reportData.containerNumber = _step1Controllers[Step1Field.containerNo]!.text;
+        reportData.weatherConditions = _step1Controllers[Step1Field.weatherConditions]!.text;
 
-  void _submit()async {
-    if (_formKey.currentState!.validate()) {
-      final newReport = DeliveryReport(
-        location: _controllers[DeliveryReportField.location]!.text.trim(),
-        checkingCompany:
-        _controllers[DeliveryReportField.checkingCompany]!.text.trim(),
-        supplier: _controllers[DeliveryReportField.supplier]!.text.trim(),
-        deliverySlipNumber:
-        _controllers[DeliveryReportField.deliverySlipNumber]!.text.trim(),
-        logisticCompany:
-        _controllers[DeliveryReportField.logisticCompany]!.text.trim(),
-        containerNumber:
-        _controllers[DeliveryReportField.containerNumber]!.text.trim(),
-        licencePlateTruck:
-        _controllers[DeliveryReportField.licencePlateTruck]!.text.trim(),
-        licencePlateTrailer:
-        _controllers[DeliveryReportField.licencePlateTrailer]!.text.trim(),
-        weatherConditions:
-        _controllers[DeliveryReportField.weatherConditions]!.text.trim(),
-        comments: _controllers[DeliveryReportField.comments]!.text.trim(),
-        truckLicencePlateFile: _truckImage,
-        trailerLicencePlateFile: _trailerImage,
-      );
+        // You could also assign license plate images here if Step1Form exposes them
+      }
 
-      print(
-          'Created DeliveryReport: ${newReport.location}, ${newReport.supplier}');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Delivery report created')),
-      );
-      await createReportViewModel.createDeliveryReport();
-      // Clear form
-      _formKey.currentState!.reset();
-      _controllers.forEach((key, controller) => controller.clear());
-      setState(() {
-        _truckImage = null;
-        _trailerImage = null;
-      });
+      if (_currentStep < 3) {
+        setState(() {
+          _currentStep++;
+        });
+      } else {
+        // Submit form
+      }
     }
   }
 
-  Widget _buildTextField({
-    required DeliveryReportField field,
-    required String label,
-    TextInputType keyboardType = TextInputType.text,
-    int maxLines = 1,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextFormField(
-        controller: _controllers[field],
-        decoration: InputDecoration(
-          labelText: label,
-          enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey),
-          ),
-          focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey),
-          ),
-        ),
-        validator: (value) =>
-        value == null || value.isEmpty ? 'Please enter $label' : null,
-        keyboardType: keyboardType,
-        maxLines: maxLines,
-      ),
-    );
+  void _previousStep() {
+    if (_currentStep > 0) {
+      setState(() {
+        _currentStep--;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Delivery Report'),
+        title: Text('Create Delivery Report - Step ${_currentStep + 1}'),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        foregroundColor: Colors.white,
       ),
-      body: SingleChildScrollView(
+      body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _buildTextField(field: DeliveryReportField.location, label: 'Location'),
-              _buildTextField(
-                  field: DeliveryReportField.checkingCompany,
-                  label: 'Checking Company'),
-              _buildTextField(field: DeliveryReportField.supplier, label: 'Supplier'),
-              _buildTextField(
-                  field: DeliveryReportField.deliverySlipNumber,
-                  label: 'Delivery Slip Number'),
-              _buildTextField(
-                  field: DeliveryReportField.logisticCompany,
-                  label: 'Logistic Company'),
-              _buildTextField(
-                  field: DeliveryReportField.containerNumber,
-                  label: 'Container Number'),
-              _buildTextField(
-                  field: DeliveryReportField.licencePlateTruck,
-                  label: 'Licence Plate Truck'),
-              _buildTextField(
-                  field: DeliveryReportField.licencePlateTrailer,
-                  label: 'Licence Plate Trailer'),
-              _buildTextField(
-                  field: DeliveryReportField.weatherConditions,
-                  label: 'Weather Conditions'),
-              _buildTextField(
-                field: DeliveryReportField.comments,
-                label: 'Comments',
-                keyboardType: TextInputType.multiline,
-                maxLines: 3,
-              ),
-              LicencePlateImageField(
-                label: 'Truck Licence Plate Image',
-                onImageSelected: (file) {
-                  setState(() {
-                    _truckImage = file;
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
-              LicencePlateImageField(
-                label: 'Trailer Licence Plate Image',
-                onImageSelected: (file) {
-                  setState(() {
-                    _trailerImage = file;
-                  });
-                },
-              ),
-              const SizedBox(height: 80), // Space above sticky button
-            ],
-          ),
+        child: IndexedStack(
+          index: _currentStep,
+          children: [
+            Step1Form(formKey: _formKeys[0], controllers: _step1Controllers),
+            Step2Form(formKey: _formKeys[1]),
+            Step3Form(formKey: _formKeys[2]),
+            Step4Form(formKey: _formKeys[3]),
+          ],
         ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16),
-        child: SizedBox(
-          width: double.infinity,
-          height: 50,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              elevation: 0,
-              minimumSize: const Size(160, 45),
-              foregroundColor: Colors.white,
-              backgroundColor: Theme.of(context).primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(3),
+        child: Row(
+          children: [
+            if (_currentStep > 0)
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    textStyle: Theme.of(context).textTheme.titleMedium,
+                    foregroundColor: Theme.of(context).primaryColor,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: _previousStep,
+                  child: const Text('Back'),
+                ),
+              ),
+            if (_currentStep > 0) const SizedBox(width: 16),
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  textStyle: Theme.of(context).textTheme.titleMedium,
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () => _nextStep,
+                child: Text(_currentStep == 3 ? 'Submit' : 'Next Step'),
               ),
             ),
-            onPressed: _submit,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Create Report',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(color: Colors.white, fontWeight: FontWeight.w700),
-              ),
-            ),
-          ),
+          ],
         ),
       ),
     );
