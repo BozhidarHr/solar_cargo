@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           hintText: S.of(context).email,
                           hintStyle: Theme.of(context).textTheme.titleMedium,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide.none,
                           ),
                         ),
@@ -119,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           hintText: S.of(context).password,
                           hintStyle: Theme.of(context).textTheme.titleMedium,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide.none,
                           ),
                         ),
@@ -135,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             backgroundColor:
                                 Theme.of(context).primaryColor, // Green button
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           onPressed: () async {

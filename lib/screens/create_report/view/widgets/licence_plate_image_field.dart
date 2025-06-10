@@ -23,7 +23,7 @@ class _LicencePlateImageFieldState extends State<LicencePlateImageField> {
 
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile =
-        await _picker.pickImage(source: source, imageQuality: 80);
+    await _picker.pickImage(source: source, imageQuality: 80);
 
     if (pickedFile != null) {
       setState(() {
@@ -68,25 +68,48 @@ class _LicencePlateImageFieldState extends State<LicencePlateImageField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          widget.label,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-        if (_selectedImage == null)
-          ElevatedButton.icon(
-            style:ElevatedButton.styleFrom(
-              elevation: 0,
-              minimumSize: const Size(160, 45),
-              foregroundColor: Colors.white,
-              backgroundColor: Theme.of(context).primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(3),
-              ),
-            ),
-            onPressed: _showImageSourceActionSheet,
-            icon: const Icon(Icons.add_a_photo),
-            label: const Text('Add Image'),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 5.0, left: 5, top: 15),
+          child: Text(
+            widget.label,
+            style: Theme.of(context)
+                .textTheme
+                .titleMedium!
+                .copyWith(color: Colors.white),
           ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+          decoration: BoxDecoration(
+            color: Colors.grey[850],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: _selectedImage != null
+                    ? Text(
+                  _selectedImage!.path.split('/').last,
+                  style: const TextStyle(fontSize: 14, color: Colors.white),
+                )
+                    : const Text(
+                  'No image selected',
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: _showImageSourceActionSheet,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 8),
+                ),
+                child: const Text('Browse'),
+              ),
+            ],
+          ),
+        ),
         const SizedBox(height: 10),
         if (_selectedImage != null)
           Stack(
@@ -112,11 +135,6 @@ class _LicencePlateImageFieldState extends State<LicencePlateImageField> {
                 ),
               ),
             ],
-          )
-        else
-          const Text(
-            'No image selected',
-            style: TextStyle(color: Colors.grey),
           ),
       ],
     );

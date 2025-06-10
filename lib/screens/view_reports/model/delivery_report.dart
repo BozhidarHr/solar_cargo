@@ -3,22 +3,22 @@ import 'dart:io';
 import 'package:intl/intl.dart';
 
 class DeliveryReport {
-  final int? id;
-  final String? location;
-  final String? checkingCompany;
-  final String? supplier;
-  final String? deliverySlipNumber;
-  final String? logisticCompany;
-  final String? containerNumber;
-  final String? licencePlateTruck;
-  final String? licencePlateTrailer;
-  final String? weatherConditions;
-  final String? truckLicencePlatePath;
-  final String? trailerLicencePlatePath;
-  final String? comments;
-  final String? createdAt;
-  final String? updatedAt;
-  final int? user;
+   int? id;
+   String? location;
+   String? checkingCompany;
+   String? supplier;
+   String? deliverySlipNumber;
+   String? logisticCompany;
+   String? containerNumber;
+   String? licencePlateTruck;
+   String? licencePlateTrailer;
+   String? weatherConditions;
+   String? truckLicencePlatePath;
+   String? trailerLicencePlatePath;
+   String? comments;
+   String? createdAt;
+   String? updatedAt;
+   int? user;
 
   // Files to upload (not coming from API response, but set by app when needed)
   File? truckLicencePlateFile;
