@@ -1,30 +1,44 @@
-# solar_cargo
+# Flutter Project Setup
 
-A new Flutter project.
+Follow these steps to set up and run the Flutter project.
 
-## Getting Started
+## Steps
 
-This project is a starting point for a Flutter application that follows the
-[simple app state management
-tutorial](https://flutter.dev/docs/development/data-and-backend/state-mgmt/simple).
+1. **Install Android Studio**
 
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+   Download and install Android Studio from the official website:  
+   [https://developer.android.com/studio](https://developer.android.com/studio)
 
-## Assets
+2. **Create an Android Virtual Device (AVD)**
 
-The `assets` directory houses images, fonts, and any other files you want to
-include with your application.
+   - Open Android Studio
+   - Go to **Tools > AVD Manager**
+   - Click **Create Virtual Device**
+   - Choose a device and system image
+   - Finish the setup and start the emulator
 
-The `assets/images` directory contains [resolution-aware
-images](https://flutter.dev/docs/development/ui/assets-and-images#resolution-aware).
+3. **Install FVM (Flutter Version Manager)**
 
-## Localization
+   FVM helps manage Flutter versions easily.
 
-This project generates localized messages based on arb files found in
-the `lib/src/localization` directory.
+   ```
+   dart pub global activate fvm
+    ```
+4. **Install Flutter 3.24.1 using FVM**
 
-To support additional languages, please visit the tutorial on
-[Internationalizing Flutter
-apps](https://flutter.dev/docs/development/accessibility-and-localization/internationalization)
+    ```
+    fvm install 3.24.1
+    fvm use 3.24.1
+    ```
+5. **Get Flutter packages**
+Run this command to fetch all dependencies:
+    ```
+    flutter pub get
+    ```
+
+6. **Run the Flutter project**
+Run your project on the emulator or connected device:
+
+    ```
+    flutter run
+    ```
