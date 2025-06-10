@@ -1,4 +1,5 @@
-{"@@locale": "en",
+{
+  "@@locale": "en",
   "appTitle": "Solar-cargo",
   "login": "Login",
   "email": "Email address",
@@ -6,5 +7,8 @@
   "errorTryAgain": "An error occurred, please try again.",
   "close": "Close",
   "fillFieldsError": "Please fill in all fields.",
-  "userNotFound": "User with matching login credentials not found."
+  "userNotFound": "User with matching login credentials not found.",
+  "supplier": "Supplier",
+  "truck": "Truck",
+  "createNewReport": "Create new report"
 }

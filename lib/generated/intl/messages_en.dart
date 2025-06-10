@@ -24,6 +24,9 @@ class MessageLookup extends MessageLookupByLibrary {
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "appTitle": MessageLookupByLibrary.simpleMessage("Solar-cargo"),
     "close": MessageLookupByLibrary.simpleMessage("Close"),
+    "createNewReport": MessageLookupByLibrary.simpleMessage(
+      "Create new report",
+    ),
     "email": MessageLookupByLibrary.simpleMessage("Email address"),
     "errorTryAgain": MessageLookupByLibrary.simpleMessage(
       "An error occurred, please try again.",
@@ -33,6 +36,8 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
+    "supplier": MessageLookupByLibrary.simpleMessage("Supplier"),
+    "truck": MessageLookupByLibrary.simpleMessage("Truck"),
     "userNotFound": MessageLookupByLibrary.simpleMessage(
       "User with matching login credentials not found.",
     ),

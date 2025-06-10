@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:intl/intl.dart';
+
 class DeliveryReport {
   final int? id;
   final String? location;
@@ -21,7 +23,6 @@ class DeliveryReport {
   // Files to upload (not coming from API response, but set by app when needed)
   File? truckLicencePlateFile;
   File? trailerLicencePlateFile;
-
 
   DeliveryReport({
     this.id,
@@ -58,7 +59,6 @@ class DeliveryReport {
       weatherConditions: json['weather_conditions'],
       truckLicencePlatePath: json['truck_license_plate_image'],
       trailerLicencePlatePath: json['trailer_license_plate_image'],
-
       comments: json['comments'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
@@ -85,5 +85,23 @@ class DeliveryReport {
       'updated_at': updatedAt,
       'user': user,
     };
+  }
+
+  String? get createdAtDate {
+    if (createdAt == null) return null;
+    try {
+      return DateFormat('yy/MM/dd').format(DateTime.parse(createdAt!));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  String? get updatedAtDate {
+    if (updatedAt == null) return null;
+    try {
+      return DateFormat('yy/MM/dd').format(DateTime.parse(updatedAt!));
+    } catch (_) {
+      return null;
+    }
   }
 }

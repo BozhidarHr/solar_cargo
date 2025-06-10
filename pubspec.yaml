@@ -24,6 +24,9 @@ dependencies:
   flutter_svg: 2.0.10+1
   flash: 3.1.0
   lottie: ^3.1.2
+  jwt_decoder: ^2.0.1
+  dio: ^5.2.1
+  easy_debounce: 2.0.3
 
 dev_dependencies:
   flutter_test:
@@ -41,5 +44,6 @@ flutter:
     - assets/icons/
     - assets/icons/miscellaneous/
     - assets/lottie/
+    - assets/icons/home_screen/
 flutter_intl:
   enabled: true

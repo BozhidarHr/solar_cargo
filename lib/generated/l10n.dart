@@ -109,6 +109,26 @@ class S {
       args: [],
     );
   }
+
+  /// `Supplier`
+  String get supplier {
+    return Intl.message('Supplier', name: 'supplier', desc: '', args: []);
+  }
+
+  /// `Truck`
+  String get truck {
+    return Intl.message('Truck', name: 'truck', desc: '', args: []);
+  }
+
+  /// `Create new report`
+  String get createNewReport {
+    return Intl.message(
+      'Create new report',
+      name: 'createNewReport',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

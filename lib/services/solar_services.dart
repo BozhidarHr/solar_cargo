@@ -1,11 +1,12 @@
 import 'dart:convert' as convert;
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
 import 'package:solar_cargo/services/solar_helper.dart';
 
 import '../models/jwt_keys.dart';
+import '../models/paging_response.dart';
 import '../screens/view_reports/model/delivery_report.dart';
+import 'http_client.dart';
 
 class SolarServices {
   final String domain;
@@ -28,7 +29,7 @@ class SolarServices {
         'username': username,
         'password': password,
       };
-      var response = await http.post(
+      var response = await httpPost(
         url!,
         body: convert.jsonEncode(body),
         headers: {HttpHeaders.contentTypeHeader: 'application/json'},
@@ -69,10 +70,8 @@ class SolarServices {
         domain,
         '/auth/refresh',
       );
-      var body = {
-        "refresh": refreshToken
-      };
-      var response = await http.post(
+      var body = {"refresh": refreshToken};
+      var response = await httpPost(
         url!,
         body: convert.jsonEncode(body),
         headers: {HttpHeaders.contentTypeHeader: 'application/json'},
@@ -99,18 +98,28 @@ class SolarServices {
     }
   }
 
-
-  Future<List<DeliveryReport>> fetchDeliveryReports() async {
+  Future<PagingResponse<DeliveryReport>> fetchDeliveryReports(
+      {int page = 1}) async {
     try {
+      const apiPageSize = 10;
+      // Build URL with page param
       var url = SolarHelper.buildUrl(
         domain,
-        '/delivery-reports',
+        '/delivery-reports?page=$page&page_size=$apiPageSize',
       );
-      var response = await http.get(url!,
-          headers: {HttpHeaders.authorizationHeader: 'Bearer $_customerToken'});
-      var responseBody = convert.jsonDecode(response.body);
-      var list = <DeliveryReport>[];
 
+      // Make GET request
+      var response = await httpGet(
+        url!,
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $_customerToken',
+        },
+      );
+
+      // Decode response
+      var responseBody = convert.jsonDecode(response.body);
+
+      // Error handling
       if (response.statusCode != 200) {
         if (responseBody is Map && responseBody['message'] != null) {
           throw Exception(SolarHelper.getErrorMessage(responseBody));
@@ -118,11 +127,12 @@ class SolarServices {
         throw Exception(
             'Unknown error occurred with status code ${response.statusCode}');
       }
-      for (var item in responseBody) {
-        var report = DeliveryReport.fromJson(item);
-        list.add(report);
-      }
-      return list;
+
+      // Parse and return paging response
+      return PagingResponse<DeliveryReport>.fromJson(
+        responseBody,
+        (item) => DeliveryReport.fromJson(item),
+      );
     } catch (e) {
       rethrow;
     }
@@ -134,8 +144,8 @@ class SolarServices {
         domain,
         '/delivery-reports',
       );
-      var response = await http
-          .post(url!, headers: {HttpHeaders.authorizationHeader: accessToken});
+      var response = await httpPost(url!,
+          headers: {HttpHeaders.authorizationHeader: accessToken});
       var responseBody = convert.jsonDecode(response.body);
 
       if (response.statusCode != 200) {

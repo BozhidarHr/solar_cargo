@@ -69,6 +69,8 @@ class _MyAppState extends State<MyApp> {
 // SettingsController to display the correct theme.
           theme: ThemeData(
             primaryColor: const Color(0xFF6AB43E),
+            secondaryHeaderColor: const Color(0xFF344E41),
+
             scaffoldBackgroundColor: const Color(0xFF081C15),
             textTheme: const TextTheme(
               labelMedium: TextStyle(fontSize: 12),
