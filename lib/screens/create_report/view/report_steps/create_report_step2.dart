@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:solar_cargo/screens/common/image_selection_field.dart';
+
+import '../../viewmodel/create_report_view_model.dart';
+import '../widgets/create_report_controllers_mixin.dart';
 
 class Step2Form extends StatefulWidget {
   final GlobalKey<FormState> formKey;
+  final CreateReportViewModel viewModel;
 
-  const Step2Form({super.key,required this.formKey});
+  const Step2Form({
+    super.key,
+    required this.formKey,
+    required this.viewModel,
+  });
 
   @override
   State<Step2Form> createState() => _Step2FormState();
@@ -61,14 +70,18 @@ class _Step2FormState extends State<Step2Form> {
               child: const Text('Add another Item'),
             ),
             const SizedBox(height: 16),
-            ListTile(
-              title: const Text('Proof of delivery'),
-              trailing: ElevatedButton(onPressed: () {}, child: const Text('Browse')),
+            ImageSelectionField(
+              label: 'Proof of delivery',
+              initialImage: widget.viewModel
+                  .images[ReportImagesFields.proofOfDelivery],
+              onImageSelected: (file) {
+                widget.viewModel
+                    .images[ReportImagesFields.proofOfDelivery] = file;
+              },
             ),
           ],
         ),
       ),
-
     );
   }
 }

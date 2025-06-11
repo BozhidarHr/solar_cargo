@@ -1,27 +1,25 @@
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../../../../generated/l10n.dart';
 import '../../../common/constants.dart';
+import '../../../common/image_selection_field.dart';
 import '../../viewmodel/create_report_view_model.dart';
 import '../widgets/create_report_controllers_mixin.dart';
-import '../../../common/image_selection_field.dart';
 
 class Step1Form extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final Map<Step1TextFields, TextEditingController> controllers;
+  final CreateReportViewModel viewModel;
 
   const Step1Form({
     super.key,
     required this.formKey,
     required this.controllers,
+    required this.viewModel,
   });
 
   @override
   Widget build(BuildContext context) {
-    final createReportViewModel =
-        Provider.of<CreateReportViewModel>(context, listen: false);
     return Form(
       key: formKey,
       child: SingleChildScrollView(
@@ -40,16 +38,20 @@ class Step1Form extends StatelessWidget {
               const SizedBox(height: 12),
               ImageSelectionField(
                   label: S.of(context).truckLicensePlate,
-                  initialImage: createReportViewModel.images[ReportImagesFields.truckLicensePlate],
+                  initialImage:
+                      viewModel.images[ReportImagesFields.truckLicensePlate],
                   onImageSelected: (file) {
-                    createReportViewModel.images[ReportImagesFields.truckLicensePlate] = file;
+                    viewModel.images[ReportImagesFields.truckLicensePlate] =
+                        file;
                   }),
               const SizedBox(height: 12),
               ImageSelectionField(
                 label: S.of(context).trailerLicensePlate,
-                initialImage: createReportViewModel.images[ReportImagesFields.trailerLicensePlate],
+                initialImage: viewModel
+                    .images[ReportImagesFields.trailerLicensePlate],
                 onImageSelected: (file) {
-                  createReportViewModel.images[ReportImagesFields.trailerLicensePlate] = file;
+                  viewModel
+                      .images[ReportImagesFields.trailerLicensePlate] = file;
                 },
               ),
               const SizedBox(height: 12),

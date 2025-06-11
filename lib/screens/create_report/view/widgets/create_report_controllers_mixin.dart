@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
+// Step 1 text fields
 enum Step1TextFields {
   pvPlantLocation,
   checkingCompany,
@@ -10,8 +11,20 @@ enum Step1TextFields {
   weatherConditions,
 }
 
+mixin CreateReportControllersMixin {
+  // Step 1 controllers
+  final Map<Step1TextFields, TextEditingController> step1Controllers = {
+    for (var field in Step1TextFields.values) field: TextEditingController(),
+  };
+
+  final List<GlobalKey<FormState>> formKeys =
+      List.generate(4, (_) => GlobalKey<FormState>());
+}
+
+// Step 3 checkbox states
 enum ReportOption { ok, notOk, na }
 
+// Step 3 checklist item
 class Step3Item {
   ReportOption? selectedOption;
   String? comment;
@@ -25,15 +38,7 @@ class Step3Item {
 enum ReportImagesFields {
   truckLicensePlate,
   trailerLicensePlate,
+  proofOfDelivery,
   cmr,
   deliverySlip,
-}
-
-mixin CreateReportControllersMixin {
-  final Map<Step1TextFields, TextEditingController> step1Controllers = {
-    for (var field in Step1TextFields.values) field: TextEditingController(),
-  };
-
-  final List<GlobalKey<FormState>> formKeys =
-      List.generate(4, (_) => GlobalKey<FormState>());
 }

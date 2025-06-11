@@ -20,9 +20,7 @@ List<File> optionalImages = [];
     clearStep3Items();
   }
 
-  void resetImages() {
-    images.clear();
-  }
+  void resetImages() => images.clear();
 
   void setStep1Data({
     required Map step1Controllers,
@@ -54,11 +52,13 @@ List<File> optionalImages = [];
   };
 
   void clearStep3Items() {
-    step3Items.forEach((key, value) {
-      value.selectedOption = null;
-      value.comment = null;
-    });
+    for (var item in step3Items.values) {
+      item
+        ..selectedOption = null
+        ..comment = null;
+    }
     notifyListeners();
+
   }
 
   void setOption(String label, ReportOption? option) {

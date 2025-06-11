@@ -28,9 +28,7 @@ class _CreateDeliveryReportScreenState extends State<CreateDeliveryReportScreen>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
       _viewModel = Provider.of<CreateReportViewModel>(context, listen: false);
-    });
   }
 
   @override
@@ -49,13 +47,26 @@ class _CreateDeliveryReportScreenState extends State<CreateDeliveryReportScreen>
     final valid = formKeys[_currentStep].currentState?.validate() ?? false;
     // First step additional validations
     if (_currentStep == 0) {
-      var truckLicenseImage =
+      final truckLicenseImage =
           _viewModel.images[ReportImagesFields.truckLicensePlate];
       final trailerLicenseImage =
-          _viewModel.images[ReportImagesFields.truckLicensePlate];
+          _viewModel.images[ReportImagesFields.trailerLicensePlate];
       if (truckLicenseImage == null || trailerLicenseImage == null) {
         FlashHelper.errorMessage(
-          message: "Please select license plate images.",
+          message: "Please add license plate images.",
+          context,
+        );
+        return false;
+      }
+    }
+    // Step 2 additional validations
+    if (_currentStep == 1) {
+      final proofOfDeliveryImage =
+      _viewModel.images[ReportImagesFields.proofOfDelivery];
+
+      if (proofOfDeliveryImage == null) {
+        FlashHelper.errorMessage(
+          message: "Please add proof of delivery image.",
           context,
         );
         return false;
@@ -68,7 +79,7 @@ class _CreateDeliveryReportScreenState extends State<CreateDeliveryReportScreen>
           _viewModel.images[ReportImagesFields.deliverySlip];
       if (cmrImage == null || deliverySlipImage == null) {
         FlashHelper.errorMessage(
-          message: "Please select CMR/Delivery Slip images.",
+          message: "Please add CMR/Delivery Slip images.",
           context,
         );
         return false;
@@ -115,10 +126,11 @@ class _CreateDeliveryReportScreenState extends State<CreateDeliveryReportScreen>
             Step1Form(
               formKey: formKeys[0],
               controllers: step1Controllers,
+              viewModel: _viewModel,
             ),
-            Step2Form(formKey: formKeys[1]),
-            Step3Form(formKey: formKeys[2]),
-            Step4Form(formKey: formKeys[3]),
+            Step2Form(formKey: formKeys[1], viewModel: _viewModel,),
+            Step3Form(formKey: formKeys[2], viewModel: _viewModel,),
+            Step4Form(formKey: formKeys[3], viewModel: _viewModel,),
           ],
         ),
       ),

@@ -4,16 +4,16 @@ import 'package:provider/provider.dart';
 import '../../viewmodel/create_report_view_model.dart';
 import '../widgets/checklist_item.dart';
 
-class Step3Form extends StatefulWidget {
+class Step3Form extends StatelessWidget {
   final GlobalKey<FormState> formKey;
+  final CreateReportViewModel viewModel;
 
-  const Step3Form({super.key, required this.formKey});
+  const Step3Form({
+    super.key,
+    required this.formKey,
+    required this.viewModel,
+  });
 
-  @override
-  State<Step3Form> createState() => _Step3FormState();
-}
-
-class _Step3FormState extends State<Step3Form> {
   @override
   Widget build(BuildContext context) {
     return Consumer<CreateReportViewModel>(
@@ -21,7 +21,7 @@ class _Step3FormState extends State<Step3Form> {
         final step3Items = viewModel.step3Items;
 
         return Form(
-          key: widget.formKey,
+          key: formKey,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
