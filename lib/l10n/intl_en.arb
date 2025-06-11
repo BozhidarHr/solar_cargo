@@ -10,5 +10,18 @@
   "userNotFound": "User with matching login credentials not found.",
   "supplier": "Supplier",
   "truck": "Truck",
-  "createNewReport": "Create new report"
+  "createNewReport": "Create new report",
+  "step1Title": "Step 1: Delivery Information",
+  "truckLicensePlate": "Truck License Plate",
+  "trailerLicensePlate": "Trailer License Plate",
+  "plantLocation": "PV/Plant Location",
+  "checkingCompany": "Checking company",
+  "deliverySlipNumber": "Delivery slip No",
+  "logisticsCompany": "Logistics company",
+  "containerNumber": "Container No",
+  "weatherConditions": "Weather conditions",
+  "browse": "Browse",
+  "takePhoto": "Take Photo",
+  "chooseFromGallery": "Choose from Gallery",
+  "noImageSelected": "No image selected"
 }

@@ -16,8 +16,10 @@ class CreateDeliveryReportScreen extends StatefulWidget {
   State<CreateDeliveryReportScreen> createState() =>
       _CreateDeliveryReportScreenState();
 }
+
 class _CreateDeliveryReportScreenState extends State<CreateDeliveryReportScreen>
     with CreateReportControllersMixin {
+  // Start step
   int _currentStep = 0;
   late final CreateReportViewModel _viewModel;
 
@@ -36,24 +38,50 @@ class _CreateDeliveryReportScreenState extends State<CreateDeliveryReportScreen>
     for (final controller in step1Controllers.values) {
       controller.dispose();
     }
+    // reset report data upon exiting the screen
+    _viewModel.resetReportData();
+
     super.dispose();
   }
 
   bool _validateStep() {
+    // Validate form key in each step
     final valid = formKeys[_currentStep].currentState?.validate() ?? false;
-    if (_currentStep == 0 &&
-        (_viewModel.truckLicensePlateImage == null || _viewModel.trailerLicensePlateImage == null)) {
-      FlashHelper.errorMessage(
-        message: "Please select license plate images.",
-        context,
-      );
-      return false;
+    // First step additional validations
+    if (_currentStep == 0) {
+      var truckLicenseImage =
+          _viewModel.images[ReportImagesFields.truckLicensePlate];
+      final trailerLicenseImage =
+          _viewModel.images[ReportImagesFields.truckLicensePlate];
+      if (truckLicenseImage == null || trailerLicenseImage == null) {
+        FlashHelper.errorMessage(
+          message: "Please select license plate images.",
+          context,
+        );
+        return false;
+      }
     }
+    // Step 4 additional validations
+    if (_currentStep == 3) {
+      final cmrImage = _viewModel.images[ReportImagesFields.cmr];
+      final deliverySlipImage =
+          _viewModel.images[ReportImagesFields.deliverySlip];
+      if (cmrImage == null || deliverySlipImage == null) {
+        FlashHelper.errorMessage(
+          message: "Please select CMR/Delivery Slip images.",
+          context,
+        );
+        return false;
+      }
+    }
+
     return valid;
   }
 
   void _nextStep() {
+    // Validate step
     if (!_validateStep()) return;
+    // Set data for step 1
     if (_currentStep == 0) {
       _viewModel.setStep1Data(
         step1Controllers: step1Controllers,
@@ -63,7 +91,7 @@ class _CreateDeliveryReportScreenState extends State<CreateDeliveryReportScreen>
     if (!_isLastStep) {
       setState(() => _currentStep++);
     } else {
-      // Submit logic here
+      // Submit logic here (execute api request).
     }
   }
 

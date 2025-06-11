@@ -129,6 +129,126 @@ class S {
       args: [],
     );
   }
+
+  /// `Step 1: Delivery Information`
+  String get step1Title {
+    return Intl.message(
+      'Step 1: Delivery Information',
+      name: 'step1Title',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Truck License Plate`
+  String get truckLicensePlate {
+    return Intl.message(
+      'Truck License Plate',
+      name: 'truckLicensePlate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Trailer License Plate`
+  String get trailerLicensePlate {
+    return Intl.message(
+      'Trailer License Plate',
+      name: 'trailerLicensePlate',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `PV/Plant Location`
+  String get plantLocation {
+    return Intl.message(
+      'PV/Plant Location',
+      name: 'plantLocation',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Checking company`
+  String get checkingCompany {
+    return Intl.message(
+      'Checking company',
+      name: 'checkingCompany',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery slip No`
+  String get deliverySlipNumber {
+    return Intl.message(
+      'Delivery slip No',
+      name: 'deliverySlipNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Logistics company`
+  String get logisticsCompany {
+    return Intl.message(
+      'Logistics company',
+      name: 'logisticsCompany',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Container No`
+  String get containerNumber {
+    return Intl.message(
+      'Container No',
+      name: 'containerNumber',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Weather conditions`
+  String get weatherConditions {
+    return Intl.message(
+      'Weather conditions',
+      name: 'weatherConditions',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Browse`
+  String get browse {
+    return Intl.message('Browse', name: 'browse', desc: '', args: []);
+  }
+
+  /// `Take Photo`
+  String get takePhoto {
+    return Intl.message('Take Photo', name: 'takePhoto', desc: '', args: []);
+  }
+
+  /// `Choose from Gallery`
+  String get chooseFromGallery {
+    return Intl.message(
+      'Choose from Gallery',
+      name: 'chooseFromGallery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `No image selected`
+  String get noImageSelected {
+    return Intl.message(
+      'No image selected',
+      name: 'noImageSelected',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

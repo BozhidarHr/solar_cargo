@@ -2,14 +2,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../generated/l10n.dart';
 import '../../../common/constants.dart';
 import '../../viewmodel/create_report_view_model.dart';
 import '../widgets/create_report_controllers_mixin.dart';
-import '../widgets/licence_plate_image_field.dart';
+import '../../../common/image_selection_field.dart';
 
-class Step1Form extends StatefulWidget {
+class Step1Form extends StatelessWidget {
   final GlobalKey<FormState> formKey;
-  final Map<Step1Field, TextEditingController> controllers;
+  final Map<Step1TextFields, TextEditingController> controllers;
 
   const Step1Form({
     super.key,
@@ -18,45 +19,43 @@ class Step1Form extends StatefulWidget {
   });
 
   @override
-  State<Step1Form> createState() => _Step1FormState();
-}
-
-class _Step1FormState extends State<Step1Form> {
-
-  @override
   Widget build(BuildContext context) {
     final createReportViewModel =
         Provider.of<CreateReportViewModel>(context, listen: false);
     return Form(
-      key: widget.formKey,
-      child: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: [
-          Text(
-            'Step 1: Delivery Information',
-            style: Theme.of(context)
-                .textTheme
-                .headlineMedium!
-                .copyWith(color: Colors.white),
+      key: formKey,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Text(
+                S.of(context).step1Title,
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(color: Colors.white),
+              ),
+              ..._buildFields(context),
+              const SizedBox(height: 12),
+              ImageSelectionField(
+                  label: S.of(context).truckLicensePlate,
+                  initialImage: createReportViewModel.images[ReportImagesFields.truckLicensePlate],
+                  onImageSelected: (file) {
+                    createReportViewModel.images[ReportImagesFields.truckLicensePlate] = file;
+                  }),
+              const SizedBox(height: 12),
+              ImageSelectionField(
+                label: S.of(context).trailerLicensePlate,
+                initialImage: createReportViewModel.images[ReportImagesFields.trailerLicensePlate],
+                onImageSelected: (file) {
+                  createReportViewModel.images[ReportImagesFields.trailerLicensePlate] = file;
+                },
+              ),
+              const SizedBox(height: 12),
+            ],
           ),
-          ..._buildFields(context),
-          const SizedBox(height: 12),
-          LicencePlateImageField(
-              label: 'Truck license plate',
-              initialImage: createReportViewModel.trailerLicensePlateImage,
-              onImageSelected: (file) {
-                createReportViewModel.truckLicensePlateImage = file;
-              }),
-          const SizedBox(height: 12),
-          LicencePlateImageField(
-            label: 'Trailer license plate',
-            initialImage: createReportViewModel.trailerLicensePlateImage,
-            onImageSelected: (file) {
-              createReportViewModel.trailerLicensePlateImage = file;
-            },
-          ),
-          const SizedBox(height: 12),
-        ],
+        ),
       ),
     );
   }
@@ -64,42 +63,42 @@ class _Step1FormState extends State<Step1Form> {
   List<Widget> _buildFields(BuildContext context) {
     return [
       _buildFormField(
-        label: 'PV Plant/ Location',
+        label: S.of(context).plantLocation,
         context: context,
-        controller: widget.controllers[Step1Field.pvPlantLocation]!,
+        controller: controllers[Step1TextFields.pvPlantLocation]!,
         maxLines: 3,
       ),
       _buildFormField(
-        label: 'Checking company',
+        label: S.of(context).checkingCompany,
         context: context,
-        controller: widget.controllers[Step1Field.checkingCompany]!,
+        controller: controllers[Step1TextFields.checkingCompany]!,
       ),
       _buildFormField(
-        label: 'Supplier',
+        label: S.of(context).supplier,
         context: context,
-        controller: widget.controllers[Step1Field.supplier]!,
+        controller: controllers[Step1TextFields.supplier]!,
       ),
       _buildFormField(
-        label: 'Delivery slip No',
+        label: S.of(context).deliverySlipNumber,
         context: context,
-        controller: widget.controllers[Step1Field.deliverySlipNo]!,
+        controller: controllers[Step1TextFields.deliverySlipNo]!,
       ),
       _buildFormField(
-        label: 'Logistics company',
+        label: S.of(context).logisticsCompany,
         context: context,
-        controller: widget.controllers[Step1Field.logisticsCompany]!,
+        controller: controllers[Step1TextFields.logisticsCompany]!,
       ),
       _buildFormField(
-        label: 'Container No',
+        label: S.of(context).containerNumber,
         context: context,
-        controller: widget.controllers[Step1Field.containerNo]!,
+        controller: controllers[Step1TextFields.containerNo]!,
         isNumbersOnly: true,
       ),
       const SizedBox(height: 12),
       _buildFormField(
-        label: 'Weather conditions',
+        label: S.of(context).weatherConditions,
         context: context,
-        controller: widget.controllers[Step1Field.weatherConditions]!,
+        controller: controllers[Step1TextFields.weatherConditions]!,
       ),
       const SizedBox(height: 12),
     ];

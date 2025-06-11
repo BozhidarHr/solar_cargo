@@ -23,9 +23,18 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
     "appTitle": MessageLookupByLibrary.simpleMessage("Solar-cargo"),
+    "browse": MessageLookupByLibrary.simpleMessage("Browse"),
+    "checkingCompany": MessageLookupByLibrary.simpleMessage("Checking company"),
+    "chooseFromGallery": MessageLookupByLibrary.simpleMessage(
+      "Choose from Gallery",
+    ),
     "close": MessageLookupByLibrary.simpleMessage("Close"),
+    "containerNumber": MessageLookupByLibrary.simpleMessage("Container No"),
     "createNewReport": MessageLookupByLibrary.simpleMessage(
       "Create new report",
+    ),
+    "deliverySlipNumber": MessageLookupByLibrary.simpleMessage(
+      "Delivery slip No",
     ),
     "email": MessageLookupByLibrary.simpleMessage("Email address"),
     "errorTryAgain": MessageLookupByLibrary.simpleMessage(
@@ -35,11 +44,31 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please fill in all fields.",
     ),
     "login": MessageLookupByLibrary.simpleMessage("Login"),
+    "logisticsCompany": MessageLookupByLibrary.simpleMessage(
+      "Logistics company",
+    ),
+    "noImageSelected": MessageLookupByLibrary.simpleMessage(
+      "No image selected",
+    ),
     "password": MessageLookupByLibrary.simpleMessage("Password"),
+    "plantLocation": MessageLookupByLibrary.simpleMessage("PV/Plant Location"),
+    "step1Title": MessageLookupByLibrary.simpleMessage(
+      "Step 1: Delivery Information",
+    ),
     "supplier": MessageLookupByLibrary.simpleMessage("Supplier"),
+    "takePhoto": MessageLookupByLibrary.simpleMessage("Take Photo"),
+    "trailerLicensePlate": MessageLookupByLibrary.simpleMessage(
+      "Trailer License Plate",
+    ),
     "truck": MessageLookupByLibrary.simpleMessage("Truck"),
+    "truckLicensePlate": MessageLookupByLibrary.simpleMessage(
+      "Truck License Plate",
+    ),
     "userNotFound": MessageLookupByLibrary.simpleMessage(
       "User with matching login credentials not found.",
+    ),
+    "weatherConditions": MessageLookupByLibrary.simpleMessage(
+      "Weather conditions",
     ),
   };
 }
