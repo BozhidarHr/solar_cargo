@@ -1,28 +1,34 @@
-import 'dart:io';
 
 import 'package:intl/intl.dart';
 
-class DeliveryReport {
-   int? id;
-   String? location;
-   String? checkingCompany;
-   String? supplier;
-   String? deliverySlipNumber;
-   String? logisticCompany;
-   String? containerNumber;
-   String? licencePlateTruck;
-   String? licencePlateTrailer;
-   String? weatherConditions;
-   String? truckLicencePlatePath;
-   String? trailerLicencePlatePath;
-   String? comments;
-   String? createdAt;
-   String? updatedAt;
-   int? user;
+import '../../create_report/models/checkbox_comment.dart';
+import '../../create_report/models/delivery_item.dart';
 
-  // Files to upload (not coming from API response, but set by app when needed)
-  File? truckLicencePlateFile;
-  File? trailerLicencePlateFile;
+class DeliveryReport {
+  int? id;
+  String? location;
+  String? checkingCompany;
+  String? supplier;
+  String? deliverySlipNumber;
+  String? logisticCompany;
+  String? containerNumber;
+  String? licencePlateTruck;
+  String? licencePlateTrailer;
+  List<DeliveryItem>? deliveryItems = [];
+  String? weatherConditions;
+  String? comments;
+  String? createdAt;
+  String? updatedAt;
+  int? user;
+
+  // File? or String?
+  dynamic truckLicencePlateImage;
+  dynamic trailerLicencePlateImage;
+  dynamic proofOfDelivery;
+  List<CheckBoxItem> checkboxItems = [];
+  dynamic cmrImage;
+  dynamic deliverySlipImage;
+  List<dynamic>? additionalImages;
 
   DeliveryReport({
     this.id,
@@ -35,14 +41,14 @@ class DeliveryReport {
     this.licencePlateTruck,
     this.licencePlateTrailer,
     this.weatherConditions,
-    this.truckLicencePlatePath,
-    this.trailerLicencePlatePath,
+    this.deliveryItems,
     this.comments,
     this.createdAt,
     this.updatedAt,
     this.user,
-    this.truckLicencePlateFile,
-    this.trailerLicencePlateFile,
+    this.truckLicencePlateImage,
+    this.trailerLicencePlateImage,
+    this.proofOfDelivery,
   });
 
   factory DeliveryReport.fromJson(Map<String, dynamic> json) {
@@ -57,8 +63,8 @@ class DeliveryReport {
       licencePlateTruck: json['licence_plate_truck'],
       licencePlateTrailer: json['licence_plate_trailer'],
       weatherConditions: json['weather_conditions'],
-      truckLicencePlatePath: json['truck_license_plate_image'],
-      trailerLicencePlatePath: json['trailer_license_plate_image'],
+      truckLicencePlateImage: json['truck_license_plate_image'],
+      trailerLicencePlateImage: json['trailer_license_plate_image'],
       comments: json['comments'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],
@@ -66,26 +72,29 @@ class DeliveryReport {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'location': location,
-      'checking_company': checkingCompany,
-      'supplier': supplier,
-      'delivery_slip_number': deliverySlipNumber,
-      'logistic_company': logisticCompany,
-      'container_number': containerNumber,
-      'licence_plate_truck': licencePlateTruck,
-      'licence_plate_trailer': licencePlateTrailer,
-      'weather_conditions': weatherConditions,
-      'truck_license_plate_image': truckLicencePlateFile,
-      'trailer_license_plate_image': truckLicencePlateFile,
-      'comments': comments,
-      'created_at': createdAt,
-      'updated_at': updatedAt,
-      'user': user,
-    };
-  }
+  // Map<String, dynamic> toJson() {
+  //   final checkboxItemsJson = CheckBoxItem.listToFlatJson(checkboxItems);
+  //   return {
+  //     'items_input': deliveryItems?.map((e) => e.toJson).toList() ?? [],
+  //     'location': location,
+  //     'checking_company': checkingCompany,
+  //     'supplier': supplier,
+  //     'delivery_slip_number': deliverySlipNumber,
+  //     'logistic_company': logisticCompany,
+  //     'container_number': containerNumber,
+  //     // Hardcoded for now
+  //     'licence_plate_truck': 'РР 1234 ВК',
+  //     'licence_plate_trailer': 'РР 5678 ВК',
+  //     'truck_license_plate_image':  truckLicencePlateImage ,
+  //     'trailer_license_plate_image': trailerLicencePlateImage ,
+  //     'weather_conditions': weatherConditions,
+  //     // not needed field
+  //     'comments': null,
+  //     // all checkbox items
+  //     ...checkboxItemsJson,
+  //     'user': 1,
+  //   };
+  // }
 
   String? get createdAtDate {
     if (createdAt == null) return null;

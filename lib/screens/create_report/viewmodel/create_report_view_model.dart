@@ -1,105 +1,86 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:solar_cargo/screens/create_report/models/checkbox_comment.dart';
 import 'package:solar_cargo/screens/view_reports/model/delivery_report.dart';
 
-import '../view/widgets/create_report_controllers_mixin.dart';
+import '../../../services/api_response.dart';
+import '../../../services/services.dart';
+import '../../common/logger.dart';
+import '../models/delivery_item.dart';
+import '../models/delivery_item_controllers.dart';
+import '../view/widgets/create_report_mixin.dart';
+
+part 'create_report_view_model_extension.dart';
 
 class CreateReportViewModel with ChangeNotifier {
-  DeliveryReport newReport = DeliveryReport();
-  final Map<ReportImagesFields, File?> images = {};
-List<File> optionalImages = [];
-  void setImage(ReportImagesFields field, File? image) {
-    images[field] = image;
+  final Services _service = Services();
+
+  // Api response
+  ApiResponse _createReportResponse = ApiResponse.initial('Empty data');
+
+  ApiResponse get createReportResponse {
+    return _createReportResponse;
   }
 
+  // initialise step3 items
+  final step3CheckboxItems = CheckBoxItem.defaultStep3Items();
+
+  // init report
+  DeliveryReport newReport = DeliveryReport();
+
+  final Map<ReportImagesFields, File?> images = {};
+  List<File> optionalImages = [];
 
   void resetReportData() {
+    // reset all text fields
     newReport = DeliveryReport();
-    resetImages();
-    clearStep3Items();
+    // reset all images
+    clearAllImages();
+    // reset checkboxes
+    clearCheckboxesData();
   }
 
-  void resetImages() => images.clear();
-
-  void setStep1Data({
-    required Map step1Controllers,
-  }) {
-    newReport
-      ..location = step1Controllers[Step1TextFields.pvPlantLocation]?.text ?? ''
-      ..checkingCompany =
-          step1Controllers[Step1TextFields.checkingCompany]?.text ?? ''
-      ..supplier = step1Controllers[Step1TextFields.supplier]?.text ?? ''
-      ..deliverySlipNumber =
-          step1Controllers[Step1TextFields.deliverySlipNo]?.text ?? ''
-      ..logisticCompany =
-          step1Controllers[Step1TextFields.logisticsCompany]?.text ?? ''
-      ..containerNumber = step1Controllers[Step1TextFields.containerNo]?.text ?? ''
-      ..weatherConditions =
-          step1Controllers[Step1TextFields.weatherConditions]?.text ?? ''
-      ..truckLicencePlateFile = images[ReportImagesFields.truckLicensePlate]
-      ..trailerLicencePlateFile = images[ReportImagesFields.trailerLicensePlate];
+  void setFinalData(
+      Map<Step1TextFields, TextEditingController> step1Controllers,
+      List<DeliveryItemControllers> items) {
+    setStep1Data(step1Controllers);
+    setStep2Data(items);
+    setStep3Data();
+    setStep4Data();
   }
 
-  final Map<String, Step3Item> step3Items = {
-    'Load properly secured': Step3Item(),
-    'Goods according to delivery and PO, amount and indentity': Step3Item(),
-    'Packaging sufficient and stable enough': Step3Item(),
-    'Delivery without damages': Step3Item(),
-    'Suitable machines for unloading/handling present': Step3Item(),
-    'Delivery slip scanned, uploaded and filed': Step3Item(),
-    'Inspection Report scanned, uploaded and filed': Step3Item(),
-  };
-
-  void clearStep3Items() {
-    for (var item in step3Items.values) {
-      item
-        ..selectedOption = null
-        ..comment = null;
-    }
+  Future<void> createDeliveryReport() async {
+    _createReportResponse = ApiResponse.loading('Creating delivery report ...');
     notifyListeners();
 
+    try {
+      final response = await _service.api.createDeliveryReports(newReport);
+
+      _createReportResponse = ApiResponse.completed(response);
+    } catch (e) {
+      _createReportResponse = ApiResponse.error(e.toString());
+      logger.w(
+        'createDeliveryReport(catch): ${e.toString()}',
+      );
+    }
+
+    notifyListeners();
   }
 
+  // Used in UI for state management;
   void setOption(String label, ReportOption? option) {
-    step3Items[label]?.selectedOption = option;
+    step3CheckboxItems[label]?.selectedOption = option;
     notifyListeners();
   }
 
   void setComment(String label, String comment) {
-    step3Items[label]?.comment = comment;
+    step3CheckboxItems[label]?.comment = comment;
     notifyListeners();
   }
 
   void removeComment(String label) {
-    step3Items[label]?.comment = null;
+    step3CheckboxItems[label]?.comment = null;
     notifyListeners();
   }
 }
-// final Services _service = Services();
-//
-// ApiResponse _createReportResponse = ApiResponse.initial('Empty data');
-//
-// ApiResponse get createReportResponse {
-//   return _createReportResponse;
-// }
-
-// Future<void> createDeliveryReport() async {
-//   _createReportResponse =
-//       ApiResponse.loading('Creating delivery report ...');
-//   notifyListeners();
-//
-//   try {
-//     final DeliveryReport deliveryReports =
-//     await _service.api.createDeliveryReports();
-//
-//     _createReportResponse = ApiResponse.completed(deliveryReports);
-//   } catch (e) {
-//     _createReportResponse = ApiResponse.error(e.toString());
-//     logger.w(
-//       'createDeliveryReport(catch): ${e.toString()}',
-//     );
-//   }
-//
-//   notifyListeners();
-// }

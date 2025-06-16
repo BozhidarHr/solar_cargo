@@ -99,7 +99,7 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Text(
                       _selectedImage != null
-                          ? _selectedImage!.path.split('/').last
+                          ? "1 Image Selected"
                           : S.of(context).noImageSelected,
                       style: const TextStyle(
                         fontSize: 14,

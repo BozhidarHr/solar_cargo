@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:solar_cargo/screens/common/constants.dart';
 
-import 'create_report_controllers_mixin.dart';
+import '../../models/checkbox_comment.dart';
 
 class Step3ChecklistItem extends StatelessWidget {
   final String label;
-  final Step3Item item;
+  final CheckBoxItem item;
   final Function(ReportOption?) onOptionChanged;
   final VoidCallback? onAddComment;
   final ValueChanged<String>? onCommentChanged;

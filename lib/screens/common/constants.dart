@@ -9,3 +9,4 @@ const kDeleteSvg = 'assets/icons/miscellaneous/delete.svg';
 const kLoadingLottie = 'assets/lottie/loading.json';
 // Colors
 const kFormFieldBackgroundColor = Color(0xFFDAD7CD);
+const kDeliveryItemFieldColor = Color(0xFF889E81);

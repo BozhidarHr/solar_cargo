@@ -2,61 +2,103 @@ import 'package:flutter/material.dart';
 
 import '../../../../generated/l10n.dart';
 import '../../../common/constants.dart';
+import '../../../common/flash_helper.dart';
 import '../../../common/image_selection_field.dart';
 import '../../viewmodel/create_report_view_model.dart';
-import '../widgets/create_report_controllers_mixin.dart';
+import '../widgets/create_report_mixin.dart';
 
 class Step1Form extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final Map<Step1TextFields, TextEditingController> controllers;
   final CreateReportViewModel viewModel;
+  final VoidCallback? onNext;
 
   const Step1Form({
     super.key,
     required this.formKey,
     required this.controllers,
     required this.viewModel,
+    this.onNext,
   });
+
+  bool _validate(BuildContext context) {
+    final valid = formKey.currentState?.validate() ?? false;
+    final truck = viewModel.images[ReportImagesFields.truckLicensePlate];
+    final trailer = viewModel.images[ReportImagesFields.trailerLicensePlate];
+    if (truck == null || trailer == null) {
+      FlashHelper.errorMessage(
+        context,
+        message: 'Please add license plate images.',
+      );
+      return false;
+    }
+    return valid;
+  }
+
+  void _handleNext(BuildContext context, VoidCallback onNext) {
+    if (_validate(context)) {
+      onNext();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Form(
       key: formKey,
       child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Text(
-                S.of(context).step1Title,
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium!
-                    .copyWith(color: Colors.white),
+        padding: const EdgeInsets.symmetric(horizontal: 25),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Step 1: Delivery Information',
+                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                      color: Colors.white, fontWeight: FontWeight.w700),
+                ),
               ),
-              ..._buildFields(context),
-              const SizedBox(height: 12),
-              ImageSelectionField(
-                  label: S.of(context).truckLicensePlate,
-                  initialImage:
-                      viewModel.images[ReportImagesFields.truckLicensePlate],
-                  onImageSelected: (file) {
-                    viewModel.images[ReportImagesFields.truckLicensePlate] =
-                        file;
-                  }),
-              const SizedBox(height: 12),
-              ImageSelectionField(
-                label: S.of(context).trailerLicensePlate,
-                initialImage: viewModel
-                    .images[ReportImagesFields.trailerLicensePlate],
-                onImageSelected: (file) {
-                  viewModel
-                      .images[ReportImagesFields.trailerLicensePlate] = file;
-                },
+            ),
+            ..._buildFields(context),
+            const SizedBox(height: 12),
+            ImageSelectionField(
+              label: S.of(context).truckLicensePlate,
+              initialImage:
+                  viewModel.images[ReportImagesFields.truckLicensePlate],
+              onImageSelected: (file) {
+                viewModel.images[ReportImagesFields.truckLicensePlate] = file;
+              },
+            ),
+            const SizedBox(height: 12),
+            ImageSelectionField(
+              label: S.of(context).trailerLicensePlate,
+              initialImage:
+                  viewModel.images[ReportImagesFields.trailerLicensePlate],
+              onImageSelected: (file) {
+                viewModel.images[ReportImagesFields.trailerLicensePlate] =
+                    file;
+              },
+            ),
+            const SizedBox(height: 12,),
+            if (onNext != null)
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    textStyle: Theme.of(context).textTheme.titleMedium,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () => _handleNext(context, onNext!),
+                  child: const Text('Next Step'),
+                ),
               ),
-              const SizedBox(height: 12),
-            ],
-          ),
+          ],
         ),
       ),
     );
