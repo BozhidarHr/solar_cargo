@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
             ),
             // Example primary color
           ),
-          darkTheme: ThemeData.dark(),
+          themeMode: ThemeMode.light,
           debugShowCheckedModeBanner: false,
 // Define a function to handle named routes in order to support
 // Flutter web url navigation and deep linking.
