@@ -6,6 +6,7 @@ import 'package:solar_cargo/services/solar_helper.dart';
 
 import '../models/jwt_keys.dart';
 import '../models/paging_response.dart';
+import '../models/token_storage.dart';
 import '../screens/create_report/models/checkbox_comment.dart';
 import '../screens/view_reports/model/delivery_report.dart';
 import 'http_client.dart';
@@ -20,10 +21,18 @@ class SolarServices {
   String? _customerToken;
   String? _refreshToken;
 
+  final TokenStorage tokenStorage = TokenStorage();
+
   String? get customerToken => _customerToken;
 
-  setCustomerToken(String token) {
+  setCustomerToken(String token) async {
+    await tokenStorage.write(TokenType.bearer, token);
     _customerToken = token;
+  }
+
+  setRefreshToken(String token) async {
+    await tokenStorage.write(TokenType.refresh, token);
+    _refreshToken = token;
   }
 
   Future<JwtKeys> login(String username, String password) async {
@@ -61,8 +70,9 @@ class SolarServices {
       if (bearerToken == null || bearerToken.isEmpty) {
         throw Exception('Bearer token not found in response');
       }
-      _customerToken = bearerToken;
-      _refreshToken = refreshToken;
+
+      await setCustomerToken(bearerToken);
+      await setRefreshToken(refreshToken);
       return JwtKeys(
         bearerToken: bearerToken,
         refreshToken: refreshToken,
@@ -74,6 +84,10 @@ class SolarServices {
 
   Future<String> updateToken() async {
     try {
+      _refreshToken = await tokenStorage.read(TokenType.refresh);
+      if (_refreshToken == null || _refreshToken!.isEmpty) {
+        throw Exception('No refresh token available');
+      }
       var url = SolarHelper.buildUrl(
         domain,
         '/auth/refresh',
@@ -99,7 +113,7 @@ class SolarServices {
       }
 
       final bearerToken = responseBody?['access'];
-      _customerToken = bearerToken;
+      await setCustomerToken(bearerToken);
       return bearerToken;
     } catch (e) {
       rethrow;

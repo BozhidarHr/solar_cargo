@@ -11,7 +11,6 @@ class Step1Form extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final CreateReportViewModel viewModel;
   final VoidCallback? onNext;
-
   const Step1Form({
     super.key,
     required this.formKey,

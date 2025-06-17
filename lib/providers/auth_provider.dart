@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-import '../models/jwt_keys.dart';
 import '../models/token_storage.dart';
 import '../models/user.dart';
 import '../screens/common/logger.dart';
@@ -9,21 +8,15 @@ import '../services/services.dart';
 
 class AuthProvider with ChangeNotifier {
   final Services _service = Services();
-  final TokenStorage _tokenStorage = TokenStorage();
 
-  String? _bearerToken;
-  String? _refreshToken;
   bool _isLoggedIn = false;
   bool _isLoading = false;
   String? _errorMessage;
   User? _currentUser;
 
   User? get currentUser => _currentUser;
-
   bool get isLoggedIn => _isLoggedIn;
-
   bool get isLoading => _isLoading;
-
   String? get errorMessage => _errorMessage;
 
   // --- Initialization ---
@@ -34,14 +27,13 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> _checkLoginStatus() async {
-    _bearerToken = await _tokenStorage.read(TokenType.bearer);
-
-    if (_bearerToken != null) {
+    final bearerToken = await _service.api.tokenStorage.read(TokenType.bearer);
+    if (bearerToken != null) {
       final isValid = await _refreshBearerToken();
       if (isValid) {
         _setLoggedIn(true);
       } else {
-        await logout(); // logout() already calls _setLoggedIn(false)
+        await logout();
       }
     } else {
       _setLoggedIn(false);
@@ -50,19 +42,19 @@ class AuthProvider with ChangeNotifier {
 
   Future<bool> _refreshBearerToken() async {
     try {
-      _refreshToken = await _tokenStorage.read(TokenType.refresh);
-      if (_refreshToken == null) return false;
+      final refreshToken = await _service.api.tokenStorage.read(TokenType.refresh);
+      if (refreshToken == null) return false;
 
-      _bearerToken = await _service.api.updateToken();
-      await _tokenStorage.write(TokenType.bearer, _bearerToken);
-      if (_bearerToken != null) {
-        Map<String, dynamic> decodedToken = JwtDecoder.decode(_bearerToken!);
-        _currentUser = User.fromMap(decodedToken);
-        logger.i('User refreshed: $_currentUser');
-      }
+      final bearerToken = await _service.api.updateToken();
+      await _service.api.tokenStorage.write(TokenType.bearer, bearerToken);
+
+      final decodedToken = JwtDecoder.decode(bearerToken);
+      _currentUser = User.fromMap(decodedToken);
+      logger.i('User refreshed: $_currentUser');
+
       return true;
     } catch (e) {
-      logger.w('Token validation failed: $e');
+      logger.w('Token refresh failed: $e');
       return false;
     }
   }
@@ -74,7 +66,9 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final jwt = await _service.api.login(username, password);
-      await _saveTokens(jwt);
+      final decodedToken = JwtDecoder.decode(jwt.bearerToken);
+      _currentUser = User.fromMap(decodedToken);
+      logger.i('User loaded: $_currentUser');
       _setLoggedIn(true);
     } catch (e) {
       logger.w('Login error: $e');
@@ -85,9 +79,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> logout() async {
-    _bearerToken = null;
-    _refreshToken = null;
-    await _tokenStorage.clearAll();
+    await _service.api.tokenStorage.clearAll();
     _setLoggedIn(false);
   }
 
@@ -96,22 +88,6 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // --- Private Methods ---
-
-  Future<void> _saveTokens(JwtKeys jwt) async {
-    _bearerToken = jwt.bearerToken;
-    _refreshToken = jwt.refreshToken;
-
-    await _tokenStorage.write(TokenType.bearer, _bearerToken);
-    await _tokenStorage.write(TokenType.refresh, _refreshToken);
-
-    // Decode token and set currentUser
-    if (_bearerToken != null) {
-      Map<String, dynamic> decodedToken = JwtDecoder.decode(_bearerToken!);
-      _currentUser = User.fromMap(decodedToken);
-      logger.i('User loaded: $_currentUser');
-    }
-  }
 
   void _setLoggedIn(bool value) {
     _isLoggedIn = value;
