@@ -15,9 +15,6 @@ class CreateReportViewModel with ChangeNotifier {
 
   ApiResponse get response => _createReportResponse;
 
-  // Step 3 Checkbox Items
-  final step3CheckboxItems = CheckBoxItem.defaultStep3Items();
-
   // Delivery Report instance
   DeliveryReport newReport = DeliveryReport();
 
@@ -25,7 +22,6 @@ class CreateReportViewModel with ChangeNotifier {
   void resetReportData() {
     resetResponse();
     newReport = DeliveryReport();
-    clearCheckboxesData();
   }
 
   /// Resets API response state
@@ -50,23 +46,22 @@ class CreateReportViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void setCheckboxData() {
-    newReport.checkboxItems = step3CheckboxItems.values.toList();
-  }
-
   // Used in UI for state management;
-  void setOption(String label, ReportOption? option) {
-    step3CheckboxItems[label]?.selectedOption = option;
+  void setOption(String name, ReportOption? option) {
+    final item = matchCheckboxItem(name);
+    item.selectedOption = option;
     notifyListeners();
   }
 
-  void setComment(String label, String comment) {
-    step3CheckboxItems[label]?.comment = comment;
+  void setComment(String name, String comment) {
+    final item = matchCheckboxItem(name);
+    item.comment = comment;
     notifyListeners();
   }
 
-  void removeComment(String label) {
-    step3CheckboxItems[label]?.comment = null;
+  void removeComment(String name) {
+    final item = matchCheckboxItem(name);
+    item.comment = null;
     notifyListeners();
   }
 
@@ -90,11 +85,11 @@ class CreateReportViewModel with ChangeNotifier {
     }
   }
 
-  void clearCheckboxesData() {
-    for (var item in step3CheckboxItems.values) {
-      item
-        ..selectedOption = null
-        ..comment = null;
-    }
+  CheckBoxItem matchCheckboxItem(String name) {
+    return newReport.checkboxItems.firstWhere(
+          (item) => item.name == name,
+      orElse: () => throw Exception("CheckBoxItem with name '$name' not found"),
+    );
   }
+
 }

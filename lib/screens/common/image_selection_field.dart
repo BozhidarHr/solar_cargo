@@ -9,7 +9,9 @@ import '../../generated/l10n.dart';
 class ImageSelectionField extends StatefulWidget {
   final String label;
   final void Function(File?) onImageSelected;
-  final File? initialImage;
+
+  /// Can be a File (local) or a String (URL or file path)
+  final dynamic initialImage;
 
   const ImageSelectionField({
     super.key,
@@ -24,19 +26,28 @@ class ImageSelectionField extends StatefulWidget {
 
 class _ImageSelectionFieldState extends State<ImageSelectionField> {
   File? _selectedImage;
+  String? _initialImagePathOrUrl;
+
   final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
-    _selectedImage = widget.initialImage;
+
+    if (widget.initialImage is File) {
+      _selectedImage = widget.initialImage as File;
+    } else if (widget.initialImage is String) {
+      _initialImagePathOrUrl = widget.initialImage as String;
+    }
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final pickedFile =
-        await _picker.pickImage(source: source, imageQuality: 80);
+    final pickedFile = await _picker.pickImage(source: source, imageQuality: 80);
     if (pickedFile != null) {
-      setState(() => _selectedImage = File(pickedFile.path));
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+        _initialImagePathOrUrl = null; // Clear the old image
+      });
       widget.onImageSelected(_selectedImage);
     }
   }
@@ -57,7 +68,7 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title:  Text(S.of(context).chooseFromGallery),
+              title: Text(S.of(context).chooseFromGallery),
               onTap: () {
                 Navigator.of(context).pop();
                 _pickImage(ImageSource.gallery);
@@ -69,13 +80,58 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
     );
   }
 
+  Widget _buildImagePreview() {
+    Widget imageWidget;
+
+    if (_selectedImage != null) {
+      imageWidget = Image.file(_selectedImage!, width: 220, height: 150, fit: BoxFit.cover);
+    } else if (_initialImagePathOrUrl != null) {
+      // Determine if it's a local file path or a URL
+      if (_initialImagePathOrUrl!.startsWith('http')) {
+        imageWidget = Image.network(_initialImagePathOrUrl!, width: 220, height: 150, fit: BoxFit.cover);
+      } else {
+        imageWidget = Image.file(File(_initialImagePathOrUrl!), width: 220, height: 150, fit: BoxFit.cover);
+      }
+    } else {
+      return const SizedBox.shrink();
+    }
+
+    return Center(
+      child: Stack(
+        alignment: Alignment.topRight,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: imageWidget,
+          ),
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                _selectedImage = null;
+                _initialImagePathOrUrl = null;
+                widget.onImageSelected(null);
+              });
+            },
+            child: const CircleAvatar(
+              radius: 12,
+              backgroundColor: Colors.black54,
+              child: Icon(Icons.close, size: 16, color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final hasImage = _selectedImage != null || _initialImagePathOrUrl != null;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 5.0, left: 5, top: 0),
+          padding: const EdgeInsets.only(bottom: 5.0, left: 5),
           child: Text(
             widget.label,
             style: Theme.of(context)
@@ -98,7 +154,7 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     child: Text(
-                      _selectedImage != null
+                      hasImage
                           ? "1 Image Selected"
                           : S.of(context).noImageSelected,
                       style: const TextStyle(
@@ -112,14 +168,14 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14),
-                  decoration:  BoxDecoration(
-                    color: Theme.of(context).primaryColor.withOpacity(0.5), // green background
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor.withOpacity(0.5),
                     borderRadius: const BorderRadius.horizontal(
                       right: Radius.circular(8),
                     ),
                   ),
                   alignment: Alignment.center,
-                  child:  Text(
+                  child: Text(
                     S.of(context).browse,
                     style: const TextStyle(
                       color: Colors.black,
@@ -132,36 +188,7 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
           ),
         ),
         const SizedBox(height: 10),
-        if (_selectedImage != null)
-          Center(
-            child: Stack(
-              alignment: Alignment.topRight,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.file(
-                    _selectedImage!,
-                    width: 220,
-                    height: 150,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedImage = null;
-                      widget.onImageSelected(_selectedImage);
-                    });
-                  },
-                  child: const CircleAvatar(
-                    radius: 12,
-                    backgroundColor: Colors.black54,
-                    child: Icon(Icons.close, size: 16, color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        _buildImagePreview(),
       ],
     );
   }

@@ -70,8 +70,6 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
         formKeys: formKeys,
         onBack: _previousStep,
         onSubmit: () async {
-          _viewModel.setCheckboxData();
-
           await _viewModel.createDeliveryReport();
         },
       )

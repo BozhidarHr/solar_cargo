@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:solar_cargo/screens/common/string_extension.dart';
+import 'package:solar_cargo/screens/create_report/viewmodel/create_report_view_model.dart';
 
 import '../../../generated/l10n.dart';
 import '../../../routes/route_list.dart';
@@ -129,6 +130,8 @@ class _ReportListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final viewModel =
+        Provider.of<CreateReportViewModel>(context, listen: false);
     final theme = Theme.of(context);
 
     String headerText = '';
@@ -157,7 +160,10 @@ class _ReportListItem extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
         onTap: () {
-          // TODO: Navigate to detail screen if needed
+          viewModel.newReport = report;
+          Navigator.of(context).pushNamed(
+            RouteList.reportDetails,
+          );
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

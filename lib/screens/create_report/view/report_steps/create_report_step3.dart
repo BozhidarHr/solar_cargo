@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../common/flash_helper.dart';
 import '../../../common/will_pop_scope.dart';
+import '../../models/checkbox_comment.dart';
 import '../../viewmodel/create_report_view_model.dart';
 import '../widgets/checklist_item.dart';
 
@@ -51,7 +52,8 @@ class Step3Form extends StatelessWidget {
             },
       child: Consumer<CreateReportViewModel>(
         builder: (context, viewModel, child) {
-          final step3Items = viewModel.step3CheckboxItems;
+          final List<CheckBoxItem> checkBoxItems =
+              viewModel.newReport.checkboxItems;
 
           return Form(
             key: formKey,
@@ -75,17 +77,18 @@ class Step3Form extends StatelessWidget {
                       ),
                     ),
                   ),
-                  ...step3Items.entries.map((entry) {
-                    final label = entry.key;
-                    final item = entry.value;
+                  ...checkBoxItems.map((CheckBoxItem item) {
+                    final label = item.label ?? item.name;
+
                     return Step3ChecklistItem(
                       label: label,
                       item: item,
-                      onOptionChanged: (opt) => viewModel.setOption(label, opt),
-                      onAddComment: () => viewModel.setComment(label, ''),
+                      onOptionChanged: (opt) =>
+                          viewModel.setOption(item.name, opt),
+                      onAddComment: () => viewModel.setComment(item.name, ''),
                       onCommentChanged: (text) =>
-                          viewModel.setComment(label, text),
-                      onRemoveComment: () => viewModel.removeComment(label),
+                          viewModel.setComment(item.name, text),
+                      onRemoveComment: () => viewModel.removeComment(item.name),
                     );
                   }),
                   Row(

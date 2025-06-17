@@ -16,6 +16,7 @@ class DeliveryReport {
   String? licencePlateTruck;
   String? licencePlateTrailer;
   List<DeliveryItem> deliveryItems;
+  List<CheckBoxItem> checkboxItems;
   String? weatherConditions;
   String? comments;
   String? createdAt;
@@ -26,7 +27,6 @@ class DeliveryReport {
   dynamic truckLicencePlateImage;
   dynamic trailerLicencePlateImage;
   dynamic proofOfDelivery;
-  List<CheckBoxItem> checkboxItems = [];
   dynamic cmrImage;
   dynamic deliverySlipImage;
   List<File>? additionalImages;
@@ -43,6 +43,7 @@ class DeliveryReport {
     this.licencePlateTrailer,
     this.weatherConditions,
     List<DeliveryItem>? deliveryItems,
+    List<CheckBoxItem>? checkboxItems,
     this.comments,
     this.createdAt,
     this.updatedAt,
@@ -50,7 +51,8 @@ class DeliveryReport {
     this.truckLicencePlateImage,
     this.trailerLicencePlateImage,
     this.proofOfDelivery,
-  }) : deliveryItems = deliveryItems ?? [DeliveryItem.empty()];
+  }) : deliveryItems = deliveryItems ?? [DeliveryItem.empty()],
+        checkboxItems = checkboxItems ?? CheckBoxItem.defaultStep3Items();
 
   factory DeliveryReport.fromJson(Map<String, dynamic> json) {
     return DeliveryReport(
@@ -63,9 +65,15 @@ class DeliveryReport {
       containerNumber: json['container_number'],
       licencePlateTruck: json['licence_plate_truck'],
       licencePlateTrailer: json['licence_plate_trailer'],
-      weatherConditions: json['weather_conditions'],
       truckLicencePlateImage: json['truck_license_plate_image'],
       trailerLicencePlateImage: json['trailer_license_plate_image'],
+      weatherConditions: json['weather_conditions'],
+      deliveryItems: (json['items'] != null)
+          ? (json['items'] as List)
+              .map((e) => DeliveryItem.fromJson(Map<String, dynamic>.from(e)))
+              .toList()
+          : [],
+      checkboxItems: CheckBoxItem.listFromFlatJson(json),
       comments: json['comments'],
       createdAt: json['created_at'],
       updatedAt: json['updated_at'],

@@ -188,7 +188,7 @@ class SolarServices {
 
         // Add checkbox fields
         final checkboxFields =
-            CheckBoxItem.listToFlatJson(newReport.checkboxItems);
+            CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
         checkboxFields.forEach((key, value) {
           request.fields[key] = value?.toString() ?? '';
         });
