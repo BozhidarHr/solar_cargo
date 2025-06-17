@@ -8,7 +8,6 @@ import '../../../services/api_response.dart';
 import '../../../services/services.dart';
 import '../../common/logger.dart';
 import '../models/delivery_item.dart';
-import '../models/delivery_item_controllers.dart';
 import '../view/widgets/create_report_mixin.dart';
 
 part 'create_report_view_model_extension.dart';
@@ -41,11 +40,8 @@ class CreateReportViewModel with ChangeNotifier {
     clearCheckboxesData();
   }
 
-  void setFinalData(
-      Map<Step1TextFields, TextEditingController> step1Controllers,
-      List<DeliveryItemControllers> items) {
-    setStep1Data(step1Controllers);
-    setStep2Data(items);
+  void setFinalData() {
+    setStep2Data();
     setStep3Data();
     setStep4Data();
   }
@@ -83,4 +79,26 @@ class CreateReportViewModel with ChangeNotifier {
     step3CheckboxItems[label]?.comment = null;
     notifyListeners();
   }
+
+
+  void addDeliveryItem() {
+    newReport.deliveryItems.add(DeliveryItem(name: '', amount: null));
+    notifyListeners();
+  }
+
+  void updateItem(int index, {String? name, int? amount}) {
+    var deliveryItems = newReport.deliveryItems;
+    if (index >= 0 && index < deliveryItems.length) {
+      if (name != null) deliveryItems[index].name = name;
+      if (amount != null) deliveryItems[index].amount = amount;
+    }
+  }
+
+  void removeItem(int index) {
+    if (index > 0 && index < newReport.deliveryItems.length) {
+      newReport.deliveryItems.removeAt(index);
+      notifyListeners();
+    }
+  }
+
 }

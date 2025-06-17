@@ -1,3 +1,4 @@
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../generated/l10n.dart';
@@ -9,14 +10,12 @@ import '../widgets/create_report_mixin.dart';
 
 class Step1Form extends StatelessWidget {
   final GlobalKey<FormState> formKey;
-  final Map<Step1TextFields, TextEditingController> controllers;
   final CreateReportViewModel viewModel;
   final VoidCallback? onNext;
 
   const Step1Form({
     super.key,
     required this.formKey,
-    required this.controllers,
     required this.viewModel,
     this.onNext,
   });
@@ -76,11 +75,12 @@ class Step1Form extends StatelessWidget {
               initialImage:
                   viewModel.images[ReportImagesFields.trailerLicensePlate],
               onImageSelected: (file) {
-                viewModel.images[ReportImagesFields.trailerLicensePlate] =
-                    file;
+                viewModel.images[ReportImagesFields.trailerLicensePlate] = file;
               },
             ),
-            const SizedBox(height: 12,),
+            const SizedBox(
+              height: 12,
+            ),
             if (onNext != null)
               SizedBox(
                 width: double.infinity,
@@ -109,40 +109,47 @@ class Step1Form extends StatelessWidget {
       _buildFormField(
         label: S.of(context).plantLocation,
         context: context,
-        controller: controllers[Step1TextFields.pvPlantLocation]!,
+        initialValue: viewModel.newReport.location,
+        onChanged: (val) => viewModel.newReport.location = val,
         maxLines: 3,
       ),
       _buildFormField(
         label: S.of(context).checkingCompany,
         context: context,
-        controller: controllers[Step1TextFields.checkingCompany]!,
+        initialValue: viewModel.newReport.checkingCompany,
+        onChanged: (val) => viewModel.newReport.checkingCompany = val,
       ),
       _buildFormField(
         label: S.of(context).supplier,
         context: context,
-        controller: controllers[Step1TextFields.supplier]!,
+        initialValue: viewModel.newReport.supplier,
+        onChanged: (val) => viewModel.newReport.supplier = val,
       ),
       _buildFormField(
         label: S.of(context).deliverySlipNumber,
         context: context,
-        controller: controllers[Step1TextFields.deliverySlipNo]!,
+        initialValue: viewModel.newReport.deliverySlipNumber,
+        onChanged: (val) => viewModel.newReport.deliverySlipNumber = val,
       ),
       _buildFormField(
         label: S.of(context).logisticsCompany,
         context: context,
-        controller: controllers[Step1TextFields.logisticsCompany]!,
+        initialValue: viewModel.newReport.logisticCompany,
+        onChanged: (val) => viewModel.newReport.logisticCompany = val,
       ),
       _buildFormField(
         label: S.of(context).containerNumber,
         context: context,
-        controller: controllers[Step1TextFields.containerNo]!,
+        initialValue: viewModel.newReport.containerNumber,
+        onChanged: (val) => viewModel.newReport.containerNumber = val,
         isNumbersOnly: true,
       ),
       const SizedBox(height: 12),
       _buildFormField(
         label: S.of(context).weatherConditions,
         context: context,
-        controller: controllers[Step1TextFields.weatherConditions]!,
+        initialValue: viewModel.newReport.weatherConditions,
+        onChanged: (val) => viewModel.newReport.weatherConditions = val,
       ),
       const SizedBox(height: 12),
     ];
@@ -151,7 +158,8 @@ class Step1Form extends StatelessWidget {
   Column _buildFormField({
     required String label,
     required BuildContext context,
-    required TextEditingController controller,
+    required String? initialValue,
+    required ValueChanged<String> onChanged,
     bool isNumbersOnly = false,
     int maxLines = 1,
   }) {
@@ -169,8 +177,8 @@ class Step1Form extends StatelessWidget {
           ),
         ),
         TextFormField(
+          initialValue: initialValue,
           keyboardType: isNumbersOnly ? TextInputType.number : null,
-          controller: controller,
           decoration: InputDecoration(
             filled: true,
             fillColor: kFormFieldBackgroundColor,
@@ -184,6 +192,13 @@ class Step1Form extends StatelessWidget {
             ),
           ),
           maxLines: maxLines,
+          onChanged: (val) {
+            EasyDebounce.debounce(
+              '$label-debounce',
+              const Duration(seconds: 1),
+                  () => onChanged(val),
+            );
+          },
           validator: (value) => (value == null || value.trim().isEmpty)
               ? 'Please enter $label.'
               : null,

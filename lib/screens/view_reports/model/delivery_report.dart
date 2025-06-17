@@ -1,4 +1,3 @@
-
 import 'package:intl/intl.dart';
 
 import '../../create_report/models/checkbox_comment.dart';
@@ -14,7 +13,7 @@ class DeliveryReport {
   String? containerNumber;
   String? licencePlateTruck;
   String? licencePlateTrailer;
-  List<DeliveryItem>? deliveryItems = [];
+  List<DeliveryItem> deliveryItems;
   String? weatherConditions;
   String? comments;
   String? createdAt;
@@ -41,7 +40,7 @@ class DeliveryReport {
     this.licencePlateTruck,
     this.licencePlateTrailer,
     this.weatherConditions,
-    this.deliveryItems,
+    List<DeliveryItem>? deliveryItems,
     this.comments,
     this.createdAt,
     this.updatedAt,
@@ -49,7 +48,7 @@ class DeliveryReport {
     this.truckLicencePlateImage,
     this.trailerLicencePlateImage,
     this.proofOfDelivery,
-  });
+  }) : deliveryItems = deliveryItems ?? [DeliveryItem.empty()];
 
   factory DeliveryReport.fromJson(Map<String, dynamic> json) {
     return DeliveryReport(

@@ -13,13 +13,8 @@ enum Step1TextFields {
 }
 
 mixin CreateReportMixin {
-  // Step 1 controllers
-  final Map<Step1TextFields, TextEditingController> step1Controllers = {
-    for (var field in Step1TextFields.values) field: TextEditingController(),
-  };
-
   final List<GlobalKey<FormState>> formKeys =
-      List.generate(4, (_) => GlobalKey<FormState>());
+      List.generate(3, (_) => GlobalKey<FormState>());
 
 }
 
