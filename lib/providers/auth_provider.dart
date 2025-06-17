@@ -53,7 +53,7 @@ class AuthProvider with ChangeNotifier {
       _refreshToken = await _tokenStorage.read(TokenType.refresh);
       if (_refreshToken == null) return false;
 
-      _bearerToken = await _service.api.updateToken(_refreshToken!);
+      _bearerToken = await _service.api.updateToken();
       await _tokenStorage.write(TokenType.bearer, _bearerToken);
       if (_bearerToken != null) {
         Map<String, dynamic> decodedToken = JwtDecoder.decode(_bearerToken!);

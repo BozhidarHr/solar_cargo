@@ -1,5 +1,6 @@
 import 'package:solar_cargo/screens/common/string_extension.dart';
 
+
 class SolarHelper {
   static Uri? buildUrl(
     String? domain,

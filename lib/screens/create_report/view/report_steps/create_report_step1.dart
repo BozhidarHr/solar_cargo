@@ -6,7 +6,6 @@ import '../../../common/constants.dart';
 import '../../../common/flash_helper.dart';
 import '../../../common/image_selection_field.dart';
 import '../../viewmodel/create_report_view_model.dart';
-import '../widgets/create_report_mixin.dart';
 
 class Step1Form extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -22,8 +21,8 @@ class Step1Form extends StatelessWidget {
 
   bool _validate(BuildContext context) {
     final valid = formKey.currentState?.validate() ?? false;
-    final truck = viewModel.images[ReportImagesFields.truckLicensePlate];
-    final trailer = viewModel.images[ReportImagesFields.trailerLicensePlate];
+    final truck = viewModel.newReport.truckLicencePlateImage;
+    final trailer = viewModel.newReport.trailerLicencePlateImage;
     if (truck == null || trailer == null) {
       FlashHelper.errorMessage(
         context,
@@ -64,18 +63,18 @@ class Step1Form extends StatelessWidget {
             ImageSelectionField(
               label: S.of(context).truckLicensePlate,
               initialImage:
-                  viewModel.images[ReportImagesFields.truckLicensePlate],
+              viewModel.newReport.truckLicencePlateImage,
               onImageSelected: (file) {
-                viewModel.images[ReportImagesFields.truckLicensePlate] = file;
+                viewModel.newReport.truckLicencePlateImage = file;
               },
             ),
             const SizedBox(height: 12),
             ImageSelectionField(
               label: S.of(context).trailerLicensePlate,
               initialImage:
-                  viewModel.images[ReportImagesFields.trailerLicensePlate],
+              viewModel.newReport.trailerLicencePlateImage,
               onImageSelected: (file) {
-                viewModel.images[ReportImagesFields.trailerLicensePlate] = file;
+                viewModel.newReport.trailerLicencePlateImage = file;
               },
             ),
             const SizedBox(

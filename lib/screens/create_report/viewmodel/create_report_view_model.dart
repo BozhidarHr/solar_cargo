@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:solar_cargo/screens/create_report/models/checkbox_comment.dart';
 import 'package:solar_cargo/screens/view_reports/model/delivery_report.dart';
@@ -8,42 +6,31 @@ import '../../../services/api_response.dart';
 import '../../../services/services.dart';
 import '../../common/logger.dart';
 import '../models/delivery_item.dart';
-import '../view/widgets/create_report_mixin.dart';
-
-part 'create_report_view_model_extension.dart';
 
 class CreateReportViewModel with ChangeNotifier {
   final Services _service = Services();
 
-  // Api response
+  // API response state
   ApiResponse _createReportResponse = ApiResponse.initial('Empty data');
 
-  ApiResponse get createReportResponse {
-    return _createReportResponse;
-  }
+  ApiResponse get response => _createReportResponse;
 
-  // initialise step3 items
+  // Step 3 Checkbox Items
   final step3CheckboxItems = CheckBoxItem.defaultStep3Items();
 
-  // init report
+  // Delivery Report instance
   DeliveryReport newReport = DeliveryReport();
 
-  final Map<ReportImagesFields, File?> images = {};
-  List<File> optionalImages = [];
-
+  /// Resets the view model state for a new report
   void resetReportData() {
-    // reset all text fields
+    resetResponse();
     newReport = DeliveryReport();
-    // reset all images
-    clearAllImages();
-    // reset checkboxes
     clearCheckboxesData();
   }
 
-  void setFinalData() {
-    setStep2Data();
-    setStep3Data();
-    setStep4Data();
+  /// Resets API response state
+  void resetResponse() {
+    _createReportResponse = ApiResponse.initial('Empty data...');
   }
 
   Future<void> createDeliveryReport() async {
@@ -60,8 +47,11 @@ class CreateReportViewModel with ChangeNotifier {
         'createDeliveryReport(catch): ${e.toString()}',
       );
     }
-
     notifyListeners();
+  }
+
+  void setCheckboxData() {
+    newReport.checkboxItems = step3CheckboxItems.values.toList();
   }
 
   // Used in UI for state management;
@@ -79,7 +69,6 @@ class CreateReportViewModel with ChangeNotifier {
     step3CheckboxItems[label]?.comment = null;
     notifyListeners();
   }
-
 
   void addDeliveryItem() {
     newReport.deliveryItems.add(DeliveryItem(name: '', amount: null));
@@ -101,4 +90,11 @@ class CreateReportViewModel with ChangeNotifier {
     }
   }
 
+  void clearCheckboxesData() {
+    for (var item in step3CheckboxItems.values) {
+      item
+        ..selectedOption = null
+        ..comment = null;
+    }
+  }
 }

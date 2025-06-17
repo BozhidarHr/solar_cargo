@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:http/http.dart' as http;
+import 'package:solar_cargo/services/services.dart';
 
 import '../screens/common/logger.dart';
 
 /// enable network proxy
 const debugNetworkProxy = false;
+typedef RequestExecutor = Future<http.Response> Function(String? token);
 
 class HttpClientSetting {
   static String webProxy = '';
@@ -36,6 +38,23 @@ class HttpBase extends http.BaseClient {
   Future<http.StreamedResponse> send(http.BaseRequest request) {
     return _client.send(request);
   }
+}
+
+Future<http.Response> sendWithAuth(RequestExecutor executor) async {
+  var services = Services();
+  String? token = services.api.customerToken;
+  http.Response response = await executor(token);
+
+  if (response.statusCode == 401) {
+    // Try to refresh token
+    final newToken = await services.api.updateToken();
+    services.api.setCustomerToken(newToken); // Add this setter in SolarServices
+
+    // Retry the request with new token
+    response = await executor(newToken);
+  }
+
+  return response;
 }
 
 Future<http.Response> _makeRequest(Future<http.Response> request) async {

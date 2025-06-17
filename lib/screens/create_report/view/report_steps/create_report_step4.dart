@@ -4,7 +4,6 @@ import 'package:solar_cargo/screens/common/image_selection_field.dart';
 import '../../../common/flash_helper.dart';
 import '../../../common/multiple_images_selection_field.dart';
 import '../../viewmodel/create_report_view_model.dart';
-import '../widgets/create_report_mixin.dart';
 
 class Step4Form extends StatelessWidget {
   final CreateReportViewModel viewModel;
@@ -19,8 +18,8 @@ class Step4Form extends StatelessWidget {
   });
 
   bool _validate(BuildContext context) {
-    final cmr = viewModel.images[ReportImagesFields.cmr];
-    final slip = viewModel.images[ReportImagesFields.deliverySlip];
+    final cmr = viewModel.newReport.cmrImage;
+    final slip = viewModel.newReport.deliverySlipImage;
     if (cmr == null || slip == null) {
       FlashHelper.errorMessage(context,
           message: 'Please add CMR/Delivery Slip images.');
@@ -39,7 +38,6 @@ class Step4Form extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 25),
-
       child: Column(
         children: [
           Padding(
@@ -48,32 +46,34 @@ class Step4Form extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 'Step 4: Delivery Images',
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                    color: Colors.white, fontWeight: FontWeight.w700),
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium!
+                    .copyWith(color: Colors.white, fontWeight: FontWeight.w700),
               ),
             ),
           ),
           ImageSelectionField(
             label: 'CMR',
-            initialImage: viewModel.images[ReportImagesFields.cmr],
+            initialImage: viewModel.newReport.cmrImage,
             onImageSelected: (file) {
-              viewModel.images[ReportImagesFields.cmr] = file;
+              viewModel.newReport.cmrImage = file;
             },
           ),
           const SizedBox(height: 12),
           ImageSelectionField(
             label: 'Delivery Slip',
-            initialImage: viewModel.images[ReportImagesFields.deliverySlip],
+            initialImage: viewModel.newReport.deliverySlipImage,
             onImageSelected: (file) {
-              viewModel.images[ReportImagesFields.deliverySlip] = file;
+              viewModel.newReport.deliverySlipImage = file;
             },
           ),
           const SizedBox(height: 12),
           MultiImageSelectionField(
             label: "Other (multiple) (optional)",
-            initialImages: viewModel.optionalImages,
+            initialImages: viewModel.newReport.additionalImages,
             onImagesSelected: (images) {
-              viewModel.optionalImages = images;
+              viewModel.newReport.additionalImages = images;
             },
           ),
           const SizedBox(height: 24),

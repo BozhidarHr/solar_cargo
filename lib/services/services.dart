@@ -11,7 +11,6 @@ class Services {
 
   late final SolarServices api = SolarServices(
     domain: Env.apiUrl,
-    accessToken: Env.accessToken,
   );
 
 }

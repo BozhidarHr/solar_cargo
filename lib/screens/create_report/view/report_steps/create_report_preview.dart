@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:solar_cargo/screens/common/flash_helper.dart';
 
 import '../../viewmodel/create_report_view_model.dart';
-import '../widgets/create_report_mixin.dart';
 import 'create_report_step1.dart';
 import 'create_report_step2.dart';
 import 'create_report_step3.dart';
@@ -67,7 +66,9 @@ class CreateReportPreview extends StatelessWidget {
           left: 0,
           right: 0,
           child: Container(
-            color: Theme.of(context).scaffoldBackgroundColor,
+            color: Theme
+                .of(context)
+                .scaffoldBackgroundColor,
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
             child: Row(
               children: [
@@ -76,9 +77,14 @@ class CreateReportPreview extends StatelessWidget {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      foregroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: Theme
+                          .of(context)
+                          .primaryColor,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      textStyle: Theme.of(context).textTheme.titleMedium,
+                      textStyle: Theme
+                          .of(context)
+                          .textTheme
+                          .titleMedium,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -92,10 +98,15 @@ class CreateReportPreview extends StatelessWidget {
                   flex: 3,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
+                      backgroundColor: Theme
+                          .of(context)
+                          .primaryColor,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      textStyle: Theme.of(context).textTheme.titleMedium,
+                      textStyle: Theme
+                          .of(context)
+                          .textTheme
+                          .titleMedium,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -121,18 +132,22 @@ class CreateReportPreview extends StatelessWidget {
   bool _allValid(BuildContext context) {
     // Validate forms
     final allFormsValid =
-        formKeys.every((key) => key.currentState?.validate() ?? false);
+    formKeys.every((key) => key.currentState?.validate() ?? false);
 
     // Validate images using the same logic as in each step
     final step1ImagesValid =
-        viewModel.images[ReportImagesFields.truckLicensePlate] != null &&
-            viewModel.images[ReportImagesFields.trailerLicensePlate] != null;
+        viewModel.newReport.truckLicencePlateImage != null &&
+            viewModel.newReport.trailerLicencePlateImage != null;
     final step2ImagesValid =
-        viewModel.images[ReportImagesFields.proofOfDelivery] != null;
-    final step4ImagesValid = viewModel.images[ReportImagesFields.cmr] != null &&
-        viewModel.images[ReportImagesFields.deliverySlip] != null;
+        viewModel.newReport.proofOfDelivery != null;
+    final step4ImagesValid = viewModel.newReport.cmrImage != null &&
+        viewModel.newReport.deliverySlipImage != null;
 
-    if (!allFormsValid) return false;
+    if (!allFormsValid) {
+      FlashHelper.errorMessage(context,
+          message: 'Please complete all required fields.');
+      return false;
+    }
     if (!step1ImagesValid) {
       FlashHelper.errorMessage(context,
           message: 'Please add license plate images.');

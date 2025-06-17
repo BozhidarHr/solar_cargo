@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:intl/intl.dart';
 
 import '../../create_report/models/checkbox_comment.dart';
@@ -27,7 +29,7 @@ class DeliveryReport {
   List<CheckBoxItem> checkboxItems = [];
   dynamic cmrImage;
   dynamic deliverySlipImage;
-  List<dynamic>? additionalImages;
+  List<File>? additionalImages;
 
   DeliveryReport({
     this.id,

@@ -7,7 +7,6 @@ import 'package:easy_debounce/easy_debounce.dart';
 import '../../../common/constants.dart';
 import '../../../common/flash_helper.dart';
 import '../../viewmodel/create_report_view_model.dart';
-import '../widgets/create_report_mixin.dart';
 
 class Step2Form extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -26,7 +25,7 @@ class Step2Form extends StatelessWidget {
 
   bool _validate(BuildContext context) {
     final formValid = formKey.currentState?.validate() ?? false;
-    final proof = viewModel.images[ReportImagesFields.proofOfDelivery];
+    final proof = viewModel.newReport.proofOfDelivery;
 
     if (!formValid) return false;
 
@@ -183,9 +182,9 @@ class Step2Form extends StatelessWidget {
               ImageSelectionField(
                 label: 'Proof of delivery',
                 initialImage:
-                    viewModel.images[ReportImagesFields.proofOfDelivery],
+                    viewModel.newReport.proofOfDelivery,
                 onImageSelected: (file) {
-                  viewModel.images[ReportImagesFields.proofOfDelivery] = file;
+                  viewModel.newReport.proofOfDelivery = file;
                 },
               ),
               const SizedBox(height: 24),
