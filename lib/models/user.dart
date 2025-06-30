@@ -1,7 +1,7 @@
 class User {
   final int userID;
   final String userName;
-  final String? userRole; // Optional
+  final String? userRole;
 
   User({
     required this.userID,
@@ -20,5 +20,8 @@ class User {
   @override
   String toString() {
     return 'User(userID: $userID, userName: $userName, userRole: $userRole)';
+  }
+  bool get isAdmin{
+    return userRole == 'admin';
   }
 }

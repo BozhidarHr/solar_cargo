@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:solar_cargo/providers/auth_provider.dart';
+import 'package:solar_cargo/screens/common/string_extension.dart';
+
 import '../routes/route_list.dart';
 import 'common/constants.dart';
 
@@ -17,7 +19,7 @@ class HomeScreen extends StatelessWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushNamedAndRemoveUntil(
           RouteList.login,
-              (route) => false,
+          (route) => false,
         );
       });
       return const SizedBox.shrink();
@@ -48,8 +50,8 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         "Welcome Back!",
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          color: Theme.of(context).primaryColor,
-                        ),
+                              color: Theme.of(context).primaryColor,
+                            ),
                       ),
                       if (user.userName.isNotEmpty)
                         Text(
@@ -62,10 +64,33 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                Image.asset(
-                  kWorkerImage,
-                  width: 60,
-                  height: 60,
+                Column(
+                  children: [
+                    Image.asset(
+                      kWorkerImage,
+                      width: 60,
+                      height: 60,
+                    ),
+                    if (user.userRole.isNotNullAndNotEmpty)
+                      Container(
+                        margin: const EdgeInsets.only(top: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          user.userRole!.upperCaseFirstChar(),
+                          style:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 0.5,
+                                  ),
+                        ),
+                      )
+                  ],
                 ),
               ],
             ),
@@ -97,15 +122,17 @@ class HomeScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 16),
-                _buildButton(
-                  context: context,
-                  label: 'View Reports',
-                  icon: Icons.list_alt,
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(RouteList.viewReports);
-                  },
-                ),
-                const SizedBox(height: 16),
+                if (user.isAdmin) ...[
+                  _buildButton(
+                    context: context,
+                    label: 'View Reports',
+                    icon: Icons.list_alt,
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(RouteList.viewReports);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 _buildButton(
                   context: context,
                   label: 'Logout',

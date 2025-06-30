@@ -34,15 +34,15 @@ class CreateReportViewModel with ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _service.api.createDeliveryReports(newReport);
+      await _service.api.createDeliveryReport(newReport);
 
-      _createReportResponse = ApiResponse.completed(response);
+      _createReportResponse =
+          ApiResponse.completed("Report create successfully.");
     } catch (e) {
       _createReportResponse = ApiResponse.error(e.toString());
-      logger.w(
-        'createDeliveryReport(catch): ${e.toString()}',
-      );
+      logger.w('createDeliveryReport(catch): ${e.toString()}');
     }
+
     notifyListeners();
   }
 
@@ -87,9 +87,8 @@ class CreateReportViewModel with ChangeNotifier {
 
   CheckBoxItem matchCheckboxItem(String name) {
     return newReport.checkboxItems.firstWhere(
-          (item) => item.name == name,
+      (item) => item.name == name,
       orElse: () => throw Exception("CheckBoxItem with name '$name' not found"),
     );
   }
-
 }

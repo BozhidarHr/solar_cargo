@@ -18,20 +18,17 @@ class S {
   static S? _current;
 
   static S get current {
-    assert(
-      _current != null,
-      'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.',
-    );
+    assert(_current != null,
+        'No instance of S was loaded. Try to initialize the S delegate before accessing S.current.');
     return _current!;
   }
 
   static const AppLocalizationDelegate delegate = AppLocalizationDelegate();
 
   static Future<S> load(Locale locale) {
-    final name =
-        (locale.countryCode?.isEmpty ?? false)
-            ? locale.languageCode
-            : locale.toString();
+    final name = (locale.countryCode?.isEmpty ?? false)
+        ? locale.languageCode
+        : locale.toString();
     final localeName = Intl.canonicalizedLocale(name);
     return initializeMessages(localeName).then((_) {
       Intl.defaultLocale = localeName;
@@ -44,10 +41,8 @@ class S {
 
   static S of(BuildContext context) {
     final instance = S.maybeOf(context);
-    assert(
-      instance != null,
-      'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?',
-    );
+    assert(instance != null,
+        'No instance of S present in the widget tree. Did you add S.delegate in localizationsDelegates?');
     return instance!;
   }
 
@@ -57,22 +52,42 @@ class S {
 
   /// `Solar-cargo`
   String get appTitle {
-    return Intl.message('Solar-cargo', name: 'appTitle', desc: '', args: []);
+    return Intl.message(
+      'Solar-cargo',
+      name: 'appTitle',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Login`
   String get login {
-    return Intl.message('Login', name: 'login', desc: '', args: []);
+    return Intl.message(
+      'Login',
+      name: 'login',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Email address`
   String get email {
-    return Intl.message('Email address', name: 'email', desc: '', args: []);
+    return Intl.message(
+      'Email address',
+      name: 'email',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Password`
   String get password {
-    return Intl.message('Password', name: 'password', desc: '', args: []);
+    return Intl.message(
+      'Password',
+      name: 'password',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `An error occurred, please try again.`
@@ -87,7 +102,12 @@ class S {
 
   /// `Close`
   String get close {
-    return Intl.message('Close', name: 'close', desc: '', args: []);
+    return Intl.message(
+      'Close',
+      name: 'close',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Please fill in all fields.`
@@ -112,12 +132,22 @@ class S {
 
   /// `Supplier`
   String get supplier {
-    return Intl.message('Supplier', name: 'supplier', desc: '', args: []);
+    return Intl.message(
+      'Supplier',
+      name: 'supplier',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Truck`
   String get truck {
-    return Intl.message('Truck', name: 'truck', desc: '', args: []);
+    return Intl.message(
+      'Truck',
+      name: 'truck',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Create new report`
@@ -222,12 +252,22 @@ class S {
 
   /// `Browse`
   String get browse {
-    return Intl.message('Browse', name: 'browse', desc: '', args: []);
+    return Intl.message(
+      'Browse',
+      name: 'browse',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Take Photo`
   String get takePhoto {
-    return Intl.message('Take Photo', name: 'takePhoto', desc: '', args: []);
+    return Intl.message(
+      'Take Photo',
+      name: 'takePhoto',
+      desc: '',
+      args: [],
+    );
   }
 
   /// `Choose from Gallery`
@@ -245,6 +285,46 @@ class S {
     return Intl.message(
       'No image selected',
       name: 'noImageSelected',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Proof of delivery`
+  String get proofOfDelivery {
+    return Intl.message(
+      'Proof of delivery',
+      name: 'proofOfDelivery',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `CMR image`
+  String get cmrImage {
+    return Intl.message(
+      'CMR image',
+      name: 'cmrImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Delivery slip image`
+  String get deliverySlipImage {
+    return Intl.message(
+      'Delivery slip image',
+      name: 'deliverySlipImage',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Additional images`
+  String get additionalImages {
+    return Intl.message(
+      'Additional images',
+      name: 'additionalImages',
       desc: '',
       args: [],
     );

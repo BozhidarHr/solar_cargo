@@ -20,7 +20,7 @@ class CreateReportStepper extends StatefulWidget {
 
 class _CreateReportStepperState extends State<CreateReportStepper> {
   final List<GlobalKey<FormState>> formKeys =
-      List.generate(3, (_) => GlobalKey<FormState>());
+      List.generate(4, (_) => GlobalKey<FormState>());
 
   int _currentStep = 0;
   late final CreateReportViewModel _viewModel;
@@ -61,6 +61,7 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
         onBack: _previousStep,
       ),
       Step4Form(
+        formKey: formKeys[3],
         viewModel: _viewModel,
         onBack: _previousStep,
         onNext: _nextStep,
@@ -69,10 +70,7 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
         viewModel: _viewModel,
         formKeys: formKeys,
         onBack: _previousStep,
-        onSubmit: () async {
-          await _viewModel.createDeliveryReport();
-        },
-      )
+      ),
     ];
 
     return Scaffold(
@@ -96,9 +94,8 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
                 FlashHelper.message(context,
                     message: 'Report submitted successfully',
                     duration: const Duration(seconds: 1));
-                if (mounted){
+                if (mounted) {
                   Navigator.of(context).pop();
-
                 }
               });
 

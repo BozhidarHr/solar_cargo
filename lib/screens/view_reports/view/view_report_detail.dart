@@ -18,9 +18,8 @@ class ViewReportDetail extends StatefulWidget {
 }
 
 class _ViewReportDetailState extends State<ViewReportDetail> {
-
   final List<GlobalKey<FormState>> formKeys =
-      List.generate(3, (_) => GlobalKey<FormState>());
+      List.generate(4, (_) => GlobalKey<FormState>());
 
   late final CreateReportViewModel viewModel;
 
@@ -72,6 +71,7 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
                   ),
                   divider,
                   Step4Form(
+                    formKey: formKeys[3],
                     viewModel: viewModel,
                   ),
                   const SizedBox(height: 16),
@@ -85,7 +85,8 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
             right: 0,
             child: Container(
               color: Theme.of(context).scaffoldBackgroundColor,
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
               child: Row(
                 children: [
                   Expanded(

@@ -11,14 +11,12 @@ import 'create_report_step4.dart';
 class CreateReportPreview extends StatelessWidget {
   final CreateReportViewModel viewModel;
   final List<GlobalKey<FormState>> formKeys;
-  final VoidCallback onSubmit;
   final VoidCallback onBack;
 
   const CreateReportPreview({
     super.key,
     required this.viewModel,
     required this.formKeys,
-    required this.onSubmit,
     required this.onBack,
   });
 
@@ -62,6 +60,7 @@ class CreateReportPreview extends StatelessWidget {
                   ),
                   divider,
                   Step4Form(
+                    formKey: formKeys[3],
                     viewModel: viewModel,
                     restrictBack: true,
                   ),
@@ -109,11 +108,9 @@ class CreateReportPreview extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (_allValid(context)) {
-                          // execute request
-                          onSubmit();
-                          //  after logic
+                          await viewModel.createDeliveryReport();
                         }
                       },
                       child: const Text('Submit'),

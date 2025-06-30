@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:solar_cargo/screens/common/string_extension.dart';
 import 'package:solar_cargo/screens/home_screen.dart';
 import 'package:solar_cargo/screens/login/view/login_screen.dart';
-import 'package:solar_cargo/screens/view_reports/view/view_report_detail.dart';
 
 import '../screens/create_report/view/create_report_stepper.dart';
+import '../screens/view_reports/view/view_report_detail_new.dart';
 import '../screens/view_reports/view/view_reports_screen.dart';
 import '../widgets/error_widget.dart';
 import 'route_list.dart';
@@ -17,7 +17,7 @@ class Routes {
       case RouteList.home:
         return _buildRoute(
           settings,
-              (context) => const HomeScreen(),
+          (context) => const HomeScreen(),
         );
       case RouteList.login:
         return _buildRoute(
@@ -25,10 +25,13 @@ class Routes {
           (context) => const LoginScreen(),
         );
       case RouteList.reportDetails:
+        final arguments = settings.arguments;
+        if (arguments is ViewReportDetailArguments) {
           return _buildRoute(
             settings,
-                (context) => ViewReportDetail(),
+            (context) => ViewReportDetailNew(report: arguments.report),
           );
+        }
 
       case RouteList.viewReports:
         return _buildRoute(
@@ -38,11 +41,10 @@ class Routes {
       case RouteList.createReport:
         return _buildRoute(
           settings,
-              (context) =>  const CreateReportStepper(),
+          (context) => const CreateReportStepper(),
         );
     }
     return _errorRoute();
-
   }
 
   static MaterialPageRoute _buildRoute(

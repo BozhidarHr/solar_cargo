@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:solar_cargo/screens/common/string_extension.dart';
-import 'package:solar_cargo/screens/create_report/viewmodel/create_report_view_model.dart';
+import 'package:solar_cargo/screens/view_reports/view/view_report_detail_new.dart';
 
 import '../../../generated/l10n.dart';
 import '../../../routes/route_list.dart';
@@ -27,7 +27,7 @@ class _ViewReportsScreenState extends State<ViewReportsScreen> {
     _scrollController = ScrollController()..addListener(_onScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ViewReportsViewModel>().fetchDeliveryReports();
+      context.read<ViewReportsViewModel>().fetchDeliveryReports(refresh: true);
     });
   }
 
@@ -130,17 +130,7 @@ class _ReportListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel =
-        Provider.of<CreateReportViewModel>(context, listen: false);
     final theme = Theme.of(context);
-
-    String headerText = '';
-    if (report.location.isNotNullAndNotEmpty) {
-      headerText += report.location!;
-    }
-    if (report.id != null && report.id! > 0) {
-      headerText += ' #${report.id}';
-    }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -160,15 +150,21 @@ class _ReportListItem extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
         onTap: () {
-          viewModel.newReport = report;
-          Navigator.of(context).pushNamed(
-            RouteList.reportDetails,
-          );
+          Navigator.of(context).pushNamed(RouteList.reportDetails,
+              arguments: ViewReportDetailArguments(report));
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(theme, headerText),
+            Text(
+              report.buildHeaderText,
+              maxLines: 2,
+              style: theme.textTheme.displayMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.secondaryHeaderColor,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
             const SizedBox(height: 8),
             if (report.supplier.isNotNullAndNotEmpty)
               _buildDetailRow(S.of(context).supplier, report.supplier!),
@@ -178,26 +174,6 @@ class _ReportListItem extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildHeader(ThemeData theme, String headerText) {
-    return Row(
-      children: [
-        Text(
-          headerText,
-          style: theme.textTheme.displayMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.secondaryHeaderColor,
-          ),
-        ),
-        const Spacer(),
-        if (report.updatedAt != null)
-          Text(
-            report.updatedAtDate ?? '',
-            style: theme.textTheme.bodyMedium,
-          ),
-      ],
     );
   }
 

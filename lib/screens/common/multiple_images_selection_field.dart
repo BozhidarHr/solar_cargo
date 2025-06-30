@@ -9,7 +9,7 @@ import '../../generated/l10n.dart';
 class MultiImageSelectionField extends StatefulWidget {
   final String label;
   final void Function(List<File>) onImagesSelected;
-  final List<File>? initialImages;
+  final List<dynamic>? initialImages;
 
   const MultiImageSelectionField({
     super.key,
@@ -25,7 +25,7 @@ class MultiImageSelectionField extends StatefulWidget {
 
 class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
   final ImagePicker _picker = ImagePicker();
-  late List<File> _selectedImages;
+  late List<dynamic> _selectedImages;
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
   Future<void> _pickImages(ImageSource source) async {
     if (source == ImageSource.camera) {
       final pickedFile =
-      await _picker.pickImage(source: source, imageQuality: 80);
+          await _picker.pickImage(source: source, imageQuality: 80);
       if (pickedFile != null) {
         setState(() {
           _selectedImages.add(File(pickedFile.path));
@@ -50,7 +50,7 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
         });
       }
     }
-    widget.onImagesSelected(_selectedImages);
+    widget.onImagesSelected(_selectedImages as List<File>);
   }
 
   void _showImageSourceActionSheet() {
@@ -85,15 +85,13 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
     setState(() {
       _selectedImages.removeAt(index);
     });
-    widget.onImagesSelected(_selectedImages);
+    widget.onImagesSelected(_selectedImages as List<File>);
   }
 
   @override
   Widget build(BuildContext context) {
-    final labelStyle = Theme.of(context)
-        .textTheme
-        .titleMedium
-        ?.copyWith(color: Colors.white);
+    final labelStyle =
+        Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,19 +164,27 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
-                        child: Image.file(
-                          file,
-                          width: 220,
-                          height: 150,
-                          fit: BoxFit.cover,
-                        ),
+                        child: file is File
+                            ? Image.file(
+                                file,
+                                width: 220,
+                                height: 150,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.network(
+                                file,
+                                width: 220,
+                                height: 150,
+                                fit: BoxFit.cover,
+                              ),
                       ),
                       GestureDetector(
                         onTap: () => _removeImageAt(index),
                         child: const CircleAvatar(
                           radius: 14,
                           backgroundColor: Colors.black54,
-                          child: Icon(Icons.close, size: 18, color: Colors.white),
+                          child:
+                              Icon(Icons.close, size: 18, color: Colors.white),
                         ),
                       ),
                     ],

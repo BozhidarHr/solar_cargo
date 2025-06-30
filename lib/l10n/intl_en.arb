@@ -23,5 +23,10 @@
   "browse": "Browse",
   "takePhoto": "Take Photo",
   "chooseFromGallery": "Choose from Gallery",
-  "noImageSelected": "No image selected"
+  "noImageSelected": "No image selected",
+  "proofOfDelivery": "Proof of delivery",
+  "cmrImage": "CMR image",
+  "deliverySlipImage": "Delivery slip image",
+  "additionalImages": "Additional images"
+
 }

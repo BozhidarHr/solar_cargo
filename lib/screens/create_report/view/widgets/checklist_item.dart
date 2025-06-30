@@ -79,8 +79,8 @@ class Step3ChecklistItem extends StatelessWidget {
             Text(label, style: textStyle),
             Row(
               children: [
-                buildCheckbox('Ok', ReportOption.ok, field.value, onChanged),
-                buildCheckbox('Not Ok', ReportOption.notOk, field.value, onChanged),
+                buildCheckbox('OK', ReportOption.ok, field.value, onChanged),
+                buildCheckbox('Not OK', ReportOption.notOk, field.value, onChanged),
                 buildCheckbox('N/A', ReportOption.na, field.value, onChanged),
                 const Spacer(),
                 ElevatedButton(

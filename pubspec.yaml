@@ -27,6 +27,7 @@ dependencies:
   jwt_decoder: ^2.0.1
   dio: ^5.2.1
   easy_debounce: 2.0.3
+  flutter_typeahead: 4.8.0
 
 dev_dependencies:
   flutter_test:
