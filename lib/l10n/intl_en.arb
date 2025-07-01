@@ -27,6 +27,7 @@
   "proofOfDelivery": "Proof of delivery",
   "cmrImage": "CMR image",
   "deliverySlipImage": "Delivery slip image",
-  "additionalImages": "Additional images"
+  "additionalImages": "Additional images",
+  "comments": "Comments"
 
 }

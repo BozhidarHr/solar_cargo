@@ -50,7 +50,7 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
         });
       }
     }
-    widget.onImagesSelected(_selectedImages as List<File>);
+    widget.onImagesSelected(_selectedImages.whereType<File>().toList());
   }
 
   void _showImageSourceActionSheet() {

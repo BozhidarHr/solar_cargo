@@ -40,7 +40,7 @@ class Step3ChecklistItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Checkbox(
-              visualDensity: VisualDensity.compact,
+              visualDensity: const VisualDensity(horizontal: -4.0, vertical: -4.0),
               fillColor: WidgetStateProperty.resolveWith<Color>((states) {
                 if (states.contains(WidgetState.selected)) {
                   return Theme.of(context).primaryColor;
@@ -53,7 +53,7 @@ class Step3ChecklistItem extends StatelessWidget {
                   onChanged(value == true ? option : null),
             ),
             Text(title, style: textStyle),
-            const SizedBox(width: 10),
+            const SizedBox(width: 10,),
           ],
         ),
       );
@@ -77,30 +77,36 @@ class Step3ChecklistItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(label, style: textStyle),
-            Row(
+            Wrap(
+              spacing: 5,
+              runSpacing: 8,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 buildCheckbox('OK', ReportOption.ok, field.value, onChanged),
                 buildCheckbox('Not OK', ReportOption.notOk, field.value, onChanged),
                 buildCheckbox('N/A', ReportOption.na, field.value, onChanged),
-                const Spacer(),
+                const SizedBox(width: 5,),
                 ElevatedButton(
                   onPressed: onAddComment,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     backgroundColor: kFormFieldBackgroundColor,
                     foregroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0),
                     ),
                   ),
-                  child: Row(children: [
-                    const Icon(Icons.add, color: Colors.black, size: 20),
-                    const SizedBox(width: 5),
-                    Text(
-                      'comment',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ]),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.add, color: Colors.black, size: 20),
+                      const SizedBox(width: 5),
+                      Text(
+                        'comment',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

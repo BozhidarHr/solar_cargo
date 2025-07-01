@@ -5,6 +5,7 @@ import '../../create_report/models/checkbox_comment.dart';
 import '../../create_report/models/delivery_item.dart';
 
 class DeliveryReport {
+  int? id;
   String? location;
   String? checkingCompany;
   String? supplier;
@@ -14,6 +15,7 @@ class DeliveryReport {
   String? licencePlateTruck;
   String? licencePlateTrailer;
   List<DeliveryItem> deliveryItems;
+  String? comments;
   List<CheckBoxItem> checkboxItems;
   String? weatherConditions;
   int? user;
@@ -27,6 +29,7 @@ class DeliveryReport {
   dynamic additionalImages;
 
   DeliveryReport({
+    this.id,
     this.location,
     this.checkingCompany,
     this.supplier,
@@ -37,6 +40,7 @@ class DeliveryReport {
     this.licencePlateTrailer,
     this.weatherConditions,
     List<DeliveryItem>? deliveryItems,
+    this.comments,
     List<CheckBoxItem>? checkboxItems,
     this.user,
     this.truckLicencePlateImage,
@@ -50,6 +54,7 @@ class DeliveryReport {
 
   factory DeliveryReport.fromJson(Map<String, dynamic> json) {
     return DeliveryReport(
+      id: json['id'],
       location: json['location'],
       checkingCompany: json['checking_company'],
       supplier: json['supplier'],
@@ -67,6 +72,7 @@ class DeliveryReport {
               .map((e) => DeliveryItem.fromJson(Map<String, dynamic>.from(e)))
               .toList()
           : [],
+      comments: json['comments'],
       checkboxItems: CheckBoxItem.listFromFlatJson(json),
       cmrImage: json['cmr_image'],
       deliverySlipImage: json['delivery_slip_image'],

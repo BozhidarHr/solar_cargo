@@ -32,6 +32,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Choose from Gallery"),
         "close": MessageLookupByLibrary.simpleMessage("Close"),
         "cmrImage": MessageLookupByLibrary.simpleMessage("CMR image"),
+        "comments": MessageLookupByLibrary.simpleMessage("Comments"),
         "containerNumber": MessageLookupByLibrary.simpleMessage("Container No"),
         "createNewReport":
             MessageLookupByLibrary.simpleMessage("Create new report"),

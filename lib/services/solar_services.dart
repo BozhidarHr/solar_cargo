@@ -2,6 +2,8 @@ import 'dart:convert' as convert;
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:solar_cargo/screens/common/string_extension.dart';
 import 'package:solar_cargo/services/solar_helper.dart';
 
 import '../models/jwt_keys.dart';
@@ -178,8 +180,11 @@ class SolarServices {
             newReport.deliverySlipNumber ?? '';
         request.fields['logistic_company'] = newReport.logisticCompany ?? '';
         request.fields['container_number'] = newReport.containerNumber ?? '';
-        request.fields['licence_plate_truck'] = newReport.licencePlateTruck ?? '';
-        request.fields['licence_plate_trailer'] = newReport.licencePlateTrailer ?? '';
+        request.fields['licence_plate_truck'] =
+            newReport.licencePlateTruck ?? '';
+        request.fields['licence_plate_trailer'] =
+            newReport.licencePlateTrailer ?? '';
+        request.fields['comments'] = newReport.comments ?? '';
 
         // Truck licence plate image
         if (newReport.truckLicencePlateImage is File) {
@@ -202,7 +207,7 @@ class SolarServices {
 
         // Delivery items
         final itemsJson =
-        newReport.deliveryItems.map((e) => e.toJson()).toList();
+            newReport.deliveryItems.map((e) => e.toJson()).toList();
         request.fields['items_input'] = convert.jsonEncode(itemsJson);
 
         // Proof of delivery image
@@ -215,7 +220,7 @@ class SolarServices {
 
         // Checkbox fields
         final checkboxFields =
-        CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
+            CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
         checkboxFields.forEach((key, value) {
           request.fields[key] = value?.toString() ?? '';
         });
@@ -306,4 +311,63 @@ class SolarServices {
       return [];
     }
   }
-}
+
+
+
+
+  Future<File?> downloadReport({
+    required bool isPdf,
+    required String reportId,
+  }) async {
+    try {
+
+
+      // Build URL
+      final url = '$domain/download-report/$reportId/${isPdf ? 'pdf' : 'excel'}/'.toUri();
+
+      final response = await sendWithAuth((token) {
+        return http.get(
+          url!,
+          headers: {
+            HttpHeaders.authorizationHeader: 'Bearer $_customerToken',
+          },
+        );
+      });
+
+      if (response.statusCode != 200) {
+        final responseBody = convert.jsonDecode(response.body);
+        if (responseBody is Map && responseBody['message'] != null) {
+          throw Exception(SolarHelper.getErrorMessage(responseBody));
+        }
+        throw Exception('Unknown error occurred with status code ${response.statusCode}');
+      }
+
+      final ext = isPdf ? 'pdf' : 'xlsx';
+      final fileName = 'report_$reportId.$ext';
+
+      Directory dir;
+
+      if (Platform.isAndroid) {
+        dir = Directory('/storage/emulated/0/Download');
+        if (!await dir.exists()) {
+          dir = (await getExternalStorageDirectory())!;
+        }
+      } else {
+        dir = await getApplicationDocumentsDirectory();
+      }
+
+      final filePath = '${dir.path}/$fileName';
+      final file = File(filePath);
+
+      try {
+        await file.writeAsBytes(response.bodyBytes);
+        printLog('File saved at ${file.path}');
+
+      } catch (e) {
+        printLog('Error saving file: $e');
+      }
+
+      return file;
+    } catch (e) {
+      rethrow;
+    }}}

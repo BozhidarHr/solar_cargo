@@ -19,6 +19,7 @@ class ViewReportsScreen extends StatefulWidget {
 
 class _ViewReportsScreenState extends State<ViewReportsScreen> {
   late final ScrollController _scrollController;
+  late final ViewReportsViewModel viewModel;
 
   @override
   void initState() {
@@ -27,7 +28,8 @@ class _ViewReportsScreenState extends State<ViewReportsScreen> {
     _scrollController = ScrollController()..addListener(_onScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ViewReportsViewModel>().fetchDeliveryReports(refresh: true);
+      viewModel = Provider.of<ViewReportsViewModel>(context, listen: false)
+        ..fetchDeliveryReports(refresh: true);
     });
   }
 
@@ -40,8 +42,6 @@ class _ViewReportsScreenState extends State<ViewReportsScreen> {
   }
 
   void _onScroll() {
-    final viewModel = context.read<ViewReportsViewModel>();
-
     if (!_scrollController.hasClients || viewModel.isLoadingMore) return;
 
     const thresholdPixels = 200;
@@ -83,24 +83,6 @@ class _ViewReportsScreenState extends State<ViewReportsScreen> {
 
           return _buildReportsList(reports, viewModel.isLoadingMore);
         },
-      ),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 8.0),
-            child: Divider(
-              color: Colors.white,
-              indent: 15,
-              endIndent: 15,
-            ),
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.only(top: 0, bottom: 16, left: 16, right: 16),
-            child: _createNewReportButton(context: context),
-          ),
-        ],
       ),
     );
   }
@@ -186,25 +168,4 @@ class _ReportListItem extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget _createNewReportButton({
-  required BuildContext context,
-}) {
-  return SizedBox(
-    width: double.infinity,
-    child: ElevatedButton.icon(
-      onPressed: () => Navigator.of(context).pushNamed(RouteList.createReport),
-      label: Text(S.of(context).createNewReport),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Theme.of(context).primaryColor,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        textStyle: const TextStyle(fontSize: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-    ),
-  );
 }

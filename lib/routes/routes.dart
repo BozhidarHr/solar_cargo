@@ -29,7 +29,7 @@ class Routes {
         if (arguments is ViewReportDetailArguments) {
           return _buildRoute(
             settings,
-            (context) => ViewReportDetailNew(report: arguments.report),
+            (context) => ViewReportDetailNew(report: arguments.report,),
           );
         }
 

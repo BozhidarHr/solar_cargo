@@ -88,6 +88,14 @@ class Step4Form extends StatelessWidget {
                   onChanged: (val) =>
                       viewModel.newReport.licencePlateTrailer = val,
                 ),
+                _buildFormField(
+                  label: S.of(context).comments,
+                  context: context,
+                  initialValue: viewModel.newReport.comments,
+                  maxLines: 4,
+                  onChanged: (val) =>
+                  viewModel.newReport.comments = val,
+                )
               ]),
             ),
             const SizedBox(
