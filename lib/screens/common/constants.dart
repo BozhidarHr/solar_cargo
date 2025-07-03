@@ -10,9 +10,10 @@ const kLoadingLottie = 'assets/lottie/loading.json';
 // Colors
 const kFormFieldBackgroundColor = Color(0xFFDAD7CD);
 const kDeliveryItemFieldColor = Color(0xFF889E81);
+const maxAdditionalImages = 3;
+
 const fileTypes = {
   ".pdf": "application/pdf",
   ".xls": "application/vnd.ms-excel",
-  ".xlsx":
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 };

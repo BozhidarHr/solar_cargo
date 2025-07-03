@@ -144,7 +144,7 @@ class Step2Form extends StatelessWidget {
 
                                           EasyDebounce.debounce(
                                             debounceKey,
-                                            const Duration(milliseconds: 500),
+                                            const Duration(milliseconds: 100),
                                                 () async {
                                               final results = await Services().api.searchItems(pattern) ?? [];
                                               if (!completer.isCompleted) {

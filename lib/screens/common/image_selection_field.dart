@@ -42,7 +42,7 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source, imageQuality: 80);
+    final pickedFile = await _picker.pickImage(source: source, imageQuality: 70);
     if (pickedFile != null) {
       setState(() {
         _selectedImage = File(pickedFile.path);

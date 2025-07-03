@@ -133,7 +133,7 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
                           Navigator.of(dialogContext).pop();
                           await _openFile(downloadResponse.data);
                         },
-                        child:  Text('Yes',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),),
+                        child:  const Text('Yes',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),),
                       ),
                     ],
                   );

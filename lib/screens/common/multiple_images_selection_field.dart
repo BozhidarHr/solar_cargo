@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:solar_cargo/screens/common/constants.dart';
 
 import '../../generated/l10n.dart';
+import 'flash_helper.dart';
 
 class MultiImageSelectionField extends StatefulWidget {
   final String label;
@@ -34,16 +35,23 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
   }
 
   Future<void> _pickImages(ImageSource source) async {
+
+    if (_selectedImages.length >= maxAdditionalImages) {
+      FlashHelper.errorMessage(context,
+          message: "You can select up to $maxAdditionalImages additional images.");
+
+      return;
+    }
     if (source == ImageSource.camera) {
       final pickedFile =
-          await _picker.pickImage(source: source, imageQuality: 80);
+          await _picker.pickImage(source: source, imageQuality: 70);
       if (pickedFile != null) {
         setState(() {
           _selectedImages.add(File(pickedFile.path));
         });
       }
     } else {
-      final pickedFiles = await _picker.pickMultiImage(imageQuality: 80);
+      final pickedFiles = await _picker.pickMultiImage(imageQuality: 70);
       if (pickedFiles.isNotEmpty) {
         setState(() {
           _selectedImages.addAll(pickedFiles.map((pf) => File(pf.path)));

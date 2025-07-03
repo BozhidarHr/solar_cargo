@@ -244,6 +244,7 @@ class SolarServices {
         // Additional images
         if (newReport.additionalImages is List<File>) {
           final images = newReport.additionalImages as List<File>;
+
           for (final file in images) {
             request.files.add(await http.MultipartFile.fromPath(
               'additional_images_input',
@@ -312,18 +313,15 @@ class SolarServices {
     }
   }
 
-
-
-
   Future<File?> downloadReport({
     required bool isPdf,
     required String reportId,
   }) async {
     try {
-
-
       // Build URL
-      final url = '$domain/download-report/$reportId/${isPdf ? 'pdf' : 'excel'}/'.toUri();
+      final url =
+          '$domain/download-report/$reportId/${isPdf ? 'pdf' : 'excel'}/'
+              .toUri();
 
       final response = await sendWithAuth((token) {
         return http.get(
@@ -339,7 +337,8 @@ class SolarServices {
         if (responseBody is Map && responseBody['message'] != null) {
           throw Exception(SolarHelper.getErrorMessage(responseBody));
         }
-        throw Exception('Unknown error occurred with status code ${response.statusCode}');
+        throw Exception(
+            'Unknown error occurred with status code ${response.statusCode}');
       }
 
       final ext = isPdf ? 'pdf' : 'xlsx';
@@ -362,7 +361,6 @@ class SolarServices {
       try {
         await file.writeAsBytes(response.bodyBytes);
         printLog('File saved at ${file.path}');
-
       } catch (e) {
         printLog('Error saving file: $e');
       }
@@ -370,4 +368,6 @@ class SolarServices {
       return file;
     } catch (e) {
       rethrow;
-    }}}
+    }
+  }
+}
