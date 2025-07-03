@@ -538,7 +538,14 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
       return const SizedBox();
     }
     final imageWidget =
-        Image.network(image!, width: 220, height: 150, fit: BoxFit.cover);
+        Image.network(image!, width: 220, height: 150, fit: BoxFit.cover,errorBuilder: (context, error, stackTrace) => Container(
+          width: 220,
+          height: 150,
+          color: Colors.grey[300],
+          alignment: Alignment.center,
+          child: const Icon(Icons.broken_image, color: Colors.grey),
+        ),
+        );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6.0),
       child: Column(
