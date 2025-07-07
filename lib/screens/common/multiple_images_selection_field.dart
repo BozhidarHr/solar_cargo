@@ -35,16 +35,16 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
   }
 
   Future<void> _pickImages(ImageSource source) async {
-
     if (_selectedImages.length >= maxAdditionalImages) {
-      FlashHelper.errorMessage(context,
-          message: "You can select up to $maxAdditionalImages additional images.");
-
+      FlashHelper.errorMessage(
+        context,
+        message: "You can select up to $maxAdditionalImages additional images.",
+      );
       return;
     }
+
     if (source == ImageSource.camera) {
-      final pickedFile =
-          await _picker.pickImage(source: source, imageQuality: 70);
+      final pickedFile = await _picker.pickImage(source: source, imageQuality: 70);
       if (pickedFile != null) {
         setState(() {
           _selectedImages.add(File(pickedFile.path));
@@ -53,11 +53,33 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
     } else {
       final pickedFiles = await _picker.pickMultiImage(imageQuality: 70);
       if (pickedFiles.isNotEmpty) {
+        final remaining = maxAdditionalImages - _selectedImages.length;
+
+        // Take only allowed number of files (XFile)
+        final allowedFiles = pickedFiles.take(remaining).toList();
+
+        if (pickedFiles.length > remaining) {
+          String message = "You can select up to $maxAdditionalImages images.";
+          if (remaining > 1) {
+            message += "\nOnly the first $remaining will be added.";
+          } else if (remaining == 1) {
+            message += "\nOnly the first image will be added.";
+          }
+          FlashHelper.errorMessage(
+            context,
+            message: message,
+            duration: const Duration(seconds: 2),
+          );
+        }
+
         setState(() {
-          _selectedImages.addAll(pickedFiles.map((pf) => File(pf.path)));
+          _selectedImages.addAll(
+            allowedFiles.map((pf) => File(pf.path)).toList(),
+          );
         });
       }
     }
+
     widget.onImagesSelected(_selectedImages.whereType<File>().toList());
   }
 
@@ -110,7 +132,7 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
             child: Text(widget.label, style: labelStyle),
           ),
         Visibility(
-          visible:  _selectedImages.length < maxAdditionalImages,
+          visible: _selectedImages.length < maxAdditionalImages,
           child: GestureDetector(
             onTap: _showImageSourceActionSheet,
             child: Container(

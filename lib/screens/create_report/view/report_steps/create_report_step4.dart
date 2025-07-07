@@ -118,7 +118,7 @@ class Step4Form extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             MultiImageSelectionField(
-              label: "Other (multiple) (optional)",
+              label: "Other (multiple) ($maxAdditionalImages max.)",
               initialImages: viewModel.newReport.additionalImages,
               onImagesSelected: (images) {
                 viewModel.newReport.additionalImages = images;
