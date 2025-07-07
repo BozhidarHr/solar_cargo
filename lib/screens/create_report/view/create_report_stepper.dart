@@ -88,7 +88,10 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
             case Status.INITIAL:
               break;
             case Status.LOADING:
-              overlay = const LoadingWidget();
+              overlay = const LoadingWidget(
+                showTint: true,
+                text: "This may take some time.\nPlease wait.",
+              );
             case Status.COMPLETED:
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 FlashHelper.message(context,

@@ -81,6 +81,7 @@ class Step3Form extends StatelessWidget {
                     final label = item.label ?? item.name;
 
                     return Step3ChecklistItem(
+                      key: ValueKey(label),
                       label: label,
                       item: item,
                       onOptionChanged: (opt) =>

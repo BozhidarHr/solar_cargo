@@ -93,7 +93,7 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
     setState(() {
       _selectedImages.removeAt(index);
     });
-    widget.onImagesSelected(_selectedImages as List<File>);
+    widget.onImagesSelected(_selectedImages.whereType<File>().toList());
   }
 
   @override
@@ -109,50 +109,53 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
             padding: const EdgeInsets.only(bottom: 5.0, left: 5),
             child: Text(widget.label, style: labelStyle),
           ),
-        GestureDetector(
-          onTap: _showImageSourceActionSheet,
-          child: Container(
-            height: 50,
-            decoration: BoxDecoration(
-              color: kFormFieldBackgroundColor,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Text(
-                      _selectedImages.isNotEmpty
-                          ? '${_selectedImages.length} image(s) selected'
-                          : S.of(context).noImageSelected,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w500,
+        Visibility(
+          visible:  _selectedImages.length < maxAdditionalImages,
+          child: GestureDetector(
+            onTap: _showImageSourceActionSheet,
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                color: kFormFieldBackgroundColor,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        _selectedImages.isNotEmpty
+                            ? '${_selectedImages.length} image(s) selected'
+                            : S.of(context).noImageSelected,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.withOpacity(0.5),
-                    borderRadius: const BorderRadius.horizontal(
-                      right: Radius.circular(8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor.withOpacity(0.5),
+                      borderRadius: const BorderRadius.horizontal(
+                        right: Radius.circular(8),
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      S.of(context).browse,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    S.of(context).browse,
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

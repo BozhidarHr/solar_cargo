@@ -193,6 +193,11 @@ class Step4Form extends StatelessWidget {
           initialValue: initialValue,
           keyboardType: isNumbersOnly ? TextInputType.number : null,
           decoration: InputDecoration(
+            hintText: 'Enter ${label.toLowerCase()}...',
+            hintStyle: TextStyle(
+                color:
+                Colors.black.withOpacity(0.5)),
+
             filled: true,
             fillColor: kFormFieldBackgroundColor,
             border: OutlineInputBorder(

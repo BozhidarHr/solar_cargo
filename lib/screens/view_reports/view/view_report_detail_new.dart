@@ -716,7 +716,7 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
                     ),
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    child: TextFormField(
+                    child: TextFormField(readOnly: true,
                       initialValue: item.comment?.toString(),
                       style: const TextStyle(
                         fontWeight: FontWeight.w500,

@@ -4,7 +4,7 @@ import 'package:solar_cargo/screens/common/constants.dart';
 
 import '../../models/checkbox_comment.dart';
 
-class Step3ChecklistItem extends StatelessWidget {
+class Step3ChecklistItem extends StatefulWidget {
   final String label;
   final CheckBoxItem item;
   final Function(ReportOption?) onOptionChanged;
@@ -21,6 +21,32 @@ class Step3ChecklistItem extends StatelessWidget {
     this.onCommentChanged,
     this.onRemoveComment,
   });
+
+  @override
+  State<Step3ChecklistItem> createState() => _Step3ChecklistItemState();
+}
+
+class _Step3ChecklistItemState extends State<Step3ChecklistItem> {
+  final FocusNode _commentFocusNode = FocusNode();
+  bool _wasCommentNull = true;
+  @override
+  void didUpdateWidget(covariant Step3ChecklistItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (_wasCommentNull && widget.item.comment != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _commentFocusNode.requestFocus();
+      });
+    }
+
+    _wasCommentNull = widget.item.comment == null;
+  }
+  void _handleRemoveComment() {
+    _commentFocusNode.unfocus(); // Remove focus first
+    if (widget.onRemoveComment != null) {
+      widget.onRemoveComment!(); // Then call external handler which removes comment
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +86,7 @@ class Step3ChecklistItem extends StatelessWidget {
     }
 
     return FormField<ReportOption>(
-      initialValue: item.selectedOption,
+      initialValue: widget.item.selectedOption,
       validator: (selectedOption) {
         if (selectedOption == null) {
           return 'Please select an option.';
@@ -70,13 +96,13 @@ class Step3ChecklistItem extends StatelessWidget {
       builder: (field) {
         void onChanged(ReportOption? newOption) {
           field.didChange(newOption); // update FormField internal state
-          onOptionChanged(newOption); // notify external listener
+          widget.onOptionChanged(newOption); // notify external listener
         }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: textStyle),
+            Text(widget.label, style: textStyle),
             Wrap(
               spacing: 5,
               runSpacing: 8,
@@ -86,28 +112,35 @@ class Step3ChecklistItem extends StatelessWidget {
                 buildCheckbox('Not OK', ReportOption.notOk, field.value, onChanged),
                 buildCheckbox('N/A', ReportOption.na, field.value, onChanged),
                 const SizedBox(width: 5,),
-                ElevatedButton(
-                  onPressed: onAddComment,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    backgroundColor: kFormFieldBackgroundColor,
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.add, color: Colors.black, size: 20),
-                      const SizedBox(width: 5),
-                      Text(
-                        'comment',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                    ],
-                  ),
-                ),
+                Visibility(
+        visible: widget.item.comment == null,
+        maintainSize: true,
+        maintainAnimation: true,
+        maintainState: true,
+        child: ElevatedButton(
+        onPressed: widget.onAddComment,
+        style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        backgroundColor: kFormFieldBackgroundColor,
+        foregroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+        ),
+        ),
+        child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+        const Icon(Icons.add, color: Colors.black, size: 20),
+        const SizedBox(width: 5),
+        Text(
+        'comment',
+        style: Theme.of(context).textTheme.titleMedium,
+        ),
+        ],
+        ),
+        ),
+        ),
+
               ],
             ),
             if (field.hasError)
@@ -119,14 +152,15 @@ class Step3ChecklistItem extends StatelessWidget {
                 ),
               ),
             const SizedBox(height: 8),
-            if (item.comment != null)
+            if (widget.item.comment != null)
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: TextFormField(
-                      initialValue: item.comment,
-                      onChanged: onCommentChanged,
+                      initialValue: widget.item.comment,
+                      focusNode: _commentFocusNode,
+                      onChanged: widget.onCommentChanged,
                       decoration: const InputDecoration(
                         filled: true,
                         hintText: 'Add a comment',
@@ -167,7 +201,7 @@ class Step3ChecklistItem extends StatelessWidget {
                       ),
                       child: IconButton(
                         padding: const EdgeInsets.symmetric(horizontal: 25),
-                        onPressed: onRemoveComment,
+                        onPressed: _handleRemoveComment,
                         icon: SvgPicture.asset(kDeleteSvg),
                         splashRadius: 22,
                       ),

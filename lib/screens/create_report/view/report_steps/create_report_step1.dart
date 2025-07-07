@@ -178,6 +178,10 @@ class Step1Form extends StatelessWidget {
           initialValue: initialValue,
           keyboardType: isNumbersOnly ? TextInputType.number : null,
           decoration: InputDecoration(
+            hintText: 'Enter ${label.toLowerCase()}...',
+            hintStyle:  const TextStyle(
+              color: Colors.grey,
+            ),
             filled: true,
             fillColor: kFormFieldBackgroundColor,
             border: OutlineInputBorder(
