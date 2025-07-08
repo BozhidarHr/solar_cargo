@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as path;
@@ -131,7 +132,7 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
                         ),
                         onPressed: () async {
                           Navigator.of(dialogContext).pop();
-                          await _openFile(downloadResponse.data);
+                          await _openFileWithPicker();
                         },
                         child:  const Text('Yes',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),),
                       ),
@@ -742,17 +743,30 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
     });
   }
 
-  Future<void> _openFile(String filePath) async {
+  Future<void> _openFileWithPicker() async {
     try {
-      final hasPermission = await requestStoragePermission();
-      if (!hasPermission) {
-        throw Exception('Storage permission denied');
+      // Let the user pick a single file
+      final result = await FilePicker.platform.pickFiles();
+
+      if (result == null || result.files.single.path == null) {
+        printLog('No file selected');
+        return;
       }
 
-      final extension = path.extension(filePath);
-      await OpenFile.open(filePath, type: fileTypes[extension]);
+      final filePath = result.files.single.path!;
+      final extension = path.extension(filePath).toLowerCase();
+      final fileType = fileTypes[extension];
+
+      if (fileType == null) {
+        throw Exception('Unsupported file type: $extension');
+      }
+
+      final openResult = await OpenFile.open(filePath, type: fileType);
+
+      if (openResult.type != ResultType.done) {
+        throw Exception('Failed to open file: ${openResult.message}');
+      }
     } catch (e) {
-      printLog('Failed to open folder: $e');
+      printLog('Failed to open file: $e');
     }
-  }
-}
+  }}
