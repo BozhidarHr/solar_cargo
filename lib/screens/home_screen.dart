@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:solar_cargo/providers/auth_provider.dart';
+import 'package:solar_cargo/screens/choose_location_screen.dart';
 import 'package:solar_cargo/screens/common/string_extension.dart';
 
 import '../routes/route_list.dart';
@@ -19,7 +20,7 @@ class HomeScreen extends StatelessWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Navigator.of(context).pushNamedAndRemoveUntil(
           RouteList.login,
-          (route) => false,
+              (route) => false,
         );
       });
       return const SizedBox.shrink();
@@ -35,7 +36,9 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        backgroundColor: Theme
+            .of(context)
+            .scaffoldBackgroundColor,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -49,18 +52,49 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Text(
                         "Welcome Back!",
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: Theme.of(context).primaryColor,
-                            ),
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(
+                          color: Theme
+                              .of(context)
+                              .primaryColor,
+                          fontSize: 16,
+                        ),
                       ),
                       if (user.userName.isNotEmpty)
                         Text(
                           user.userName,
-                          style: Theme.of(context)
+                          style: Theme
+                              .of(context)
                               .textTheme
                               .headlineMedium!
                               .copyWith(color: Colors.white),
                         ),
+                      if (user.currentLocation.isNotNullAndNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Text(
+                          "Location:",
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(
+                              color: Theme
+                                  .of(context)
+                                  .primaryColor,
+                              fontSize: 16),
+                        ),
+                        Text(
+                          user.currentLocation!,
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .headlineMedium!
+                              .copyWith(color: Colors.white),
+                        )
+                      ]
                     ],
                   ),
                 ),
@@ -83,11 +117,15 @@ class HomeScreen extends StatelessWidget {
                         child: Text(
                           user.userRole!.upperCaseFirstChar(),
                           style:
-                              Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                    letterSpacing: 0.5,
-                                  ),
+                          Theme
+                              .of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       )
                   ],
@@ -100,9 +138,6 @@ class HomeScreen extends StatelessWidget {
             // Centered main content
             Column(
               children: [
-                Icon(Icons.analytics,
-                    size: 80, color: Theme.of(context).primaryColor),
-                const SizedBox(height: 24),
                 const Text(
                   'Welcome to the Dashboard',
                   style: TextStyle(
@@ -129,6 +164,18 @@ class HomeScreen extends StatelessWidget {
                     icon: Icons.list_alt,
                     onPressed: () {
                       Navigator.of(context).pushNamed(RouteList.viewReports);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                if (user.locations.length > 1)...[
+                  _buildButton(
+                    context: context,
+                    label: 'Change Location',
+                    icon: Icons.location_city,
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(RouteList.chooseLocation,
+                          arguments: ChooseLocationScreenArguments(user));
                     },
                   ),
                   const SizedBox(height: 16),
@@ -164,7 +211,9 @@ class HomeScreen extends StatelessWidget {
         icon: Icon(icon),
         label: Text(label),
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: Theme
+              .of(context)
+              .primaryColor,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
           textStyle: const TextStyle(fontSize: 16),

@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:solar_cargo/providers/auth_provider.dart';
 import 'package:solar_cargo/routes/routes.dart';
+import 'package:solar_cargo/screens/choose_location_screen.dart';
 import 'package:solar_cargo/screens/home_screen.dart';
 import 'package:solar_cargo/screens/login/view/login_screen.dart';
 
@@ -91,7 +92,18 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget _resolveInitialScreen(AuthProvider auth) {
-    if (!auth.isLoggedIn) return const LoginScreen();
-    return const HomeScreen();
+    final user = auth.currentUser;
+    if (!auth.isLoggedIn || user == null) return const LoginScreen();
+
+    if (user.locations.length == 1) {
+      user.setUserLocation(user.locations.first);
+    }
+    if (user.currentLocation != null) {
+      return const HomeScreen();
+    } else {
+      return ChooseLocationScreen(
+        user: user,
+      );
+    }
   }
 }

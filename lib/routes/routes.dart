@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:solar_cargo/screens/choose_location_screen.dart';
 import 'package:solar_cargo/screens/common/string_extension.dart';
 import 'package:solar_cargo/screens/home_screen.dart';
 import 'package:solar_cargo/screens/login/view/login_screen.dart';
@@ -14,6 +15,16 @@ class Routes {
     var routingData = settings.name!.getRoutingData;
 
     switch (routingData.route) {
+      case RouteList.chooseLocation:
+        final arguments = settings.arguments;
+        if (arguments is ChooseLocationScreenArguments) {
+          return _buildRoute(
+            settings,
+            (context) => ChooseLocationScreen(
+              user: arguments.user,
+            ),
+          );
+        }
       case RouteList.home:
         return _buildRoute(
           settings,
@@ -29,7 +40,9 @@ class Routes {
         if (arguments is ViewReportDetailArguments) {
           return _buildRoute(
             settings,
-            (context) => ViewReportDetailNew(report: arguments.report,),
+            (context) => ViewReportDetailNew(
+              report: arguments.report,
+            ),
           );
         }
 

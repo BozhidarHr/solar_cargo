@@ -29,12 +29,12 @@ class SolarServices {
   String? get customerToken => _customerToken;
 
   setCustomerToken(String token) async {
-    await tokenStorage.write(TokenType.bearer, token);
+    await tokenStorage.write(StorageItem.bearerToken, token);
     _customerToken = token;
   }
 
   setRefreshToken(String token) async {
-    await tokenStorage.write(TokenType.refresh, token);
+    await tokenStorage.write(StorageItem.refreshToken, token);
     _refreshToken = token;
   }
 
@@ -87,7 +87,7 @@ class SolarServices {
 
   Future<String> updateToken() async {
     try {
-      _refreshToken = await tokenStorage.read(TokenType.refresh);
+      _refreshToken = await tokenStorage.read(StorageItem.refreshToken);
       if (_refreshToken == null || _refreshToken!.isEmpty) {
         throw Exception('No refresh token available');
       }

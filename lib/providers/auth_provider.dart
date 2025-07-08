@@ -15,8 +15,11 @@ class AuthProvider with ChangeNotifier {
   User? _currentUser;
 
   User? get currentUser => _currentUser;
+
   bool get isLoggedIn => _isLoggedIn;
+
   bool get isLoading => _isLoading;
+
   String? get errorMessage => _errorMessage;
 
   // --- Initialization ---
@@ -27,10 +30,19 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> _checkLoginStatus() async {
-    final bearerToken = await _service.api.tokenStorage.read(TokenType.bearer);
+    final bearerToken =
+        await _service.api.tokenStorage.read(StorageItem.bearerToken);
     if (bearerToken != null) {
       final isValid = await _refreshBearerToken();
       if (isValid) {
+        // Read saved location from storage
+        final savedLocation =
+        await _service.api.tokenStorage.read(StorageItem.location);
+
+        // Set location if it exists
+        if (savedLocation != null) {
+          _currentUser!.setUserLocation(savedLocation);
+        }
         _setLoggedIn(true);
       } else {
         await logout();
@@ -42,11 +54,13 @@ class AuthProvider with ChangeNotifier {
 
   Future<bool> _refreshBearerToken() async {
     try {
-      final refreshToken = await _service.api.tokenStorage.read(TokenType.refresh);
+      final refreshToken =
+          await _service.api.tokenStorage.read(StorageItem.refreshToken);
       if (refreshToken == null) return false;
 
       final bearerToken = await _service.api.updateToken();
-      await _service.api.tokenStorage.write(TokenType.bearer, bearerToken);
+      await _service.api.tokenStorage
+          .write(StorageItem.bearerToken, bearerToken);
 
       final decodedToken = JwtDecoder.decode(bearerToken);
       _currentUser = User.fromMap(decodedToken);
@@ -68,6 +82,7 @@ class AuthProvider with ChangeNotifier {
       final jwt = await _service.api.login(username, password);
       final decodedToken = JwtDecoder.decode(jwt.bearerToken);
       _currentUser = User.fromMap(decodedToken);
+
       logger.i('User loaded: $_currentUser');
       _setLoggedIn(true);
     } catch (e) {
@@ -80,6 +95,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> logout() async {
     await _service.api.tokenStorage.clearAll();
+
     _setLoggedIn(false);
   }
 
@@ -87,7 +103,6 @@ class AuthProvider with ChangeNotifier {
     _clearError();
     notifyListeners();
   }
-
 
   void _setLoggedIn(bool value) {
     _isLoggedIn = value;
