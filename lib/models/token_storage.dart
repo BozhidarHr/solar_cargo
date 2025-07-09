@@ -3,13 +3,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class TokenStorage {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  Future<void> write(StorageItem type, String? value) async {
+  Future<void> write(StorageItem type, dynamic value) async {
     if (value != null) {
       await _storage.write(key: type.key, value: value);
     }
   }
 
-  Future<String?> read(StorageItem type) async {
+  Future<dynamic> read(StorageItem type) async {
     return await _storage.read(key: type.key);
   }
 
