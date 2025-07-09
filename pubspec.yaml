@@ -33,6 +33,10 @@ dependencies:
   open_file: ^3.3.2
   dropdown_button2: ^2.3.9
 
+dependency_overrides:
+  flutter_keyboard_visibility:
+    path: overrides/flutter_keyboard_visibility
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

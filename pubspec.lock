@@ -175,12 +175,11 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_keyboard_visibility:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: flutter_keyboard_visibility
-      sha256: "4983655c26ab5b959252ee204c2fffa4afeb4413cd030455194ec0caa3b8e7cb"
-      url: "https://pub.dev"
-    source: hosted
+      path: "overrides/flutter_keyboard_visibility"
+      relative: true
+    source: path
     version: "5.4.1"
   flutter_keyboard_visibility_linux:
     dependency: transitive
