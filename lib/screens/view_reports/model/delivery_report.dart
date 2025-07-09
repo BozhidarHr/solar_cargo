@@ -1,4 +1,3 @@
-
 import 'package:solar_cargo/screens/common/string_extension.dart';
 
 import '../../create_report/models/checkbox_comment.dart';
@@ -6,18 +5,20 @@ import '../../create_report/models/delivery_item.dart';
 
 class DeliveryReport {
   int? id;
-  String? location;
-  String? checkingCompany;
+  String? pvProject;
+  String? subcontractor;
   String? supplier;
   String? deliverySlipNumber;
   String? logisticCompany;
   String? containerNumber;
   String? licencePlateTruck;
   String? licencePlateTrailer;
+  String? damagesDescription;
   List<DeliveryItem> deliveryItems;
   String? comments;
   List<CheckBoxItem> checkboxItems;
   String? weatherConditions;
+  String? weatherComment;
   int? user;
 
   // File? or String?
@@ -27,11 +28,11 @@ class DeliveryReport {
   dynamic cmrImage;
   dynamic deliverySlipImage;
   dynamic additionalImages;
+  dynamic damagesImages;
 
   DeliveryReport({
     this.id,
-    this.location,
-    this.checkingCompany,
+    this.pvProject,
     this.supplier,
     this.deliverySlipNumber,
     this.logisticCompany,
@@ -39,6 +40,8 @@ class DeliveryReport {
     this.licencePlateTruck,
     this.licencePlateTrailer,
     this.weatherConditions,
+    this.weatherComment,
+    this.damagesDescription,
     List<DeliveryItem>? deliveryItems,
     this.comments,
     List<CheckBoxItem>? checkboxItems,
@@ -49,14 +52,15 @@ class DeliveryReport {
     this.cmrImage,
     this.deliverySlipImage,
     this.additionalImages,
-  }) : deliveryItems = deliveryItems ?? [DeliveryItem.empty()],
+    this.damagesImages,
+  })  : subcontractor = 'S&G Solar',
+        deliveryItems = deliveryItems ?? [DeliveryItem.empty()],
         checkboxItems = checkboxItems ?? CheckBoxItem.defaultStep3Items();
 
   factory DeliveryReport.fromJson(Map<String, dynamic> json) {
     return DeliveryReport(
       id: json['id'],
-      location: json['location'],
-      checkingCompany: json['checking_company'],
+      pvProject: json['pv_project'],
       supplier: json['supplier'],
       deliverySlipNumber: json['delivery_slip_number'],
       logisticCompany: json['logistic_company'],
@@ -65,7 +69,9 @@ class DeliveryReport {
       licencePlateTrailer: json['licence_plate_trailer'],
       truckLicencePlateImage: json['truck_license_plate_image'],
       trailerLicencePlateImage: json['trailer_license_plate_image'],
+      damagesDescription: json['damages_description'],
       weatherConditions: json['weather_conditions'],
+      weatherComment: json['weather_comments'],
       proofOfDelivery: json['proof_of_delivery_image'],
       deliveryItems: (json['items'] != null)
           ? (json['items'] as List)
@@ -76,9 +82,12 @@ class DeliveryReport {
       checkboxItems: CheckBoxItem.listFromFlatJson(json),
       cmrImage: json['cmr_image'],
       deliverySlipImage: json['delivery_slip_image'],
-      additionalImages: (json['additional_images_urls'])
-          ?.map((e) => e['image'])
-          .toList() ?? [],
+      additionalImages:
+          (json['additional_images_urls'])?.map((e) => e['image']).toList() ??
+              [],
+      damagesImages:
+      (json['damages_images_urls'])?.map((e) => e['image']).toList() ??
+          [],
       user: json['user'],
     );
   }
@@ -99,21 +108,21 @@ class DeliveryReport {
     );
   }
 
-  // String? get createdAtDate {
-  //   if (createdAt == null) return null;
-  //   try {
-  //     return DateFormat('yy/MM/dd').format(DateTime.parse(createdAt!));
-  //   } catch (_) {
-  //     return null;
-  //   }
-  // }
-  //
-  // String? get updatedAtDate {
-  //   if (updatedAt == null) return null;
-  //   try {
-  //     return DateFormat('yy/MM/dd').format(DateTime.parse(updatedAt!));
-  //   } catch (_) {
-  //     return null;
-  //   }
-  // }
+// String? get createdAtDate {
+//   if (createdAt == null) return null;
+//   try {
+//     return DateFormat('yy/MM/dd').format(DateTime.parse(createdAt!));
+//   } catch (_) {
+//     return null;
+//   }
+// }
+//
+// String? get updatedAtDate {
+//   if (updatedAt == null) return null;
+//   try {
+//     return DateFormat('yy/MM/dd').format(DateTime.parse(updatedAt!));
+//   } catch (_) {
+//     return null;
+//   }
+// }
 }

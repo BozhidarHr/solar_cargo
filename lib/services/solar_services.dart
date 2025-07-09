@@ -173,8 +173,7 @@ class SolarServices {
         request.headers[HttpHeaders.authorizationHeader] = 'Bearer $token';
 
         // Fields
-        request.fields['location'] = newReport.location ?? '';
-        request.fields['checking_company'] = newReport.checkingCompany ?? '';
+        request.fields['location'] = newReport.pvProject ?? '';
         request.fields['supplier'] = newReport.supplier ?? '';
         request.fields['delivery_slip_number'] =
             newReport.deliverySlipNumber ?? '';

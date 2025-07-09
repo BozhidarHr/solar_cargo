@@ -4,7 +4,6 @@ import 'package:solar_cargo/screens/common/flash_helper.dart';
 import '../../../common/will_pop_scope.dart';
 import '../../viewmodel/create_report_view_model.dart';
 import 'create_report_step1.dart';
-import 'create_report_step2.dart';
 import 'create_report_step3.dart';
 import 'create_report_step4.dart';
 
@@ -47,7 +46,7 @@ class CreateReportPreview extends StatelessWidget {
                     viewModel: viewModel,
                   ),
                   divider,
-                  Step2Form(
+                  Step3Form(
                     formKey: formKeys[1],
                     viewModel: viewModel,
                     restrictBack: true,
@@ -134,7 +133,7 @@ class CreateReportPreview extends StatelessWidget {
     final step1ImagesValid =
         viewModel.newReport.truckLicencePlateImage != null &&
             viewModel.newReport.trailerLicencePlateImage != null;
-    final step2ImagesValid = viewModel.newReport.proofOfDelivery != null;
+    final step3ImagesValid = viewModel.newReport.proofOfDelivery != null;
     final step4ImagesValid = viewModel.newReport.cmrImage != null &&
         viewModel.newReport.deliverySlipImage != null;
 
@@ -148,7 +147,7 @@ class CreateReportPreview extends StatelessWidget {
           message: 'Please add license plate images.');
       return false;
     }
-    if (!step2ImagesValid) {
+    if (!step3ImagesValid) {
       FlashHelper.errorMessage(context,
           message: 'Please add proof of delivery image.');
       return false;

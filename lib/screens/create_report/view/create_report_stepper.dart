@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_damages.dart';
 import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_preview.dart';
 
 import '../../../services/api_response.dart';
@@ -33,7 +34,7 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
   }
 
   void _nextStep() {
-    if (_currentStep < 4) setState(() => _currentStep++);
+    if (_currentStep < 5) setState(() => _currentStep++);
   }
 
   void _previousStep() {
@@ -47,6 +48,11 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
         formKey: formKeys[0],
         viewModel: _viewModel,
         onNext: _nextStep,
+      ),
+      CreateReportDamages(
+        viewModel: _viewModel,
+        onNext: _nextStep,
+        onBack: _previousStep,
       ),
       Step2Form(
         formKey: formKeys[1],

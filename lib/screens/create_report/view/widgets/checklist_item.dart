@@ -175,7 +175,7 @@ class _Step3ChecklistItemState extends State<Step3ChecklistItem> {
                         EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                         errorStyle: TextStyle(
                           color: Colors.red,
-                          fontSize: 12,
+                          fontSize: 14,
                         ),
                       ),
                       validator: (value) =>

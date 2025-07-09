@@ -6,11 +6,13 @@ import '../../../common/constants.dart';
 import '../../../common/flash_helper.dart';
 import '../../../common/image_selection_field.dart';
 import '../../viewmodel/create_report_view_model.dart';
+import '../widgets/weather_dropdown.dart';
 
 class Step1Form extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final CreateReportViewModel viewModel;
   final VoidCallback? onNext;
+
   const Step1Form({
     super.key,
     required this.formKey,
@@ -61,8 +63,7 @@ class Step1Form extends StatelessWidget {
             const SizedBox(height: 12),
             ImageSelectionField(
               label: S.of(context).truckLicensePlate,
-              initialImage:
-              viewModel.newReport.truckLicencePlateImage,
+              initialImage: viewModel.newReport.truckLicencePlateImage,
               onImageSelected: (file) {
                 viewModel.newReport.truckLicencePlateImage = file;
               },
@@ -70,8 +71,7 @@ class Step1Form extends StatelessWidget {
             const SizedBox(height: 12),
             ImageSelectionField(
               label: S.of(context).trailerLicensePlate,
-              initialImage:
-              viewModel.newReport.trailerLicencePlateImage,
+              initialImage: viewModel.newReport.trailerLicencePlateImage,
               onImageSelected: (file) {
                 viewModel.newReport.trailerLicencePlateImage = file;
               },
@@ -105,18 +105,19 @@ class Step1Form extends StatelessWidget {
   List<Widget> _buildFields(BuildContext context) {
     return [
       _buildFormField(
-        label: S.of(context).plantLocation,
+        label: S.of(context).pvProject,
         context: context,
-        initialValue: viewModel.newReport.location,
-        onChanged: (val) => viewModel.newReport.location = val,
+        initialValue: viewModel.newReport.pvProject,
+        onChanged: (val) => viewModel.newReport.pvProject = val,
         maxLines: 3,
       ),
+      // Should be hardcoded to S&G Solar
       _buildFormField(
-        label: S.of(context).checkingCompany,
-        context: context,
-        initialValue: viewModel.newReport.checkingCompany,
-        onChanged: (val) => viewModel.newReport.checkingCompany = val,
-      ),
+          label: S.of(context).subcontractor,
+          context: context,
+          initialValue: viewModel.newReport.subcontractor,
+          onChanged: (value) {},
+          isReadOnly: true),
       _buildFormField(
         label: S.of(context).supplier,
         context: context,
@@ -140,16 +141,13 @@ class Step1Form extends StatelessWidget {
         context: context,
         initialValue: viewModel.newReport.containerNumber,
         onChanged: (val) => viewModel.newReport.containerNumber = val,
-        isNumbersOnly: true,
       ),
-      const SizedBox(height: 12),
-      _buildFormField(
-        label: S.of(context).weatherConditions,
-        context: context,
-        initialValue: viewModel.newReport.weatherConditions,
-        onChanged: (val) => viewModel.newReport.weatherConditions = val,
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
+        child: WeatherDropdown(
+          viewModel: viewModel,
+        ),
       ),
-      const SizedBox(height: 12),
     ];
   }
 
@@ -158,8 +156,8 @@ class Step1Form extends StatelessWidget {
     required BuildContext context,
     required String? initialValue,
     required ValueChanged<String> onChanged,
-    bool isNumbersOnly = false,
     int maxLines = 1,
+    bool isReadOnly = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,11 +173,11 @@ class Step1Form extends StatelessWidget {
           ),
         ),
         TextFormField(
+          readOnly: isReadOnly,
           initialValue: initialValue,
-          keyboardType: isNumbersOnly ? TextInputType.number : null,
           decoration: InputDecoration(
             hintText: 'Enter ${label.toLowerCase()}...',
-            hintStyle:  const TextStyle(
+            hintStyle: const TextStyle(
               color: Colors.grey,
             ),
             filled: true,
@@ -190,7 +188,7 @@ class Step1Form extends StatelessWidget {
             ),
             errorStyle: const TextStyle(
               color: Colors.red,
-              fontSize: 12,
+              fontSize: 14,
             ),
           ),
           maxLines: maxLines,
@@ -198,7 +196,7 @@ class Step1Form extends StatelessWidget {
             EasyDebounce.debounce(
               '$label-debounce',
               const Duration(seconds: 1),
-                  () => onChanged(val),
+              () => onChanged(val),
             );
           },
           validator: (value) => (value == null || value.trim().isEmpty)

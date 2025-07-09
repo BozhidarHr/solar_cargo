@@ -206,7 +206,7 @@ class Step4Form extends StatelessWidget {
             ),
             errorStyle: const TextStyle(
               color: Colors.red,
-              fontSize: 12,
+              fontSize: 14,
             ),
           ),
           maxLines: maxLines,

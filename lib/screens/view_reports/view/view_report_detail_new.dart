@@ -362,12 +362,12 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         _buildTextField(
             context: context,
-            label: S.of(context).plantLocation,
-            value: widget.report.location),
+            label: S.of(context).pvProject,
+            value: widget.report.pvProject),
         _buildTextField(
             context: context,
-            label: S.of(context).checkingCompany,
-            value: widget.report.checkingCompany),
+            label: S.of(context).subcontractor,
+            value: widget.report.subcontractor),
         _buildTextField(
             context: context,
             label: S.of(context).supplier,

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../common/flash_helper.dart';
 import '../../create_report/view/report_steps/create_report_step1.dart';
-import '../../create_report/view/report_steps/create_report_step2.dart';
 import '../../create_report/view/report_steps/create_report_step3.dart';
 import '../../create_report/view/report_steps/create_report_step4.dart';
 import '../../create_report/viewmodel/create_report_view_model.dart';
@@ -58,7 +57,7 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
                     viewModel: viewModel,
                   ),
                   divider,
-                  Step2Form(
+                  Step3Form(
                     formKey: formKeys[1],
                     viewModel: viewModel,
                     restrictBack: true,
