@@ -1,7 +1,9 @@
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:solar_cargo/screens/common/flash_helper.dart';
 import 'package:solar_cargo/screens/common/multiple_images_selection_field.dart';
+import 'package:solar_cargo/screens/common/string_extension.dart';
 
 import '../../../common/constants.dart';
 import '../../../common/will_pop_scope.dart';
@@ -35,11 +37,11 @@ class CreateReportDamages extends StatelessWidget {
             },
       child: Consumer<CreateReportViewModel>(
         builder: (context, viewModel, child) {
+          final report = viewModel.newReport;
           return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             child: Column(
               children: [
-
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: Align(
@@ -54,62 +56,80 @@ class CreateReportDamages extends StatelessWidget {
                     ),
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding:
-                      const EdgeInsets.only(bottom: 5.0, left: 5, top: 15),
-                      child: Text(
-                        'Damages description',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium!
-                            .copyWith(color: Colors.white),
-                      ),
-                    ),
-                    TextFormField(
-                      initialValue: viewModel.newReport.damagesDescription,
-                      decoration: InputDecoration(
-                        hintText: 'Enter damages description...',
-                        hintStyle:
-                        TextStyle(color: Colors.black.withOpacity(0.5)),
-                        filled: true,
-                        fillColor: kFormFieldBackgroundColor,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        errorStyle: const TextStyle(
-                          color: Colors.red,
-                          fontSize: 14,
-                        ),
-                      ),
-                      maxLines: 4,
-                      onChanged: (val) {
-                        EasyDebounce.debounce(
-                          'damages-description-debounce',
-                          const Duration(seconds: 1),
-                              () => viewModel.newReport.damagesDescription = val,
-                        );
-                      },
-                      validator: (value) =>
-                      (value == null || value.trim().isEmpty)
-                          ? 'Please enter damages description.'
-                          : null,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                MultiImageSelectionField(
-                  label:
-                      "Damages images (multiple) ($maxAdditionalImages max.)",
-                  initialImages: viewModel.newReport.damagesImages,
-                  onImagesSelected: (images) {
-                    viewModel.newReport.damagesImages = images;
+
+                // ✅ Add checkbox to toggle damage reporting
+                CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text(
+                    "I want to report damages",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  value: report.includesDamages ?? false,
+                  onChanged: (val) {
+                    viewModel.setIncludeDamages(val ?? false);
                   },
+                  controlAffinity: ListTileControlAffinity.leading,
+                  activeColor: Theme.of(context).primaryColor,
                 ),
-                const SizedBox(height: 24),
+
+                // ✅ Show form only if damages are to be included
+                if (report.includesDamages ?? false) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: 5.0,
+                      left: 5,
+                    ),
+                    child: Text(
+                      'Damages description',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(color: Colors.white),
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  TextFormField(
+                    initialValue: report.damagesDescription,
+                    decoration: InputDecoration(
+                      hintText: 'Enter damages description...',
+                      hintStyle:
+                          TextStyle(color: Colors.black.withOpacity(0.5)),
+                      filled: true,
+                      fillColor: kFormFieldBackgroundColor,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                      errorStyle: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 14,
+                      ),
+                    ),
+                    maxLines: 4,
+                    onChanged: (val) {
+                      EasyDebounce.debounce(
+                        'damages-description-debounce',
+                        const Duration(milliseconds: 500),
+                        () => report.damagesDescription = val,
+                      );
+                    },
+                    validator: (value) =>
+                        (value == null || value.trim().isEmpty)
+                            ? 'Please enter damages description.'
+                            : null,
+                  ),
+                  const SizedBox(height: 16),
+                  MultiImageSelectionField(
+                    label:
+                        "Damages images (multiple) ($maxAdditionalImages max.)",
+                    initialImages: report.damagesImages,
+                    onImagesSelected: (images) {
+                      report.damagesImages = images;
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                ],
+
                 Row(
                   children: [
                     if (onBack != null)
@@ -143,7 +163,21 @@ class CreateReportDamages extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                          onPressed: onNext,
+                          onPressed: () {
+                            // if want to report damages but all is empty
+                            if (report.includesDamages == true &&
+                                report.damagesDescription.isEmptyOrNull &&
+                                (report.damagesImages?.isEmpty ?? true)) {
+                              FlashHelper.errorMessage(context,
+                                  message:
+                                      "Fill in the fields or uncheck the box to continue.");
+                              return;
+                            }
+
+                            if (onNext != null) {
+                              onNext!();
+                            }
+                          },
                           child: const Text('Next Step'),
                         ),
                       ),

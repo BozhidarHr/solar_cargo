@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:solar_cargo/screens/common/flash_helper.dart';
+import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_damages.dart';
 
 import '../../../common/will_pop_scope.dart';
 import '../../viewmodel/create_report_view_model.dart';
 import 'create_report_step1.dart';
+import 'create_report_step2.dart';
 import 'create_report_step3.dart';
 import 'create_report_step4.dart';
 
@@ -46,7 +48,12 @@ class CreateReportPreview extends StatelessWidget {
                     viewModel: viewModel,
                   ),
                   divider,
-                  Step3Form(
+                  CreateReportDamages(
+                    viewModel: viewModel,
+                    restrictBack: true,
+                  ),
+                  divider,
+                  Step2Form(
                     formKey: formKeys[1],
                     viewModel: viewModel,
                     restrictBack: true,

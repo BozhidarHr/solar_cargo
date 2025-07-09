@@ -85,6 +85,15 @@ class CreateReportViewModel with ChangeNotifier {
     }
   }
 
+  void setIncludeDamages(bool value) {
+    if (value == false) {
+      newReport.damagesDescription = null;
+      newReport.damagesImages = null;
+    }
+    newReport.includesDamages = value;
+    notifyListeners();
+  }
+
   CheckBoxItem matchCheckboxItem(String name) {
     return newReport.checkboxItems.firstWhere(
       (item) => item.name == name,

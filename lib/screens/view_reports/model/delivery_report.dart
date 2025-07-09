@@ -13,6 +13,7 @@ class DeliveryReport {
   String? containerNumber;
   String? licencePlateTruck;
   String? licencePlateTrailer;
+  bool? includesDamages;
   String? damagesDescription;
   List<DeliveryItem> deliveryItems;
   String? comments;
@@ -41,6 +42,7 @@ class DeliveryReport {
     this.licencePlateTrailer,
     this.weatherConditions,
     this.weatherComment,
+    this.includesDamages,
     this.damagesDescription,
     List<DeliveryItem>? deliveryItems,
     this.comments,

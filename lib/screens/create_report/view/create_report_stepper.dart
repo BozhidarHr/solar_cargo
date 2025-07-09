@@ -102,7 +102,7 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 FlashHelper.message(context,
                     message: 'Report submitted successfully',
-                    duration: const Duration(seconds: 1));
+                    duration: const Duration(milliseconds: 500));
                 if (mounted) {
                   Navigator.of(context).pop();
                 }
@@ -113,7 +113,7 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 FlashHelper.errorMessage(context,
                     message: 'An error occurred submitting the report.',
-                    duration: const Duration(seconds: 1));
+                    duration: const Duration(milliseconds: 500));
               });
               break;
           }
