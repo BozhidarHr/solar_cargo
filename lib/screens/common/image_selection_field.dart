@@ -9,9 +9,7 @@ import '../../generated/l10n.dart';
 class ImageSelectionField extends StatefulWidget {
   final String label;
   final void Function(File?) onImageSelected;
-
-  /// Can be a File (local) or a String (URL or file path)
-  final dynamic initialImage;
+  final dynamic initialImage; // Can be File or String
 
   const ImageSelectionField({
     super.key,
@@ -27,6 +25,7 @@ class ImageSelectionField extends StatefulWidget {
 class _ImageSelectionFieldState extends State<ImageSelectionField> {
   File? _selectedImage;
   String? _initialImagePathOrUrl;
+  bool _showPreview = false;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -42,11 +41,13 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source, imageQuality: 70);
+    final pickedFile =
+        await _picker.pickImage(source: source, imageQuality: 70);
     if (pickedFile != null) {
       setState(() {
         _selectedImage = File(pickedFile.path);
-        _initialImagePathOrUrl = null; // Clear the old image
+        _initialImagePathOrUrl = null;
+        _showPreview = true;
       });
       widget.onImageSelected(_selectedImage);
     }
@@ -80,46 +81,111 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
     );
   }
 
-  Widget _buildImagePreview() {
-    Widget imageWidget;
-
+  Widget _buildImageWidget() {
     if (_selectedImage != null) {
-      imageWidget = Image.file(_selectedImage!, width: 220, height: 150, fit: BoxFit.cover);
+      return Image.file(_selectedImage!,
+          width: 220, height: 150, fit: BoxFit.cover);
     } else if (_initialImagePathOrUrl != null) {
-      // Determine if it's a local file path or a URL
       if (_initialImagePathOrUrl!.startsWith('http')) {
-        imageWidget = Image.network(_initialImagePathOrUrl!, width: 220, height: 150, fit: BoxFit.cover);
+        return Image.network(_initialImagePathOrUrl!,
+            width: 220, height: 150, fit: BoxFit.cover);
       } else {
-        imageWidget = Image.file(File(_initialImagePathOrUrl!), width: 220, height: 150, fit: BoxFit.cover);
+        return Image.file(File(_initialImagePathOrUrl!),
+            width: 220, height: 150, fit: BoxFit.cover);
       }
-    } else {
-      return const SizedBox.shrink();
     }
+    return const SizedBox.shrink();
+  }
 
-    return Center(
-      child: Stack(
-        alignment: Alignment.topRight,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: imageWidget,
+  Widget _buildImagePreview() {
+    final hasImage = _selectedImage != null || _initialImagePathOrUrl != null;
+    if (!hasImage) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: Theme.of(context).secondaryHeaderColor,
+            borderRadius: BorderRadius.circular(8),
           ),
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedImage = null;
-                _initialImagePathOrUrl = null;
-                widget.onImageSelected(null);
-              });
-            },
-            child: const CircleAvatar(
-              radius: 12,
-              backgroundColor: Colors.black54,
-              child: Icon(Icons.close, size: 16, color: Colors.white),
+          child: Row(
+            children: [
+              const Icon(Icons.image, color: Colors.white),
+              const SizedBox(width: 8),
+              const Text(
+                "Image selected",
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+              ),
+              const Spacer(),
+              Row(
+                children: [
+                  const Text(
+                    "View",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  const SizedBox(width: 4),
+                  Switch(
+                    activeColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                    value: _showPreview,
+                    onChanged: (val) {
+                      setState(() {
+                        _showPreview = val;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 10),
+        if (_showPreview)
+          Padding(
+            padding: const EdgeInsets.only(top: 10,bottom: 10),
+            child: Center(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: _buildImageWidget(),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedImage = null;
+                            _initialImagePathOrUrl = null;
+                            widget.onImageSelected(null);
+                          });
+                        },
+                        child: const CircleAvatar(
+                          radius: 12,
+                          backgroundColor: Colors.black54,
+                          child: Icon(Icons.close, size: 16, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
-        ],
-      ),
+      ],
     );
   }
 
@@ -133,16 +199,15 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
         Padding(
           padding: const EdgeInsets.only(bottom: 5.0, left: 5),
           child: Text(
-            '${widget.label} Image'
-,            style: Theme.of(context)
+            '${widget.label} Image',
+            style: Theme.of(context)
                 .textTheme
                 .titleMedium!
                 .copyWith(color: Colors.white),
           ),
         ),
-        Visibility(
-          visible: !hasImage,
-          child: GestureDetector(
+        if (!hasImage)
+          GestureDetector(
             onTap: _showImageSourceActionSheet,
             child: Container(
               height: 50,
@@ -156,9 +221,7 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Text(
-                        hasImage
-                            ? "1 Image Selected"
-                            : S.of(context).noImageSelected,
+                        S.of(context).noImageSelected,
                         style: const TextStyle(
                           fontSize: 14,
                           color: Colors.black87,
@@ -189,7 +252,6 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
               ),
             ),
           ),
-        ),
         const SizedBox(height: 10),
         _buildImagePreview(),
       ],
