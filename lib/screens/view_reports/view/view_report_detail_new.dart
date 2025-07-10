@@ -351,7 +351,7 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
       _buildImagePreview(
         context,
         S.of(context).deliverySlipImage,
-        widget.report.deliverySlipImage,
+        widget.report.deliverySlipImages,
       ),
     ];
   }

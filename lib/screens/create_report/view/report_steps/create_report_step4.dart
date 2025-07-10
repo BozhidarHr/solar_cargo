@@ -29,7 +29,7 @@ class Step4Form extends StatelessWidget {
   bool _validate(BuildContext context) {
     final valid = formKey.currentState?.validate() ?? false;
     final cmr = viewModel.newReport.cmrImage;
-    final slip = viewModel.newReport.deliverySlipImage;
+    final slip = viewModel.newReport.deliverySlipImages;
     if (cmr == null || slip == null) {
       FlashHelper.errorMessage(context,
           message: 'Please add CMR/Delivery Slip images.');
@@ -109,11 +109,11 @@ class Step4Form extends StatelessWidget {
               },
             ),
             const SizedBox(height: 12),
-            ImageSelectionField(
-              label: 'Delivery Slip',
-              initialImage: viewModel.newReport.deliverySlipImage,
-              onImageSelected: (file) {
-                viewModel.newReport.deliverySlipImage = file;
+            MultiImageSelectionField(
+              label: 'Delivery Slip (multiple) ($maxAdditionalImages max.)',
+              initialImages: viewModel.newReport.deliverySlipImages,
+              onImagesSelected: (images) {
+                viewModel.newReport.deliverySlipImages = images;
               },
             ),
             const SizedBox(height: 12),

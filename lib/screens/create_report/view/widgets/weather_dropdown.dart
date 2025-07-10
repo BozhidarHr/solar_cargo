@@ -24,6 +24,7 @@ class _WeatherDropdownState extends State<WeatherDropdown> {
     'Wind',
     'Other',
   ];
+
   String? _selectedWeather;
   String? _customWeather;
 
@@ -32,13 +33,13 @@ class _WeatherDropdownState extends State<WeatherDropdown> {
     super.initState();
 
     final currentCondition = widget.viewModel.newReport.weatherConditions;
-    final currentComment = widget.viewModel.newReport.weatherComment;
 
     if (_weatherOptions.contains(currentCondition)) {
       _selectedWeather = currentCondition;
-      if (currentCondition == 'Other') {
-        _customWeather = currentComment;
-      }
+    } else if (currentCondition != null && currentCondition.isNotEmpty) {
+      // Handle custom weather
+      _selectedWeather = 'Other';
+      _customWeather = currentCondition;
     }
   }
 
@@ -73,7 +74,7 @@ class _WeatherDropdownState extends State<WeatherDropdown> {
               borderSide: BorderSide.none,
             ),
             contentPadding:
-                const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
           ),
           dropdownStyleData: const DropdownStyleData(
             decoration: BoxDecoration(
@@ -106,11 +107,11 @@ class _WeatherDropdownState extends State<WeatherDropdown> {
             setState(() {
               _selectedWeather = value;
               if (value == 'Other') {
-                widget.viewModel.newReport.weatherConditions = 'Other';
+                _customWeather = '';
+                widget.viewModel.newReport.weatherConditions = '';
               } else {
                 _customWeather = null;
                 widget.viewModel.newReport.weatherConditions = value!;
-                widget.viewModel.newReport.weatherComment = '';
               }
             });
           },
@@ -145,10 +146,10 @@ class _WeatherDropdownState extends State<WeatherDropdown> {
                 EasyDebounce.debounce(
                   '$weatherLabel-debounce',
                   const Duration(seconds: 1),
-                  () => setState(() {
-                    _customWeather = val;
-                    widget.viewModel.newReport.weatherComment = val;
-                    widget.viewModel.newReport.weatherConditions = 'Other';
+                      () => setState(() {
+                    _customWeather = val.trim();
+                    widget.viewModel.newReport.weatherConditions =
+                    _customWeather!;
                   }),
                 );
               },

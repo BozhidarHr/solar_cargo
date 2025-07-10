@@ -19,7 +19,6 @@ class DeliveryReport {
   String? comments;
   List<CheckBoxItem> checkboxItems;
   String? weatherConditions;
-  String? weatherComment;
   int? user;
 
   // File? or String?
@@ -27,7 +26,7 @@ class DeliveryReport {
   dynamic trailerLicencePlateImage;
   dynamic proofOfDelivery;
   dynamic cmrImage;
-  dynamic deliverySlipImage;
+  dynamic deliverySlipImages;
   dynamic additionalImages;
   dynamic damagesImages;
 
@@ -41,7 +40,6 @@ class DeliveryReport {
     this.licencePlateTruck,
     this.licencePlateTrailer,
     this.weatherConditions,
-    this.weatherComment,
     this.includesDamages,
     this.damagesDescription,
     List<DeliveryItem>? deliveryItems,
@@ -52,7 +50,7 @@ class DeliveryReport {
     this.trailerLicencePlateImage,
     this.proofOfDelivery,
     this.cmrImage,
-    this.deliverySlipImage,
+    this.deliverySlipImages,
     this.additionalImages,
     this.damagesImages,
   })  : subcontractor = 'S&G Solar',
@@ -73,7 +71,6 @@ class DeliveryReport {
       trailerLicencePlateImage: json['trailer_license_plate_image'],
       damagesDescription: json['damages_description'],
       weatherConditions: json['weather_conditions'],
-      weatherComment: json['weather_comments'],
       proofOfDelivery: json['proof_of_delivery_image'],
       deliveryItems: (json['items'] != null)
           ? (json['items'] as List)
@@ -83,7 +80,8 @@ class DeliveryReport {
       comments: json['comments'],
       checkboxItems: CheckBoxItem.listFromFlatJson(json),
       cmrImage: json['cmr_image'],
-      deliverySlipImage: json['delivery_slip_image'],
+      deliverySlipImages: (json['delivery_slip_images_urls'])?.map((e) => e['image']).toList() ??
+          [],
       additionalImages:
           (json['additional_images_urls'])?.map((e) => e['image']).toList() ??
               [],

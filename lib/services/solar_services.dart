@@ -278,10 +278,10 @@ class SolarServices {
         }
 
         // Delivery slip image
-        if (newReport.deliverySlipImage is File) {
+        if (newReport.deliverySlipImages is File) {
           request.files.add(await http.MultipartFile.fromPath(
             'delivery_slip_image',
-            (newReport.deliverySlipImage as File).path,
+            (newReport.deliverySlipImages as File).path,
           ));
         }
 

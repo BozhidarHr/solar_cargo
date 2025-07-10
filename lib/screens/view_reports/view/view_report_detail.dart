@@ -147,7 +147,7 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
             viewModel.newReport.trailerLicencePlateImage != null;
     final step2ImagesValid = viewModel.newReport.proofOfDelivery != null;
     final step4ImagesValid = viewModel.newReport.cmrImage != null &&
-        viewModel.newReport.deliverySlipImage != null;
+        viewModel.newReport.deliverySlipImages != null;
 
     if (!allFormsValid) {
       FlashHelper.errorMessage(context,

@@ -42,17 +42,16 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
 
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile =
-        await _picker.pickImage(source: source, imageQuality: 70);
+    await _picker.pickImage(source: source, imageQuality: 70);
     if (pickedFile != null) {
       setState(() {
         _selectedImage = File(pickedFile.path);
         _initialImagePathOrUrl = null;
-        _showPreview = true;
+        _showPreview = false; // ✅ Don't show preview until user toggles it
       });
       widget.onImageSelected(_selectedImage);
     }
   }
-
   void _showImageSourceActionSheet() {
     showModalBottomSheet(
       context: context,
