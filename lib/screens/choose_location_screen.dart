@@ -1,7 +1,9 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/user.dart';
+import '../providers/auth_provider.dart';
 import 'common/flash_helper.dart';
 import 'common/user_location.dart';
 import 'home_screen.dart';
@@ -30,6 +32,7 @@ class ChooseLocationScreenState extends State<ChooseLocationScreen> {
   @override
   Widget build(BuildContext context) {
     final List<UserLocation> locations = widget.user.locations;
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -41,15 +44,38 @@ class ChooseLocationScreenState extends State<ChooseLocationScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (locations.isEmpty)
-              const Center(
-                child: Text(
-                  'No locations available.\nPlease contact your administrator.',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.redAccent,
-
-                  ),
-                  textAlign: TextAlign.center,
+              Center(
+                child: Column(
+                  children: [
+                    const Text(
+                      'No locations available.\nPlease contact your administrator.',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.redAccent,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          authProvider.logout();
+                        },
+                        icon: const Icon(Icons.logout),
+                        label: const Text('Logout'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          textStyle: const TextStyle(fontSize: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               )
             else ...[

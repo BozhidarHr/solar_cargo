@@ -9,5 +9,12 @@ class UserLocation {
 
   UserLocation.fromJson(Map<String, dynamic> map)
       : id = map['id'],
-        name = map['currentLocation'] ?? '';
-}
+        name = map['name'];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+    };
+
+}}

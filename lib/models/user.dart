@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:solar_cargo/models/token_storage.dart';
 
 import '../screens/common/user_location.dart';
@@ -25,19 +27,21 @@ class User {
       userID: map['userID'] ?? 0,
       userName: map['userName'] ?? '',
       userRole: map['userRole'],
-      locations: List<UserLocation>.from(map['locations'] ?? []
-          ),
+      locations: List<UserLocation>.from(
+        (map['locations']).map((item) => UserLocation.fromJson(item)),
+      ),
     );
   }
 
-  setUserLocation(UserLocation location)async {
+  setUserLocation(UserLocation location) async {
     if (location == _currentLocation) {
       return; // No change needed
     }
-
-
-    await Services().api.tokenStorage.write(StorageItem.location, location);
     _currentLocation = location;
+    await Services()
+        .api
+        .tokenStorage
+        .write(StorageItem.location, jsonEncode(location.toJson()));
   }
 
   @override

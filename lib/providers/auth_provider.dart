@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../models/token_storage.dart';
 import '../models/user.dart';
 import '../screens/common/logger.dart';
+import '../screens/common/user_location.dart';
 import '../services/services.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -37,11 +40,12 @@ class AuthProvider with ChangeNotifier {
       if (isValid) {
         // Read saved location from storage
         final savedLocation =
-        await _service.api.tokenStorage.read(StorageItem.location);
+            await _service.api.tokenStorage.read(StorageItem.location);
 
         // Set location if it exists
         if (savedLocation != null) {
-          _currentUser!.setUserLocation(savedLocation);
+          _currentUser!.setUserLocation(
+              (UserLocation.fromJson(jsonDecode(savedLocation))));
         }
         _setLoggedIn(true);
       } else {

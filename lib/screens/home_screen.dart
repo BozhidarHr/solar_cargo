@@ -140,7 +140,6 @@ class HomeScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 16),
-                if (user.isAdmin) ...[
                   _buildButton(
                     context: context,
                     label: 'View Reports',
@@ -150,7 +149,6 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                   const SizedBox(height: 16),
-                ],
                 if (user.locations.length > 1) ...[
                   _buildButton(
                     context: context,
