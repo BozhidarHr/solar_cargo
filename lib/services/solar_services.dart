@@ -123,6 +123,51 @@ class SolarServices {
     }
   }
 
+  Future<PagingResponse<DeliveryReport>> fetchDeliveryReportsByLocation(
+      {required int locationId, int page = 1}) async {
+    try {
+      const apiPageSize = 10;
+      // Build URL with page param
+      var url = SolarHelper.buildUrl(
+        domain,
+        '/reports-by-location/$locationId/'
+            // '?page=$page&page_size=$apiPageSize',
+      );
+      // Make GET request
+      var response = await sendWithAuth((token) {
+        return http.get(
+          url!,
+          headers: {
+            HttpHeaders.authorizationHeader: 'Bearer $_customerToken',
+          },
+        );
+      });
+
+      // Decode response
+      var responseBody = convert.jsonDecode(response.body);
+
+      // Error handling
+      if (response.statusCode != 200) {
+        if (responseBody is Map && responseBody['message'] != null) {
+          throw Exception(SolarHelper.getErrorMessage(responseBody));
+        }
+        throw Exception(
+            'Unknown error occurred with status code ${response.statusCode}');
+      }
+
+      // Parse and return paging response
+      return PagingResponse<DeliveryReport>.fromJson(
+        responseBody,
+            (item) => DeliveryReport.fromJson(item),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+
+
+
   Future<PagingResponse<DeliveryReport>> fetchDeliveryReports(
       {int page = 1}) async {
     try {

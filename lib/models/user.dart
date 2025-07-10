@@ -8,12 +8,14 @@ import '../services/services.dart';
 class User {
   final int userID;
   final String userName;
+  final String? userFullName;
   final String? userRole;
   final List<UserLocation> locations;
 
   User({
     required this.userID,
     required this.userName,
+    required this.userFullName,
     required this.locations,
     this.userRole,
   });
@@ -26,10 +28,12 @@ class User {
     return User(
       userID: map['userID'] ?? 0,
       userName: map['userName'] ?? '',
+      userFullName: map['fullName'] ?? '',
       userRole: map['userRole'],
-      locations: List<UserLocation>.from(
-        (map['locations']).map((item) => UserLocation.fromJson(item)),
-      ),
+      locations: map['locations'] != null
+          ? List<UserLocation>.from(
+              (map['locations']).map((item) => UserLocation.fromJson(item)))
+          : [],
     );
   }
 

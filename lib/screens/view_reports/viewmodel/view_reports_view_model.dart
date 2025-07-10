@@ -68,6 +68,39 @@ class ViewReportsViewModel with ChangeNotifier {
     }
   }
 
+  Future<void> fetchDeliveryReportsByLocation({required int? locationId, bool refresh = false}) async {
+    if (_isLoading) return;
+
+    if (refresh) {
+      _currentPage = 1;
+      _nextPageUrl = null;
+      _allReports.clear();
+    }
+
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      if (locationId == null) {
+        throw Exception('Cannot fetch reports: locationId == null');
+      }
+      final PagingResponse<DeliveryReport> deliveryReports =
+      await _service.api.fetchDeliveryReportsByLocation(locationId: locationId,page: _currentPage);
+
+      _allReports.addAll(deliveryReports.results);
+      _nextPageUrl = deliveryReports.next;
+      _currentPage++;
+    } catch (e) {
+      _errorMessage = e.toString();
+      logger.w('fetchDeliveryReportsByLocation(catch): $_errorMessage');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
   Future<void> fetchNextPage() async {
     if (!hasMorePages || _isLoadingMore) return;
 

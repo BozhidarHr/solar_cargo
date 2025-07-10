@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:solar_cargo/providers/auth_provider.dart';
 import 'package:solar_cargo/screens/common/string_extension.dart';
 import 'package:solar_cargo/screens/view_reports/view/view_report_detail_new.dart';
 
@@ -20,6 +21,7 @@ class ViewReportsScreen extends StatefulWidget {
 class _ViewReportsScreenState extends State<ViewReportsScreen> {
   late final ScrollController _scrollController;
   late final ViewReportsViewModel viewModel;
+  late final AuthProvider authModel;
 
   @override
   void initState() {
@@ -28,8 +30,11 @@ class _ViewReportsScreenState extends State<ViewReportsScreen> {
     _scrollController = ScrollController()..addListener(_onScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      authModel = Provider.of<AuthProvider>(context, listen: false);
       viewModel = Provider.of<ViewReportsViewModel>(context, listen: false)
-        ..fetchDeliveryReports(refresh: true);
+        ..fetchDeliveryReportsByLocation(
+            locationId: authModel.currentUser?.currentLocation?.id,
+            refresh: true);
     });
   }
 

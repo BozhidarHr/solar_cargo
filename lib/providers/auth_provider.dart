@@ -99,7 +99,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> logout() async {
     await _service.api.tokenStorage.clearAll();
-
+    _currentUser = null;
     _setLoggedIn(false);
   }
 

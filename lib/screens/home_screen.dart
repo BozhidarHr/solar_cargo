@@ -25,7 +25,6 @@ class HomeScreen extends StatelessWidget {
       });
       return const SizedBox.shrink();
     }
-
     return Scaffold(
       appBar: AppBar(
         title: SizedBox(
@@ -57,7 +56,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       if (user.userName.isNotEmpty)
                         Text(
-                          user.userName,
+                          user.userFullName ?? user.userName,
                           style: Theme.of(context)
                               .textTheme
                               .headlineMedium!

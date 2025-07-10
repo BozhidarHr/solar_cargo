@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_damages.dart';
 import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_preview.dart';
 
+import '../../../providers/auth_provider.dart';
 import '../../../services/api_response.dart';
 import '../../common/flash_helper.dart';
 import '../../common/loading_widget.dart';
@@ -25,12 +26,18 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
 
   int _currentStep = 0;
   late final CreateReportViewModel _viewModel;
+  late final AuthProvider authModel;
 
   @override
   void initState() {
     super.initState();
+    authModel = Provider.of<AuthProvider>(context, listen: false);
     _viewModel = Provider.of<CreateReportViewModel>(context, listen: false);
+    // Reset report data
     _viewModel.resetReportData();
+    // Assign default field pv project
+    _viewModel.newReport.pvProject =
+        authModel.currentUser!.currentLocation!.name;
   }
 
   void _nextStep() {
