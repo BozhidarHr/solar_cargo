@@ -130,8 +130,8 @@ class SolarServices {
       // Build URL with page param
       var url = SolarHelper.buildUrl(
         domain,
-        '/reports-by-location/$locationId/'
-            // '?page=$page&page_size=$apiPageSize',
+        'reports-by-location/$locationId/?page=$page&page_size=$apiPageSize',
+        includeApiPath: false
       );
       // Make GET request
       var response = await sendWithAuth((token) {
@@ -164,8 +164,6 @@ class SolarServices {
       rethrow;
     }
   }
-
-
 
 
   Future<PagingResponse<DeliveryReport>> fetchDeliveryReports(
@@ -202,7 +200,7 @@ class SolarServices {
       // Parse and return paging response
       return PagingResponse<DeliveryReport>.fromJson(
         responseBody,
-        (item) => DeliveryReport.fromJson(item),
+            (item) => DeliveryReport.fromJson(item),
       );
     } catch (e) {
       rethrow;
@@ -251,7 +249,7 @@ class SolarServices {
 
         // Delivery items
         final itemsJson =
-            newReport.deliveryItems.map((e) => e.toJson()).toList();
+        newReport.deliveryItems.map((e) => e.toJson()).toList();
         request.fields['items_input'] = convert.jsonEncode(itemsJson);
 
         // Proof of delivery image
@@ -264,7 +262,7 @@ class SolarServices {
 
         // Checkbox fields
         final checkboxFields =
-            CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
+        CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
         checkboxFields.forEach((key, value) {
           request.fields[key] = value?.toString() ?? '';
         });
@@ -364,8 +362,8 @@ class SolarServices {
     try {
       // Build URL
       final url =
-          '$domain/download-report/$reportId/${isPdf ? 'pdf' : 'excel'}/'
-              .toUri();
+      '$domain/download-report/$reportId/${isPdf ? 'pdf' : 'excel'}/'
+          .toUri();
 
       final response = await sendWithAuth((token) {
         return http.get(

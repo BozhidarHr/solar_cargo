@@ -25,6 +25,7 @@ class HomeScreen extends StatelessWidget {
       });
       return const SizedBox.shrink();
     }
+
     return Scaffold(
       appBar: AppBar(
         title: SizedBox(

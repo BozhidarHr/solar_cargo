@@ -1,14 +1,10 @@
 import 'package:solar_cargo/screens/common/string_extension.dart';
 
-
 class SolarHelper {
-  static Uri? buildUrl(
-    String? domain,
-    String endpoint,
-  ) {
-    return '$domain/api$endpoint'.toUri();
+  static Uri? buildUrl(String? domain, String endpoint,
+      {bool includeApiPath = true}) {
+    return '$domain/${includeApiPath ? 'api' : ''}$endpoint'.toUri();
   }
-
 
   static String? getErrorMessage(body) {
     String? message = body['message'];

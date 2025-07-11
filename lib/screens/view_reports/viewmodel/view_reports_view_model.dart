@@ -89,6 +89,9 @@ class ViewReportsViewModel with ChangeNotifier {
       await _service.api.fetchDeliveryReportsByLocation(locationId: locationId,page: _currentPage);
 
       _allReports.addAll(deliveryReports.results);
+      if (allReports.isEmpty) {
+        _errorMessage = 'No delivery reports found for this location.';
+      }
       _nextPageUrl = deliveryReports.next;
       _currentPage++;
     } catch (e) {

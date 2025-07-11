@@ -1,10 +1,15 @@
+import 'dart:async';
+
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import '../../../../generated/l10n.dart';
+import '../../../../services/services.dart';
 import '../../../common/constants.dart';
 import '../../../common/flash_helper.dart';
 import '../../../common/image_selection_field.dart';
+import '../../../common/typeahead_popup_item.dart';
 import '../../viewmodel/create_report_view_model.dart';
 import '../widgets/weather_dropdown.dart';
 
@@ -105,12 +110,11 @@ class Step1Form extends StatelessWidget {
   List<Widget> _buildFields(BuildContext context) {
     return [
       _buildFormField(
-        label: S.of(context).pvProject,
-        context: context,
-        initialValue: viewModel.newReport.pvProject,
-        onChanged: (val) => viewModel.newReport.pvProject = val,
-          isReadOnly: true
-      ),
+          label: S.of(context).pvProject,
+          context: context,
+          initialValue: viewModel.newReport.pvProject,
+          onChanged: (val) => viewModel.newReport.pvProject = val,
+          isReadOnly: true),
       // Should be hardcoded to S&G Solar
       _buildFormField(
           label: S.of(context).subcontractor,
@@ -118,12 +122,7 @@ class Step1Form extends StatelessWidget {
           initialValue: viewModel.newReport.subcontractor,
           onChanged: (value) {},
           isReadOnly: true),
-      _buildFormField(
-        label: S.of(context).supplier,
-        context: context,
-        initialValue: viewModel.newReport.supplier,
-        onChanged: (val) => viewModel.newReport.supplier = val,
-      ),
+      _buildSupplierDropdown(),
       _buildFormField(
         label: S.of(context).deliverySlipNumber,
         context: context,
@@ -149,6 +148,103 @@ class Step1Form extends StatelessWidget {
         ),
       ),
     ];
+  }
+
+  StatefulBuilder _buildSupplierDropdown() {
+    return StatefulBuilder(builder: (context, setState) {
+      Map<String, Completer<List<String>>> debouncedResults = {};
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 5.0, left: 5, top: 15),
+            child: Text(
+              S.of(context).supplier,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium!
+                  .copyWith(color: Colors.white),
+            ),
+          ),
+          TypeAheadFormField<String>(
+            textFieldConfiguration: TextFieldConfiguration(
+              controller:
+                  TextEditingController(text: viewModel.newReport.supplier),
+              decoration: InputDecoration(
+                  filled: true,
+                  fillColor: kFormFieldBackgroundColor,
+                  hintText: 'Enter ${S.of(context).supplier.toLowerCase()}...',
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  errorStyle: const TextStyle(
+                    color: Colors.red,
+                    fontSize: 14,
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide.none,
+                  )),
+              onChanged: (val) {
+                viewModel.newReport.supplier = val;
+              },
+            ),
+            suggestionsCallback: (pattern) async {
+              if (pattern.length < 2) return [];
+
+              const debounceKey = 'item-name-debounce-supplier';
+
+              // Cancel any previous completer for this key
+              if (debouncedResults[debounceKey]?.isCompleted == false) {
+                debouncedResults[debounceKey]?.complete([]);
+              }
+
+              final completer = Completer<List<String>>();
+              debouncedResults[debounceKey] = completer;
+
+              EasyDebounce.debounce(
+                debounceKey,
+                const Duration(milliseconds: 100),
+                () async {
+                  final results =
+                      await Services().api.searchItems(pattern) ?? [];
+                  if (!completer.isCompleted) {
+                    completer.complete(results);
+                  }
+                },
+              );
+
+              return completer.future;
+            },
+            itemBuilder: (context, String suggestion) {
+              return TypeAheadPopupItem(item: suggestion);
+            },
+            onSuggestionSelected: (String suggestion) {
+              final trimmed = suggestion.trim();
+              if (trimmed.isNotEmpty) {
+                setState(() => viewModel.newReport.supplier = trimmed);
+              }
+            },
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return 'Item name is required';
+              }
+              return null;
+            },
+            hideOnLoading: true,
+            hideOnEmpty: true,
+            hideOnError: true,
+            loadingBuilder: (context) => const Text('Loading...'),
+            errorBuilder: (context, error) => const Text('Error!'),
+            noItemsFoundBuilder: (context) => const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('No items found'),
+            ),
+          ),
+        ],
+      );
+    });
   }
 
   Column _buildFormField({

@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
 import 'package:solar_cargo/screens/common/image_selection_field.dart';
+import 'package:solar_cargo/screens/common/typeahead_popup_item.dart';
 import 'package:solar_cargo/screens/common/will_pop_scope.dart';
 
 import '../../../../services/services.dart';
@@ -57,12 +58,12 @@ class Step2Form extends StatelessWidget {
       onWillPop: restrictBack
           ? () async => false
           : () async {
-              if (onBack != null) {
-                onBack!();
-                return false;
-              }
-              return true;
-            },
+        if (onBack != null) {
+          onBack!();
+          return false;
+        }
+        return true;
+      },
       child: Consumer<CreateReportViewModel>(
         builder: (context, viewModel, child) {
           return Form(
@@ -77,189 +78,206 @@ class Step2Form extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         'Step 2: Delivery Items',
-                        style: Theme.of(context)
+                        style: Theme
+                            .of(context)
                             .textTheme
                             .headlineMedium!
                             .copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700),
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700),
                       ),
                     ),
                   ),
                   ...List.generate(viewModel.newReport.deliveryItems.length,
-                      (index) {
-                    final item = viewModel.newReport.deliveryItems[index];
-                    return StatefulBuilder(builder: (context, setState) {
-                      Map<String, Completer<List<String>>> debouncedResults =
+                          (index) {
+                        final item = viewModel.newReport.deliveryItems[index];
+                        return StatefulBuilder(builder: (context, setState) {
+                          Map<String,
+                              Completer<List<String>>> debouncedResults =
                           {};
-                      String? name = item.name;
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.grey.shade400),
-                        ),
-                        child: Stack(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                          String? name = item.name;
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey[100],
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.grey.shade400),
+                            ),
+                            child: Stack(
                               children: [
-                                Text('Item ${index + 1}',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 8),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: kDeliveryItemFieldColor,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: TypeAheadFormField<String>(
-                                    textFieldConfiguration:
-                                        TextFieldConfiguration(
-                                      controller:
-                                          TextEditingController(text: name),
-                                      decoration: InputDecoration(
-                                        hintText: 'Item name...',
-                                        hintStyle: TextStyle(
-                                            color:
-                                                Colors.black.withOpacity(0.5)),
-                                        contentPadding:
-                                            EdgeInsets.symmetric(horizontal: 8),
-                                        border: InputBorder.none,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Item ${index + 1}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: kDeliveryItemFieldColor,
+                                        borderRadius: BorderRadius.circular(4),
                                       ),
-                                      onChanged: (val) {
-                                        name = val;
-                                        viewModel.updateItem(index, name: val);
-                                      },
-                                    ),
-                                    suggestionsCallback: (pattern) async {
-                                      if (pattern.length < 2) return [];
+                                      child: TypeAheadFormField<String>(
+                                        textFieldConfiguration:
+                                        TextFieldConfiguration(
+                                          controller:
+                                          TextEditingController(text: name),
+                                          decoration: InputDecoration(
+                                            hintText: 'Item name...',
+                                            hintStyle: TextStyle(
+                                                color:
+                                                Colors.black.withOpacity(0.5)),
+                                            contentPadding:
+                                            EdgeInsets.symmetric(horizontal: 8),
+                                            border: InputBorder.none,
+                                          ),
+                                          onChanged: (val) {
+                                            name = val;
+                                            viewModel.updateItem(
+                                                index, name: val);
+                                          },
+                                        ),
+                                        suggestionsCallback: (pattern) async {
+                                          if (pattern.length < 2) return [];
 
-                                      final debounceKey =
-                                          'item-name-debounce-$index';
+                                          final debounceKey =
+                                              'item-name-debounce-$index';
 
-                                      // Cancel any previous completer for this key
-                                      if (debouncedResults[debounceKey]
+                                          // Cancel any previous completer for this key
+                                          if (debouncedResults[debounceKey]
                                               ?.isCompleted ==
-                                          false) {
-                                        debouncedResults[debounceKey]
-                                            ?.complete([]);
-                                      }
+                                              false) {
+                                            debouncedResults[debounceKey]
+                                                ?.complete([]);
+                                          }
 
-                                      final completer =
+                                          final completer =
                                           Completer<List<String>>();
-                                      debouncedResults[debounceKey] = completer;
+                                          debouncedResults[debounceKey] =
+                                              completer;
 
-                                      EasyDebounce.debounce(
-                                        debounceKey,
-                                        const Duration(milliseconds: 100),
-                                        () async {
-                                          final results = await Services()
+                                          EasyDebounce.debounce(
+                                            debounceKey,
+                                            const Duration(milliseconds: 100),
+                                                () async {
+                                              final results = await Services()
                                                   .api
                                                   .searchItems(pattern) ??
-                                              [];
-                                          if (!completer.isCompleted) {
-                                            completer.complete(results);
-                                          }
-                                        },
-                                      );
+                                                  [];
+                                              if (!completer.isCompleted) {
+                                                completer.complete(results);
+                                              }
+                                            },
+                                          );
 
-                                      return completer.future;
-                                    },
-                                    itemBuilder: (context, String suggestion) {
-                                      return _popupItem(context, suggestion);
-                                    },
-                                    onSuggestionSelected: (String suggestion) {
-                                      final trimmed = suggestion.trim();
-                                      if (trimmed.isNotEmpty) {
-                                        setState(() => name = trimmed);
-                                        viewModel.updateItem(index,
-                                            name: trimmed);
-                                      }
-                                    },
-                                    validator: (value) {
-                                      if (value == null ||
-                                          value.trim().isEmpty) {
-                                        return 'Item name is required';
-                                      }
-                                      return null;
-                                    },
-                                    hideOnLoading: true,
-                                    hideOnEmpty: true,
-                                    hideOnError: true,
-                                    loadingBuilder: (context) =>
-                                        const Text('Loading...'),
-                                    errorBuilder: (context, error) =>
-                                        const Text('Error!'),
-                                    noItemsFoundBuilder: (context) =>
-                                        const Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Text('No items found'),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: kDeliveryItemFieldColor,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: TextFormField(
-                                    initialValue: item.amount?.toString() ?? '',
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                    decoration: const InputDecoration(
-                                      hintText: 'Item amount...',
-                                      contentPadding:
-                                          EdgeInsets.symmetric(horizontal: 8),
-                                      border: InputBorder.none,
-                                    ),
-                                    onChanged: (val) {
-                                      EasyDebounce.debounce(
-                                        'amount-debounce-$index',
-                                        const Duration(seconds: 1),
-                                        () {
-                                          final parsed = int.tryParse(val);
-                                          if (parsed != null) {
+                                          return completer.future;
+                                        },
+                                        itemBuilder: (context,
+                                            String suggestion) {
+                                          return TypeAheadPopupItem(
+                                              item: suggestion,
+                                              color: Colors.white);
+                                        },
+                                        onSuggestionSelected: (
+                                            String suggestion) {
+                                          final trimmed = suggestion.trim();
+                                          if (trimmed.isNotEmpty) {
+                                            setState(() => name = trimmed);
                                             viewModel.updateItem(index,
-                                                amount: parsed);
+                                                name: trimmed);
                                           }
                                         },
-                                      );
-                                    },
-                                    validator: (value) =>
-                                        value == null || value.trim().isEmpty
+                                        validator: (value) {
+                                          if (value == null ||
+                                              value
+                                                  .trim()
+                                                  .isEmpty) {
+                                            return 'Item name is required';
+                                          }
+                                          return null;
+                                        },
+                                        hideOnLoading: true,
+                                        hideOnEmpty: true,
+                                        hideOnError: true,
+                                        loadingBuilder: (context) =>
+                                        const Text('Loading...'),
+                                        errorBuilder: (context, error) =>
+                                        const Text('Error!'),
+                                        noItemsFoundBuilder: (context) =>
+                                        const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Text('No items found'),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: kDeliveryItemFieldColor,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: TextFormField(
+                                        initialValue: item.amount?.toString() ??
+                                            '',
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.digitsOnly
+                                        ],
+                                        decoration: const InputDecoration(
+                                          hintText: 'Item amount...',
+                                          contentPadding:
+                                          EdgeInsets.symmetric(horizontal: 8),
+                                          border: InputBorder.none,
+                                        ),
+                                        onChanged: (val) {
+                                          EasyDebounce.debounce(
+                                            'amount-debounce-$index',
+                                            const Duration(seconds: 1),
+                                                () {
+                                              final parsed = int.tryParse(val);
+                                              if (parsed != null) {
+                                                viewModel.updateItem(index,
+                                                    amount: parsed);
+                                              }
+                                            },
+                                          );
+                                        },
+                                        validator: (value) =>
+                                        value == null || value
+                                            .trim()
+                                            .isEmpty
                                             ? 'Amount is required'
                                             : null,
-                                  ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
+                                if (index != 0)
+                                  Positioned(
+                                    right: 0,
+                                    top: -15,
+                                    child: IconButton(
+                                      iconSize: 25,
+                                      onPressed: () =>
+                                          viewModel.removeItem(index),
+                                      icon: SvgPicture.asset(kDeleteSvg),
+                                    ),
+                                  ),
                               ],
                             ),
-                            if (index != 0)
-                              Positioned(
-                                right: 0,
-                                top: -15,
-                                child: IconButton(
-                                  iconSize: 25,
-                                  onPressed: () => viewModel.removeItem(index),
-                                  icon: SvgPicture.asset(kDeleteSvg),
-                                ),
-                              ),
-                          ],
-                        ),
-                      );
-                    });
-                  }),
+                          );
+                        });
+                      }),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
-                        textStyle: Theme.of(context).textTheme.titleMedium,
+                        textStyle: Theme
+                            .of(context)
+                            .textTheme
+                            .titleMedium,
                         foregroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
@@ -288,8 +306,13 @@ class Step2Form extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.white,
                               textStyle:
-                                  Theme.of(context).textTheme.titleMedium,
-                              foregroundColor: Theme.of(context).primaryColor,
+                              Theme
+                                  .of(context)
+                                  .textTheme
+                                  .titleMedium,
+                              foregroundColor: Theme
+                                  .of(context)
+                                  .primaryColor,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -306,8 +329,13 @@ class Step2Form extends StatelessWidget {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               textStyle:
-                                  Theme.of(context).textTheme.titleMedium,
-                              backgroundColor: Theme.of(context).primaryColor,
+                              Theme
+                                  .of(context)
+                                  .textTheme
+                                  .titleMedium,
+                              backgroundColor: Theme
+                                  .of(context)
+                                  .primaryColor,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
@@ -333,7 +361,9 @@ class Step2Form extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).primaryColor),
+        border: Border.all(color: Theme
+            .of(context)
+            .primaryColor),
         borderRadius: BorderRadius.circular(5),
         color: Colors.white,
       ),
