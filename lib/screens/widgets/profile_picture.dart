@@ -62,6 +62,7 @@ class _ProfilePictureState extends State<ProfilePicture> {
       return Image.asset(kWorkerImage, fit: BoxFit.cover);
     }
   }
+
   Future<ImageSource?> _selectImageSource() async {
     return showModalBottomSheet<ImageSource>(
       context: context,
@@ -84,10 +85,13 @@ class _ProfilePictureState extends State<ProfilePicture> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _pickImage,
+      onTap:
+          // _pickImage
+          () {},
       child: CircleAvatar(
         radius: _size / 2,
         backgroundColor: Colors.grey.shade300,
@@ -101,5 +105,4 @@ class _ProfilePictureState extends State<ProfilePicture> {
       ),
     );
   }
-
 }
