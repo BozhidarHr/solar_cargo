@@ -128,11 +128,9 @@ class SolarServices {
     try {
       const apiPageSize = 10;
       // Build URL with page param
-      var url = SolarHelper.buildUrl(
-        domain,
-        'reports-by-location/$locationId/?page=$page&page_size=$apiPageSize',
-        includeApiPath: false
-      );
+      var url = SolarHelper.buildUrl(domain,
+          'reports-by-location/$locationId/?page=$page&page_size=$apiPageSize',
+          includeApiPath: false);
       // Make GET request
       var response = await sendWithAuth((token) {
         return http.get(
@@ -158,13 +156,12 @@ class SolarServices {
       // Parse and return paging response
       return PagingResponse<DeliveryReport>.fromJson(
         responseBody,
-            (item) => DeliveryReport.fromJson(item),
+        (item) => DeliveryReport.fromJson(item),
       );
     } catch (e) {
       rethrow;
     }
   }
-
 
   Future<PagingResponse<DeliveryReport>> fetchDeliveryReports(
       {int page = 1}) async {
@@ -200,7 +197,7 @@ class SolarServices {
       // Parse and return paging response
       return PagingResponse<DeliveryReport>.fromJson(
         responseBody,
-            (item) => DeliveryReport.fromJson(item),
+        (item) => DeliveryReport.fromJson(item),
       );
     } catch (e) {
       rethrow;
@@ -249,7 +246,7 @@ class SolarServices {
 
         // Delivery items
         final itemsJson =
-        newReport.deliveryItems.map((e) => e.toJson()).toList();
+            newReport.deliveryItems.map((e) => e.toJson()).toList();
         request.fields['items_input'] = convert.jsonEncode(itemsJson);
 
         // Proof of delivery image
@@ -262,7 +259,7 @@ class SolarServices {
 
         // Checkbox fields
         final checkboxFields =
-        CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
+            CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
         checkboxFields.forEach((key, value) {
           request.fields[key] = value?.toString() ?? '';
         });
@@ -316,6 +313,52 @@ class SolarServices {
     }
   }
 
+  Future<Map<String, String>> plateRecognition({
+    required File truckImage,
+    required File trailerImage,
+  }) async {
+    final url = SolarHelper.buildUrl(domain, '/plate-recognition/');
+
+    try {
+      final response = await sendWithAuth((token) async {
+        final request = http.MultipartRequest('POST', url!);
+        request.headers[HttpHeaders.authorizationHeader] =
+            'Bearer $_customerToken';
+
+        // Attach truck license plate image
+        request.files.add(await http.MultipartFile.fromPath(
+          'truck_plate_image',
+          truckImage.path,
+        ));
+
+        // Attach trailer license plate image
+        request.files.add(await http.MultipartFile.fromPath(
+          'trailer_plate_image',
+          trailerImage.path,
+        ));
+
+        final streamedResponse = await request.send();
+        return await http.Response.fromStream(streamedResponse);
+      });
+
+      final responseBody = convert.jsonDecode(response.body);
+
+      if (response.statusCode != 200) {
+        final error = responseBody is Map && responseBody['message'] != null
+            ? SolarHelper.getErrorMessage(responseBody)
+            : 'Plate recognition failed with status code ${response.statusCode}';
+        throw Exception(error);
+      }
+
+      return {
+        'truckPlateText': responseBody['truck_plate_text'] ?? '',
+        'trailerPlateText': responseBody['trailer_plate_text'] ?? '',
+      };
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<List<String>?> searchItems(String query) async {
     try {
       // Build URL with page param
@@ -362,8 +405,8 @@ class SolarServices {
     try {
       // Build URL
       final url =
-      '$domain/download-report/$reportId/${isPdf ? 'pdf' : 'excel'}/'
-          .toUri();
+          '$domain/download-report/$reportId/${isPdf ? 'pdf' : 'excel'}/'
+              .toUri();
 
       final response = await sendWithAuth((token) {
         return http.get(

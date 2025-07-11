@@ -45,8 +45,8 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
   @override
   void initState() {
     super.initState();
-      viewModel = Provider.of<ViewReportsViewModel>(context, listen: false)
-        ..resetDownloadResponse();
+    viewModel = Provider.of<ViewReportsViewModel>(context, listen: false)
+      ..resetDownloadResponse();
   }
 
   @override
@@ -73,7 +73,8 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
                 builder: (dialogContext) {
                   final theme = Theme.of(context);
                   Color lighterColor = Color.alphaBlend(
-                    Colors.white.withOpacity(0.8), // Adjust opacity for lightness
+                    Colors.white.withOpacity(0.8),
+                    // Adjust opacity for lightness
                     Colors.grey,
                   );
                   return AlertDialog(
@@ -83,7 +84,8 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
                     ),
                     title: Row(
                       children: [
-                        Icon(Icons.file_open, color: theme.secondaryHeaderColor),
+                        Icon(Icons.file_open,
+                            color: theme.secondaryHeaderColor),
                         const SizedBox(width: 8),
                         Text(
                           'Open File',
@@ -105,23 +107,31 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
                         ),
                       ),
                     ),
-                    actionsPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    actionsPadding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     actions: [
                       TextButton(
                         style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          foregroundColor: theme.secondaryHeaderColor.withOpacity(0.7),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          foregroundColor:
+                              theme.secondaryHeaderColor.withOpacity(0.7),
                         ),
                         onPressed: () => Navigator.of(dialogContext).pop(),
-                        child:  Text(
+                        child: Text(
                           'No',
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15,color:  theme.secondaryHeaderColor,),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                            color: theme.secondaryHeaderColor,
+                          ),
                         ),
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: theme.secondaryHeaderColor,
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 10),
                           textStyle: const TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
@@ -134,7 +144,11 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
                           Navigator.of(dialogContext).pop();
                           await _openFileWithPicker();
                         },
-                        child:  const Text('Yes',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600),),
+                        child: const Text(
+                          'Yes',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.w600),
+                        ),
                       ),
                     ],
                   );
@@ -348,11 +362,13 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
         S.of(context).cmrImage,
         widget.report.cmrImage,
       ),
-      _buildImagePreview(
-        context,
-        S.of(context).deliverySlipImage,
-        widget.report.deliverySlipImages,
-      ),
+      ...widget.report.deliverySlipImages.map((image) {
+        return _buildImagePreview(
+          context,
+          S.of(context).deliverySlipImage,
+          image,
+        );
+      }).toList(),
     ];
   }
 
@@ -538,15 +554,19 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
     if (image.isEmptyOrNull) {
       return const SizedBox();
     }
-    final imageWidget =
-        Image.network(image!, width: 220, height: 150, fit: BoxFit.cover,errorBuilder: (context, error, stackTrace) => Container(
-          width: 220,
-          height: 150,
-          color: Colors.grey[300],
-          alignment: Alignment.center,
-          child: const Icon(Icons.broken_image, color: Colors.grey),
-        ),
-        );
+    final imageWidget = Image.network(
+      image!,
+      width: 220,
+      height: 150,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Container(
+        width: 220,
+        height: 150,
+        color: Colors.grey[300],
+        alignment: Alignment.center,
+        child: const Icon(Icons.broken_image, color: Colors.grey),
+      ),
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6.0),
       child: Column(
@@ -717,7 +737,8 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
                     ),
                     padding:
                         const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    child: TextFormField(readOnly: true,
+                    child: TextFormField(
+                      readOnly: true,
                       initialValue: item.comment?.toString(),
                       style: const TextStyle(
                         fontWeight: FontWeight.w500,
@@ -769,4 +790,5 @@ class _ViewReportDetailNewState extends State<ViewReportDetailNew> {
     } catch (e) {
       printLog('Failed to open file: $e');
     }
-  }}
+  }
+}

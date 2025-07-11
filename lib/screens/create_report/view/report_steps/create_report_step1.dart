@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
@@ -39,8 +40,14 @@ class Step1Form extends StatelessWidget {
     return valid;
   }
 
-  void _handleNext(BuildContext context, VoidCallback onNext) {
+  void _handleNext({
+    required BuildContext context,
+    required VoidCallback onNext,
+    File? truckImage,
+    File? trailerImage,
+  }) {
     if (_validate(context)) {
+      viewModel.recognisePlate(truckImage, trailerImage);
       onNext();
     }
   }
@@ -97,7 +104,12 @@ class Step1Form extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () => _handleNext(context, onNext!),
+                  onPressed: () => _handleNext(
+                    context: context,
+                    onNext: onNext!,
+                    truckImage: viewModel.newReport.truckLicencePlateImage,
+                    trailerImage: viewModel.newReport.trailerLicencePlateImage,
+                  ),
                   child: const Text('Next Step'),
                 ),
               ),

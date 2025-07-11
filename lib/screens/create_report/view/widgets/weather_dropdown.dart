@@ -74,7 +74,7 @@ class _WeatherDropdownState extends State<WeatherDropdown> {
               borderSide: BorderSide.none,
             ),
             contentPadding:
-            const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
           ),
           dropdownStyleData: const DropdownStyleData(
             decoration: BoxDecoration(
@@ -83,7 +83,10 @@ class _WeatherDropdownState extends State<WeatherDropdown> {
             offset: Offset(0, 0),
           ),
           iconStyleData: const IconStyleData(
-            icon: Icon(Icons.keyboard_arrow_down, color: Colors.black),
+            icon: Icon(
+              Icons.keyboard_arrow_down,
+              color: Colors.black,
+            ),
           ),
           hint: Text(
             'Select ${weatherLabel.toLowerCase()}',
@@ -146,10 +149,10 @@ class _WeatherDropdownState extends State<WeatherDropdown> {
                 EasyDebounce.debounce(
                   '$weatherLabel-debounce',
                   const Duration(seconds: 1),
-                      () => setState(() {
+                  () => setState(() {
                     _customWeather = val.trim();
                     widget.viewModel.newReport.weatherConditions =
-                    _customWeather!;
+                        _customWeather!;
                   }),
                 );
               },

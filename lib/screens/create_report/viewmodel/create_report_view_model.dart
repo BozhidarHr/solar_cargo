@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:solar_cargo/screens/create_report/models/checkbox_comment.dart';
 import 'package:solar_cargo/screens/view_reports/model/delivery_report.dart';
@@ -14,6 +16,10 @@ class CreateReportViewModel with ChangeNotifier {
   ApiResponse _createReportResponse = ApiResponse.initial('Empty data');
 
   ApiResponse get response => _createReportResponse;
+
+  ApiResponse _recognisePlateResponse = ApiResponse.initial('Empty data');
+
+  ApiResponse get recognisePlateResponse => _recognisePlateResponse;
 
   // Delivery Report instance
   DeliveryReport newReport = DeliveryReport();
@@ -46,7 +52,34 @@ class CreateReportViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  // Used in UI for state management;
+
+  Future<void> recognisePlate(File? truckImage, File? trailerImage) async {
+    _recognisePlateResponse = ApiResponse.loading('Recognising plate ...');
+    notifyListeners();
+
+    if (truckImage == null || trailerImage == null) {
+      return;
+    }
+
+    try {
+      final data = await _service.api.plateRecognition(
+          trailerImage: trailerImage, truckImage: truckImage);
+
+      _recognisePlateResponse =
+          ApiResponse.completed("recognisePlate successfully.");
+
+      newReport.licencePlateTruck = data['truckPlateText'];
+      newReport.licencePlateTrailer = data['trailerPlateText'];
+    } catch (e) {
+      _recognisePlateResponse = ApiResponse.error(e.toString());
+      newReport.licencePlateTruck = '';
+      newReport.licencePlateTrailer = '';
+      logger.w('recognisePlate(catch): ${e.toString()}');
+    }
+
+    notifyListeners();
+  }
+
   void setOption(String name, ReportOption? option) {
     final item = matchCheckboxItem(name);
     item.selectedOption = option;
@@ -96,7 +129,7 @@ class CreateReportViewModel with ChangeNotifier {
 
   CheckBoxItem matchCheckboxItem(String name) {
     return newReport.checkboxItems.firstWhere(
-      (item) => item.name == name,
+          (item) => item.name == name,
       orElse: () => throw Exception("CheckBoxItem with name '$name' not found"),
     );
   }
