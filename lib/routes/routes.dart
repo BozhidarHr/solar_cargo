@@ -5,7 +5,7 @@ import 'package:solar_cargo/screens/home_screen.dart';
 import 'package:solar_cargo/screens/login/view/login_screen.dart';
 
 import '../screens/create_report/view/create_report_stepper.dart';
-import '../screens/view_reports/view/view_report_detail_new.dart';
+import '../screens/view_reports/view/view_report_detail.dart';
 import '../screens/view_reports/view/view_reports_screen.dart';
 import '../widgets/error_widget.dart';
 import 'route_list.dart';
@@ -40,7 +40,7 @@ class Routes {
         if (arguments is ViewReportDetailArguments) {
           return _buildRoute(
             settings,
-            (context) => ViewReportDetailNew(
+            (context) => ViewReportDetail(
               report: arguments.report,
             ),
           );

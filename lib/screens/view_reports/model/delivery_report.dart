@@ -69,7 +69,7 @@ class DeliveryReport {
       licencePlateTrailer: json['licence_plate_trailer'],
       truckLicencePlateImage: json['truck_license_plate_image'],
       trailerLicencePlateImage: json['trailer_license_plate_image'],
-      damagesDescription: json['damages_description'],
+      damagesDescription: json['damage_description'],
       weatherConditions: json['weather_conditions'],
       proofOfDelivery: json['proof_of_delivery_image'],
       deliveryItems: (json['items'] != null)
@@ -86,7 +86,7 @@ class DeliveryReport {
           (json['additional_images_urls'])?.map((e) => e['image']).toList() ??
               [],
       damagesImages:
-      (json['damages_images_urls'])?.map((e) => e['image']).toList() ??
+      (json['damage_images_urls'])?.map((e) => e['image']).toList() ??
           [],
       user: json['user'],
     );

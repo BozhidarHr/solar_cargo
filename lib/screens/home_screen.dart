@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:solar_cargo/providers/auth_provider.dart';
 import 'package:solar_cargo/screens/choose_location_screen.dart';
 import 'package:solar_cargo/screens/common/string_extension.dart';
+import 'package:solar_cargo/screens/widgets/profile_picture.dart';
 
 import '../routes/route_list.dart';
 import 'common/constants.dart';
@@ -87,11 +88,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    Image.asset(
-                      kWorkerImage,
-                      width: 60,
-                      height: 60,
-                    ),
+                    ProfilePicture(initialImageUrl: user.imageUrl,),
                     if (user.userRole.isNotNullAndNotEmpty)
                       Container(
                         margin: const EdgeInsets.only(top: 8),

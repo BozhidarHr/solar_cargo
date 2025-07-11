@@ -204,6 +204,39 @@ class SolarServices {
     }
   }
 
+  Future<void> changeProfilePicture({
+    required File profilePicture,
+  }) async {
+    final url = SolarHelper.buildUrl(domain, '/profile_picture_image/');
+
+    try {
+      final response = await sendWithAuth((token) async {
+        final request = http.MultipartRequest('POST', url!);
+        request.headers[HttpHeaders.authorizationHeader] =
+            'Bearer $_customerToken';
+
+        request.files.add(await http.MultipartFile.fromPath(
+          'profile_picture_image',
+          profilePicture.path,
+        ));
+
+        final streamedResponse = await request.send();
+        return await http.Response.fromStream(streamedResponse);
+      });
+
+      final responseBody = convert.jsonDecode(response.body);
+
+      if (response.statusCode != 200) {
+        final error = responseBody is Map && responseBody['message'] != null
+            ? SolarHelper.getErrorMessage(responseBody)
+            : 'Plate recognition failed with status code ${response.statusCode}';
+        throw Exception(error);
+      }
+    } catch (e) {
+      printLog('Error changing profile picture: $e');
+    }
+  }
+
   Future<void> createDeliveryReport(DeliveryReport newReport) async {
     try {
       var url = SolarHelper.buildUrl(domain, '/delivery-reports/');
@@ -215,14 +248,11 @@ class SolarServices {
         // Fields
         request.fields['location'] = newReport.pvProject ?? '';
         request.fields['supplier'] = newReport.supplier ?? '';
-        request.fields['delivery_slip_number'] =
-            newReport.deliverySlipNumber ?? '';
+        request.fields['delivery_slip_number'] = newReport.deliverySlipNumber ?? '';
         request.fields['logistic_company'] = newReport.logisticCompany ?? '';
         request.fields['container_number'] = newReport.containerNumber ?? '';
-        request.fields['licence_plate_truck'] =
-            newReport.licencePlateTruck ?? '';
-        request.fields['licence_plate_trailer'] =
-            newReport.licencePlateTrailer ?? '';
+        request.fields['licence_plate_truck'] = newReport.licencePlateTruck ?? '';
+        request.fields['licence_plate_trailer'] = newReport.licencePlateTrailer ?? '';
         request.fields['comments'] = newReport.comments ?? '';
 
         // Truck licence plate image
@@ -241,12 +271,10 @@ class SolarServices {
           ));
         }
 
-        request.fields['weather_conditions'] =
-            newReport.weatherConditions ?? '';
+        request.fields['weather_conditions'] = newReport.weatherConditions ?? '';
 
         // Delivery items
-        final itemsJson =
-            newReport.deliveryItems.map((e) => e.toJson()).toList();
+        final itemsJson = newReport.deliveryItems.map((e) => e.toJson()).toList();
         request.fields['items_input'] = convert.jsonEncode(itemsJson);
 
         // Proof of delivery image
@@ -258,8 +286,7 @@ class SolarServices {
         }
 
         // Checkbox fields
-        final checkboxFields =
-            CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
+        final checkboxFields = CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
         checkboxFields.forEach((key, value) {
           request.fields[key] = value?.toString() ?? '';
         });
@@ -280,10 +307,23 @@ class SolarServices {
           ));
         }
 
+        // Damages description
+        request.fields['damage_description'] = newReport.damagesDescription ?? '';
+
+        // Damages images
+        if (newReport.damagesImages is List<File>) {
+          final images = newReport.damagesImages as List<File>;
+          for (final file in images) {
+            request.files.add(await http.MultipartFile.fromPath(
+              'damage_images_input',
+              file.path,
+            ));
+          }
+        }
+
         // Additional images
         if (newReport.additionalImages is List<File>) {
           final images = newReport.additionalImages as List<File>;
-
           for (final file in images) {
             request.files.add(await http.MultipartFile.fromPath(
               'additional_images_input',
@@ -293,6 +333,28 @@ class SolarServices {
         }
 
         request.fields['user'] = '${newReport.user ?? 1}';
+
+        // Build and print cURL command
+        String curl = 'curl -X POST \'${url.toString()}\' \\\n';
+
+        // Add headers
+        request.headers.forEach((key, value) {
+          curl += '-H \'$key: $value\' \\\n';
+        });
+
+        // Add fields
+        request.fields.forEach((key, value) {
+          final escapedValue = value.replaceAll('\'', '\\\'');
+          curl += '-F \'$key=$escapedValue\' \\\n';
+        });
+
+        // Add files (using filenames as paths)
+        for (var file in request.files) {
+          // file.filename may only contain file name; use path if you want full path
+          curl += '-F \'${file.field}=@${file.filename}\' \\\n';
+        }
+
+        printLog('cURL command:\n$curl');
 
         // Send request and get response
         var streamedResponse = await request.send();
@@ -305,8 +367,7 @@ class SolarServices {
         if (responseBody is Map && responseBody['message'] != null) {
           throw Exception(SolarHelper.getErrorMessage(responseBody));
         }
-        throw Exception(
-            'Unknown error occurred with status code ${response.statusCode}');
+        throw Exception('Unknown error occurred with status code ${response.statusCode}');
       }
     } catch (e) {
       rethrow;

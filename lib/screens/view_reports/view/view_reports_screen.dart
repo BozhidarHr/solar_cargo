@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:solar_cargo/providers/auth_provider.dart';
 import 'package:solar_cargo/screens/common/string_extension.dart';
-import 'package:solar_cargo/screens/view_reports/view/view_report_detail_new.dart';
+import 'package:solar_cargo/screens/view_reports/view/view_report_detail.dart';
 
 import '../../../generated/l10n.dart';
 import '../../../routes/route_list.dart';

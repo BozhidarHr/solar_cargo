@@ -11,6 +11,7 @@ class User {
   final String? userFullName;
   final String? userRole;
   final List<UserLocation> locations;
+  final String? imageUrl;
 
   User({
     required this.userID,
@@ -18,6 +19,7 @@ class User {
     required this.userFullName,
     required this.locations,
     this.userRole,
+    this.imageUrl,
   });
 
   UserLocation? _currentLocation;
@@ -34,6 +36,7 @@ class User {
           ? List<UserLocation>.from(
               (map['locations']).map((item) => UserLocation.fromJson(item)))
           : [],
+      imageUrl: map['imageUrl'],
     );
   }
 
