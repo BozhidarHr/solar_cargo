@@ -11,6 +11,10 @@ class UserLocation {
       : id = map['id'],
         name = map['name'];
 
+  UserLocation.fromJsonPVLocation(Map<String, dynamic> map)
+      : id = map['location'],
+        name = map['location_name'];
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

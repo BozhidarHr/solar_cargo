@@ -110,6 +110,7 @@ class Step4Form extends StatelessWidget {
                         initialValue: viewModel.newReport.comments,
                         maxLines: 4,
                         onChanged: (val) => viewModel.newReport.comments = val,
+                        isValidated: false
                       )
                     ]),
                   ),
@@ -197,6 +198,7 @@ class Step4Form extends StatelessWidget {
     required ValueChanged<String> onChanged,
     bool isNumbersOnly = false,
     int maxLines = 1,
+    bool isValidated = true,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,8 +238,10 @@ class Step4Form extends StatelessWidget {
               () => onChanged(val),
             );
           },
-          validator: (value) => (value == null || value.trim().isEmpty)
-              ? 'Please enter $label.'
+          validator: isValidated
+              ? (value) => (value == null || value.trim().isEmpty)
+                  ? 'Please enter $label.'
+                  : null
               : null,
         ),
       ],

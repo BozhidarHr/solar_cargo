@@ -419,13 +419,7 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
         S.of(context).cmrImage,
         widget.report.cmrImage,
       ),
-      ...widget.report.deliverySlipImages.map((image) {
-        return _buildImagePreview(
-          context,
-          S.of(context).deliverySlipImage,
-          image,
-        );
-      }).toList(),
+
     ];
   }
 
@@ -436,7 +430,7 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
         _buildTextField(
             context: context,
             label: S.of(context).pvProject,
-            value: widget.report.pvProject),
+            value: widget.report.pvProject?.name),
         _buildTextField(
             context: context,
             label: S.of(context).subcontractor,

@@ -1,11 +1,12 @@
 import 'package:solar_cargo/screens/common/string_extension.dart';
 
+import '../../common/user_location.dart';
 import '../../create_report/models/checkbox_comment.dart';
 import '../../create_report/models/delivery_item.dart';
 
 class DeliveryReport {
   int? id;
-  String? pvProject;
+  UserLocation? pvProject;
   String? subcontractor;
   String? supplier;
   String? deliverySlipNumber;
@@ -60,7 +61,7 @@ class DeliveryReport {
   factory DeliveryReport.fromJson(Map<String, dynamic> json) {
     return DeliveryReport(
       id: json['id'],
-      pvProject: json['pv_project'],
+      pvProject: UserLocation.fromJsonPVLocation(json),
       supplier: json['supplier'],
       deliverySlipNumber: json['delivery_slip_number'],
       logisticCompany: json['logistic_company'],

@@ -37,7 +37,7 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
     _viewModel.resetReportData();
     // Assign default field pv project
     _viewModel.newReport.pvProject =
-        authModel.currentUser!.currentLocation!.name;
+        authModel.currentUser!.currentLocation!;
   }
 
   void _nextStep() {

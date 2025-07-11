@@ -74,40 +74,43 @@ class _ViewReportDamagesState extends State<ViewReportDamages> {
               ),
             ),
             const SizedBox(height: 5),
-            Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade400),
-              ),
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          maxHeight: 150,
-                        ),
-                        child: Scrollbar(
-                          controller: _descriptionController,
-                          thumbVisibility: true,
-                          child: SingleChildScrollView(
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade400),
+                ),
+                child: Stack(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxHeight: 150,
+                          ),
+                          child: Scrollbar(
                             controller: _descriptionController,
-                            child: Text(
-                              widget.report.damagesDescription ?? '',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
+                            thumbVisibility: true,
+                            child: SingleChildScrollView(
+                              controller: _descriptionController,
+                              child: Text(
+                                widget.report.damagesDescription ?? '',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             ViewReportMultipleImages(

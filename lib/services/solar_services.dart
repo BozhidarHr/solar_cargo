@@ -246,13 +246,19 @@ class SolarServices {
         request.headers[HttpHeaders.authorizationHeader] = 'Bearer $token';
 
         // Fields
-        request.fields['location'] = newReport.pvProject ?? '';
+        // 6 is unknown location
+        request.fields['location'] = newReport.pvProject?.id.toString() ?? '6';
+        // Subcontractor NEED TO BE REMOVED FROM API
+        request.fields['checking_company'] = newReport.subcontractor ?? '';
         request.fields['supplier'] = newReport.supplier ?? '';
-        request.fields['delivery_slip_number'] = newReport.deliverySlipNumber ?? '';
+        request.fields['delivery_slip_number'] =
+            newReport.deliverySlipNumber ?? '';
         request.fields['logistic_company'] = newReport.logisticCompany ?? '';
         request.fields['container_number'] = newReport.containerNumber ?? '';
-        request.fields['licence_plate_truck'] = newReport.licencePlateTruck ?? '';
-        request.fields['licence_plate_trailer'] = newReport.licencePlateTrailer ?? '';
+        request.fields['licence_plate_truck'] =
+            newReport.licencePlateTruck ?? '';
+        request.fields['licence_plate_trailer'] =
+            newReport.licencePlateTrailer ?? '';
         request.fields['comments'] = newReport.comments ?? '';
 
         // Truck licence plate image
@@ -271,10 +277,12 @@ class SolarServices {
           ));
         }
 
-        request.fields['weather_conditions'] = newReport.weatherConditions ?? '';
+        request.fields['weather_conditions'] =
+            newReport.weatherConditions ?? '';
 
         // Delivery items
-        final itemsJson = newReport.deliveryItems.map((e) => e.toJson()).toList();
+        final itemsJson =
+            newReport.deliveryItems.map((e) => e.toJson()).toList();
         request.fields['items_input'] = convert.jsonEncode(itemsJson);
 
         // Proof of delivery image
@@ -286,7 +294,8 @@ class SolarServices {
         }
 
         // Checkbox fields
-        final checkboxFields = CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
+        final checkboxFields =
+            CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
         checkboxFields.forEach((key, value) {
           request.fields[key] = value?.toString() ?? '';
         });
@@ -299,16 +308,19 @@ class SolarServices {
           ));
         }
 
-        // Delivery slip image
-        if (newReport.deliverySlipImages is File) {
-          request.files.add(await http.MultipartFile.fromPath(
-            'delivery_slip_image',
-            (newReport.deliverySlipImages as File).path,
-          ));
+        if (newReport.deliverySlipImages is List<File>) {
+          final images = newReport.deliverySlipImages as List<File>;
+          for (final file in images) {
+            request.files.add(await http.MultipartFile.fromPath(
+              'delivery_slip_images_input',
+              file.path,
+            ));
+          }
         }
 
         // Damages description
-        request.fields['damage_description'] = newReport.damagesDescription ?? '';
+        request.fields['damage_description'] =
+            newReport.damagesDescription ?? '';
 
         // Damages images
         if (newReport.damagesImages is List<File>) {
@@ -367,7 +379,8 @@ class SolarServices {
         if (responseBody is Map && responseBody['message'] != null) {
           throw Exception(SolarHelper.getErrorMessage(responseBody));
         }
-        throw Exception('Unknown error occurred with status code ${response.statusCode}');
+        throw Exception(
+            'Unknown error occurred with status code ${response.statusCode}');
       }
     } catch (e) {
       rethrow;
@@ -378,7 +391,7 @@ class SolarServices {
     required File truckImage,
     required File trailerImage,
   }) async {
-    final url = SolarHelper.buildUrl(domain, '/plate-recognition/');
+    final url = SolarHelper.buildUrl(domain, '/recognize-plates/');
 
     try {
       final response = await sendWithAuth((token) async {
@@ -412,8 +425,8 @@ class SolarServices {
       }
 
       return {
-        'truckPlateText': responseBody['truck_plate_text'] ?? '',
-        'trailerPlateText': responseBody['trailer_plate_text'] ?? '',
+        'truckPlateText': responseBody['truck_plate'] ?? '',
+        'trailerPlateText': responseBody['trailer_plate'] ?? '',
       };
     } catch (e) {
       rethrow;

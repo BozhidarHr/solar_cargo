@@ -124,8 +124,8 @@ class Step1Form extends StatelessWidget {
       _buildFormField(
           label: S.of(context).pvProject,
           context: context,
-          initialValue: viewModel.newReport.pvProject,
-          onChanged: (val) => viewModel.newReport.pvProject = val,
+          initialValue: viewModel.newReport.pvProject?.name,
+          onChanged: (val) {},
           isReadOnly: true),
       // Should be hardcoded to S&G Solar
       _buildFormField(
