@@ -36,8 +36,7 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
     // Reset report data
     _viewModel.resetReportData();
     // Assign default field pv project
-    _viewModel.newReport.pvProject =
-        authModel.currentUser!.currentLocation!;
+    _viewModel.newReport.pvProject = authModel.currentUser!.currentLocation!;
   }
 
   void _nextStep() {
@@ -119,7 +118,9 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
             case Status.ERROR:
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 FlashHelper.errorMessage(context,
-                    message: 'An error occurred submitting the report.',
+                    message: response.message ??
+                        'An error occurred while submitting the report.',
+                    // 'An error occurred submitting the report.',
                     duration: const Duration(milliseconds: 500));
               });
               break;
@@ -133,9 +134,9 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
           );
         },
         child: SafeArea(
-        bottom: true,
-        child: steps[_currentStep],
-      ),
+          bottom: true,
+          child: steps[_currentStep],
+        ),
       ),
     );
   }

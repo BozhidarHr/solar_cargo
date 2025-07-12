@@ -173,53 +173,56 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
         }
         return Stack(
           children: [
-            Scaffold(
-              appBar: AppBar(
-                centerTitle: true,
-                title: Text(widget.report.buildHeaderText),
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                foregroundColor: Colors.white,
-              ),
-              body: SingleChildScrollView(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 6, horizontal: 15.0),
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16, horizontal: 12),
-                    decoration: BoxDecoration(
-                      color: kFormFieldBackgroundColor,
-                      border: Border.all(
-                          color:
-                              Theme.of(context).primaryColor.withOpacity(0.3)),
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+            SafeArea(
+              bottom: true,
+              child: Scaffold(
+                appBar: AppBar(
+                  centerTitle: true,
+                  title: Text(widget.report.buildHeaderText),
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  foregroundColor: Colors.white,
+                ),
+                body: SingleChildScrollView(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 6, horizontal: 15.0),
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: kFormFieldBackgroundColor,
+                        border: Border.all(
+                            color:
+                                Theme.of(context).primaryColor.withOpacity(0.3)),
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: _buildMainBody(),
                     ),
-                    child: _buildMainBody(),
                   ),
                 ),
-              ),
-              bottomNavigationBar: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 12.0),
-                    child: Divider(
-                      color: Colors.white,
-                      height: 5,
-                      indent: 15,
-                      endIndent: 15,
+                bottomNavigationBar: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 12.0),
+                      child: Divider(
+                        color: Colors.white,
+                        height: 5,
+                        indent: 15,
+                        endIndent: 15,
+                      ),
                     ),
-                  ),
-                  _bottomPopupTriggerButton(context),
-                ],
+                    _bottomPopupTriggerButton(context),
+                  ],
+                ),
               ),
             ),
 
