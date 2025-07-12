@@ -30,13 +30,13 @@ class User {
     return User(
       userID: map['userID'] ?? 0,
       userName: map['userName'] ?? '',
-      userFullName: map['fullName'] ?? '',
+      userFullName: map ['fullName'] ?? '',
       userRole: map['userRole'],
       locations: map['locations'] != null
           ? List<UserLocation>.from(
               (map['locations']).map((item) => UserLocation.fromJson(item)))
           : [],
-      imageUrl: map['imageUrl'],
+      imageUrl: map['userPicture'],
     );
   }
 

@@ -48,9 +48,9 @@ class ChooseLocationScreenState extends State<ChooseLocationScreen> {
                 child: Column(
                   children: [
                     const Text(
-                      'No locations available.\nPlease contact your administrator.',
+                      'No locations available.\nPlease try logging out and logging back in.\nIf the issue persists, contact your administrator.',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         color: Colors.redAccent,
                       ),
                       textAlign: TextAlign.center,
