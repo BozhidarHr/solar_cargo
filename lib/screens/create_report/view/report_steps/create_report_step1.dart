@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import '../../../../generated/l10n.dart';
-import '../../../../services/services.dart';
 import '../../../common/constants.dart';
 import '../../../common/flash_helper.dart';
 import '../../../common/image_selection_field.dart';
@@ -219,11 +218,11 @@ class Step1Form extends StatelessWidget {
                 debounceKey,
                 const Duration(milliseconds: 100),
                 () async {
-                  final results =
-                      await Services().api.searchItems(pattern) ?? [];
-                  if (!completer.isCompleted) {
-                    completer.complete(results);
-                  }
+                  // final results =
+                  //     await Services().api.searchItems(pattern) ?? [];
+                  // if (!completer.isCompleted) {
+                  //   completer.complete(results);
+                  // }
                 },
               );
 
