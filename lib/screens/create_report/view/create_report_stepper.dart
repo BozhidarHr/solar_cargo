@@ -132,7 +132,10 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
             ],
           );
         },
+        child: SafeArea(
+        bottom: true,
         child: steps[_currentStep],
+      ),
       ),
     );
   }
