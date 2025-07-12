@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
+import '../app.dart';
 import '../models/token_storage.dart';
 import '../models/user.dart';
+import '../routes/route_list.dart';
 import '../screens/common/logger.dart';
 import '../screens/common/user_location.dart';
 import '../services/services.dart';
@@ -101,6 +103,7 @@ class AuthProvider with ChangeNotifier {
     await _service.api.tokenStorage.clearAll();
     _currentUser = null;
     _setLoggedIn(false);
+    navigatorKey.currentState?.pushNamedAndRemoveUntil(RouteList.login, (route) => false);
   }
 
   void clearError() {

@@ -9,6 +9,7 @@ import 'package:solar_cargo/screens/home_screen.dart';
 import 'package:solar_cargo/screens/login/view/login_screen.dart';
 
 import 'generated/l10n.dart';
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// The Widget that configures your application.
 class MyApp extends StatefulWidget {
@@ -32,6 +33,7 @@ class _MyAppState extends State<MyApp> {
     return Consumer<AuthProvider>(
       builder: (context, auth, _) {
         return MaterialApp(
+          navigatorKey:  navigatorKey,
           // If not logged in and not on the login page, redirect to login
 
           home: _resolveInitialScreen(auth),
