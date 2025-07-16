@@ -129,7 +129,7 @@ class Step2Form extends StatelessWidget {
                                                 color:
                                                 Colors.black.withOpacity(0.5)),
                                             contentPadding:
-                                            EdgeInsets.symmetric(horizontal: 8),
+                                            const EdgeInsets.symmetric(horizontal: 8),
                                             border: InputBorder.none,
                                           ),
                                           onChanged: (val) {

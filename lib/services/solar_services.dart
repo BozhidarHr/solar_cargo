@@ -250,7 +250,7 @@ class SolarServices {
         request.fields['location'] = newReport.pvProject?.id.toString() ?? '6';
         // Subcontractor NEED TO BE REMOVED FROM API
         request.fields['checking_company'] = newReport.subcontractor ?? '';
-        request.fields['supplier'] = newReport.supplier ?? '';
+        request.fields['supplier_input'] = newReport.supplier ?? '';
         request.fields['delivery_slip_number'] =
             newReport.deliverySlipNumber ?? '';
         request.fields['logistic_company'] = newReport.logisticCompany ?? '';

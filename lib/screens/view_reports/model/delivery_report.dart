@@ -62,7 +62,7 @@ class DeliveryReport {
     return DeliveryReport(
       id: json['id'],
       pvProject: UserLocation.fromJsonPVLocation(json),
-      supplier: json['supplier'],
+      supplier: json['supplier_name'],
       deliverySlipNumber: json['delivery_slip_number'],
       logisticCompany: json['logistic_company'],
       containerNumber: json['container_number'],
