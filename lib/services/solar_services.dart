@@ -433,45 +433,43 @@ class SolarServices {
     }
   }
 
-  // Future<List<String>?> searchSupliers(String location,String query) async {
-  //   try {
-  //     // Build URL with page param
-  //     var url = SolarHelper.buildUrl(
-  //       domain,
-  //       '/items/autocomplete?q=$query',
-  //     );
-  //     // Make GET request
-  //     var response = await sendWithAuth((token) {
-  //       return httpGet(
-  //         url!,
-  //         headers: {
-  //           HttpHeaders.authorizationHeader: 'Bearer $_customerToken',
-  //         },
-  //       );
-  //     });
-  //
-  //     // Decode response
-  //     var responseBody = convert.jsonDecode(response.body);
-  //
-  //     // Error handling
-  //     if (response.statusCode != 200) {
-  //       if (responseBody is Map && responseBody['message'] != null) {
-  //         throw Exception(SolarHelper.getErrorMessage(responseBody));
-  //       }
-  //       throw Exception(
-  //           'Unknown error occurred with status code ${response.statusCode}');
-  //     }
-  //
-  //     // Parse and return paging response
-  //     return responseBody
-  //         .map<String>((item) => item['name'].toString())
-  //         .toList();
-  //   } catch (e) {
-  //     printLog('Search error: $e');
-  //     return [];
-  //   }
-  // }
+  Future<List<String>?> searchSuppliers(int location, String query) async {
+    try {
+      // Build URL with page param
+      var url = SolarHelper.buildUrl(
+          domain, 'locations/$location/suppliers?q=$query',
+          includeApiPath: false);
+      // Make GET request
+      var response = await sendWithAuth((token) {
+        return httpGet(
+          url!,
+          headers: {
+            HttpHeaders.authorizationHeader: 'Bearer $_customerToken',
+          },
+        );
+      });
 
+      // Decode response
+      var responseBody = convert.jsonDecode(response.body);
+
+      // Error handling
+      if (response.statusCode != 200) {
+        if (responseBody is Map && responseBody['message'] != null) {
+          throw Exception(SolarHelper.getErrorMessage(responseBody));
+        }
+        throw Exception(
+            'Unknown error occurred with status code ${response.statusCode}');
+      }
+
+      // Parse and return paging response
+      return responseBody
+          .map<String>((item) => item['name'].toString())
+          .toList();
+    } catch (e) {
+      printLog('Search error: $e');
+      return [];
+    }
+  }
 
   Future<List<String>?> searchItems(String query) async {
     try {
