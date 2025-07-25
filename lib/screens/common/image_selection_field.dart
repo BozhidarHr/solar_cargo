@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:solar_cargo/screens/common/constants.dart';
 
@@ -41,18 +43,27 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final pickedFile =
-    await _picker.pickImage(source: source, imageQuality: 70);
+    final pickedFile = await _picker.pickImage(source: source, imageQuality: 70);
     if (pickedFile != null) {
+      final imageFile = File(pickedFile.path);
+
+      if (source == ImageSource.camera) {
+        final bytes = await imageFile.readAsBytes();
+        await ImageGallerySaver.saveImage(
+          Uint8List.fromList(bytes),
+          quality: 100,
+          name: "photo_${DateTime.now().millisecondsSinceEpoch}",
+        );
+      }
+
       setState(() {
-        _selectedImage = File(pickedFile.path);
+        _selectedImage = imageFile;
         _initialImagePathOrUrl = null;
-        _showPreview = false; // ✅ Don't show preview until user toggles it
+        _showPreview = false;
       });
       widget.onImageSelected(_selectedImage);
     }
-  }
-  void _showImageSourceActionSheet() {
+  }  void _showImageSourceActionSheet() {
     showModalBottomSheet(
       context: context,
       builder: (_) => SafeArea(
