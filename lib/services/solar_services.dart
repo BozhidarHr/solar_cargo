@@ -344,7 +344,7 @@ class SolarServices {
           }
         }
 
-        request.fields['user'] = '${newReport.user ?? 1}';
+        request.fields['user'] = newReport.userId.toString();
 
         // Build and print cURL command
         String curl = 'curl -X POST \'${url.toString()}\' \\\n';

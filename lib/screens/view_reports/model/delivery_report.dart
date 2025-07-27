@@ -20,7 +20,7 @@ class DeliveryReport {
   String? comments;
   List<CheckBoxItem> checkboxItems;
   String? weatherConditions;
-  int? user;
+  int? userId;
 
   // File? or String?
   dynamic truckLicencePlateImage;
@@ -46,7 +46,7 @@ class DeliveryReport {
     List<DeliveryItem>? deliveryItems,
     this.comments,
     List<CheckBoxItem>? checkboxItems,
-    this.user,
+    this.userId,
     this.truckLicencePlateImage,
     this.trailerLicencePlateImage,
     this.proofOfDelivery,
@@ -89,7 +89,7 @@ class DeliveryReport {
       damagesImages:
       (json['damage_images_urls'])?.map((e) => e['image']).toList() ??
           [],
-      user: json['user'],
+      userId: json['user'],
     );
   }
 
