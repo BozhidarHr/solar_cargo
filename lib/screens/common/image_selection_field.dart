@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:solar_cargo/screens/common/constants.dart';
 
 import '../../generated/l10n.dart';
+import '../../services/solar_helper.dart';
 
 class ImageSelectionField extends StatefulWidget {
   final String label;
@@ -43,27 +43,47 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final pickedFile = await _picker.pickImage(source: source, imageQuality: 70);
-    if (pickedFile != null) {
-      final imageFile = File(pickedFile.path);
+    final pickedFile =
+        await _picker.pickImage(source: source, imageQuality: 70);
+    if (pickedFile == null) return;
 
-      if (source == ImageSource.camera) {
-        final bytes = await imageFile.readAsBytes();
-        await ImageGallerySaver.saveImage(
-          Uint8List.fromList(bytes),
-          quality: 100,
-          name: "photo_${DateTime.now().millisecondsSinceEpoch}",
-        );
-      }
+    final imageFile = File(pickedFile.path);
+
+    if (source == ImageSource.camera) {
+      final bytes = await imageFile.readAsBytes();
+      final fixedBytes = await SolarHelper.fixExifRotation(bytes);
+
+      await ImageGallerySaverPlus.saveImage(
+        fixedBytes,
+        quality: 100,
+        name: "photo_${DateTime.now().millisecondsSinceEpoch}",
+      );
+
+      // Write fixed image bytes to a new temporary file
+      final tempDir = imageFile.parent;
+      final fixedFile = await File(
+        '${tempDir.path}/fixed_${DateTime.now().millisecondsSinceEpoch}.jpg',
+      ).writeAsBytes(fixedBytes);
 
       setState(() {
-        _selectedImage = imageFile;
+        _selectedImage = fixedFile;
         _initialImagePathOrUrl = null;
         _showPreview = false;
       });
       widget.onImageSelected(_selectedImage);
+      return;
     }
-  }  void _showImageSourceActionSheet() {
+
+    // For gallery or other sources, just use the picked image directly
+    setState(() {
+      _selectedImage = imageFile;
+      _initialImagePathOrUrl = null;
+      _showPreview = false;
+    });
+    widget.onImageSelected(_selectedImage);
+  }
+
+  void _showImageSourceActionSheet() {
     showModalBottomSheet(
       context: context,
       builder: (_) => SafeArea(
@@ -138,7 +158,8 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
                   ),
                   const SizedBox(width: 4),
                   Switch(
-                    activeColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                    activeColor:
+                        Theme.of(context).primaryColor.withOpacity(0.5),
                     value: _showPreview,
                     onChanged: (val) {
                       setState(() {
@@ -154,7 +175,7 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
         SizedBox(height: 10),
         if (_showPreview)
           Padding(
-            padding: const EdgeInsets.only(top: 10,bottom: 10),
+            padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: Center(
               child: Container(
                 decoration: BoxDecoration(
@@ -186,7 +207,8 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
                         child: const CircleAvatar(
                           radius: 12,
                           backgroundColor: Colors.black54,
-                          child: Icon(Icons.close, size: 16, color: Colors.white),
+                          child:
+                              Icon(Icons.close, size: 16, color: Colors.white),
                         ),
                       ),
                     ],

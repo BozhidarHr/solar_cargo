@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:solar_cargo/screens/common/constants.dart';
 
 import '../../generated/l10n.dart';
+import '../../services/solar_helper.dart';
 import 'flash_helper.dart';
 
 class MultiImageSelectionField extends StatefulWidget {
@@ -20,7 +22,8 @@ class MultiImageSelectionField extends StatefulWidget {
   });
 
   @override
-  State<MultiImageSelectionField> createState() => _MultiImageSelectionFieldState();
+  State<MultiImageSelectionField> createState() =>
+      _MultiImageSelectionFieldState();
 }
 
 class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
@@ -46,8 +49,26 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
     if (source == ImageSource.camera) {
       final pickedFile = await _picker.pickImage(source: source, imageQuality: 70);
       if (pickedFile != null) {
+        final imageFile = File(pickedFile.path);
+
+        final bytes = await imageFile.readAsBytes();
+        final fixedBytes = await SolarHelper.fixExifRotation(bytes);
+
+        // Save the fixed image to gallery
+        await ImageGallerySaverPlus.saveImage(
+          fixedBytes,
+          quality: 100,
+          name: "photo_${DateTime.now().millisecondsSinceEpoch}",
+        );
+
+        // Save fixed image to a temp file
+        final tempDir = imageFile.parent;
+        final fixedFile = await File(
+          '${tempDir.path}/fixed_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        ).writeAsBytes(fixedBytes);
+
         setState(() {
-          _selectedImages.add(File(pickedFile.path));
+          _selectedImages.add(fixedFile);
         });
       }
     } else {
@@ -71,14 +92,15 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
         }
 
         setState(() {
-          _selectedImages.addAll(allowedFiles.map((pf) => File(pf.path)).toList());
+          _selectedImages.addAll(
+            allowedFiles.map((pf) => File(pf.path)).toList(),
+          );
         });
       }
     }
 
     widget.onImagesSelected(_selectedImages.whereType<File>().toList());
   }
-
   void _showImageSourceActionSheet() {
     showModalBottomSheet(
       context: context,
@@ -143,7 +165,8 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
               const SizedBox(width: 8),
               const Text(
                 "Images selected",
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
               ),
               const Spacer(),
               Row(
@@ -151,7 +174,8 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
                   const Text("View", style: TextStyle(color: Colors.white)),
                   const SizedBox(width: 4),
                   Switch(
-                    activeColor: Theme.of(context).primaryColor.withOpacity(0.5),
+                    activeColor:
+                        Theme.of(context).primaryColor.withOpacity(0.5),
                     value: _showPreview,
                     onChanged: (val) {
                       setState(() {
@@ -196,7 +220,8 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
                         child: const CircleAvatar(
                           radius: 14,
                           backgroundColor: Colors.black54,
-                          child: Icon(Icons.close, size: 18, color: Colors.white),
+                          child:
+                              Icon(Icons.close, size: 18, color: Colors.white),
                         ),
                       ),
                     ],
@@ -212,7 +237,7 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
   @override
   Widget build(BuildContext context) {
     final labelStyle =
-    Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white);
+        Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -32,7 +32,9 @@ dependencies:
   file_picker: ^6.1.1
   open_file: ^3.3.2
   dropdown_button2: ^2.3.9
-  image_gallery_saver: ^2.0.3
+  image_gallery_saver_plus: ^4.0.1
+  image: ^4.0.17
+  exif: ^2.0.3
 
 dependency_overrides:
   flutter_keyboard_visibility:
