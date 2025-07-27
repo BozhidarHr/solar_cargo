@@ -471,12 +471,12 @@ class SolarServices {
     }
   }
 
-  Future<List<String>?> searchItems(String query) async {
+  Future<List<String>?> searchItemsByLocation(int location, String query) async {
     try {
       // Build URL with page param
       var url = SolarHelper.buildUrl(
         domain,
-        '/items/autocomplete?q=$query',
+        '/items/autocomplete?q=$query&location=$location',
       );
       // Make GET request
       var response = await sendWithAuth((token) {
