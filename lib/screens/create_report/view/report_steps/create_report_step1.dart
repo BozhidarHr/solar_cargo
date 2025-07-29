@@ -203,7 +203,6 @@ class Step1Form extends StatelessWidget {
               },
             ),
             suggestionsCallback: (pattern) async {
-              if (pattern.length < 2) return [];
 
               const debounceKey = 'item-name-debounce-supplier';
 
@@ -217,7 +216,7 @@ class Step1Form extends StatelessWidget {
 
               EasyDebounce.debounce(
                 debounceKey,
-                const Duration(milliseconds: 100),
+                const Duration(milliseconds: 50),
                 () async {
                   if (viewModel.newReport.pvProject?.id == null) {
                     return;

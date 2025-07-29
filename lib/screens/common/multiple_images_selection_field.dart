@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_android/image_picker_android.dart'; // <-- Added
 import 'package:solar_cargo/screens/common/constants.dart';
 
 import '../../generated/l10n.dart';
@@ -27,13 +28,14 @@ class MultiImageSelectionField extends StatefulWidget {
 }
 
 class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
-  final ImagePicker _picker = ImagePicker();
+  final _picker = ImagePickerAndroid()..useAndroidPhotoPicker = true;
   late List<dynamic> _selectedImages;
   bool _showPreview = false;
 
   @override
   void initState() {
     super.initState();
+
     _selectedImages = widget.initialImages ?? [];
   }
 
@@ -72,7 +74,7 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
         });
       }
     } else {
-      final pickedFiles = await _picker.pickMultiImage(imageQuality: 70);
+      final pickedFiles = await _picker.pickMultiImage(imageQuality: 70) ?? [];
       if (pickedFiles.isNotEmpty) {
         final remaining = maxAdditionalImages - _selectedImages.length;
         final allowedFiles = pickedFiles.take(remaining).toList();
@@ -105,6 +107,7 @@ class _MultiImageSelectionFieldState extends State<MultiImageSelectionField> {
     showModalBottomSheet(
       context: context,
       builder: (_) => SafeArea(
+        bottom: true,
         child: Wrap(
           children: [
             ListTile(

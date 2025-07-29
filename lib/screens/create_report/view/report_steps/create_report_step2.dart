@@ -137,7 +137,6 @@ class Step2Form extends StatelessWidget {
                                       },
                                     ),
                                     suggestionsCallback: (pattern) async {
-                                      if (pattern.length < 2) return [];
 
                                       final debounceKey =
                                           'item-name-debounce-$index';
@@ -156,7 +155,7 @@ class Step2Form extends StatelessWidget {
 
                                       EasyDebounce.debounce(
                                         debounceKey,
-                                        const Duration(milliseconds: 100),
+                                        const Duration(milliseconds: 50),
                                         () async {
                                           final results = await Services()
                                                   .api

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_picker_android/image_picker_android.dart';
 import 'package:solar_cargo/screens/common/constants.dart';
 
 import '../../generated/l10n.dart';
@@ -29,7 +30,7 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
   String? _initialImagePathOrUrl;
   bool _showPreview = false;
 
-  final ImagePicker _picker = ImagePicker();
+  final _picker = ImagePickerAndroid()..useAndroidPhotoPicker = true;
 
   @override
   void initState() {
@@ -87,6 +88,7 @@ class _ImageSelectionFieldState extends State<ImageSelectionField> {
     showModalBottomSheet(
       context: context,
       builder: (_) => SafeArea(
+        bottom: true,
         child: Wrap(
           children: [
             ListTile(

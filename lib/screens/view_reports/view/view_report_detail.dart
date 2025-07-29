@@ -173,42 +173,41 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
         }
         return Stack(
           children: [
-            SafeArea(
-              bottom: true,
-              child: Scaffold(
-                appBar: AppBar(
-                  centerTitle: true,
-                  title: Text(widget.report.buildHeaderText),
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  foregroundColor: Colors.white,
-                ),
-                body: SingleChildScrollView(
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 6, horizontal: 15.0),
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 16, horizontal: 12),
-                      decoration: BoxDecoration(
-                        color: kFormFieldBackgroundColor,
-                        border: Border.all(
-                            color:
-                                Theme.of(context).primaryColor.withOpacity(0.3)),
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: _buildMainBody(),
+            Scaffold(
+              appBar: AppBar(
+                centerTitle: true,
+                title: Text(widget.report.buildHeaderText),
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                foregroundColor: Colors.white,
+              ),
+              body: SingleChildScrollView(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 6, horizontal: 15.0),
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: kFormFieldBackgroundColor,
+                      border: Border.all(
+                          color:
+                              Theme.of(context).primaryColor.withOpacity(0.3)),
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
+                    child: _buildMainBody(),
                   ),
                 ),
-                bottomNavigationBar: Column(
+              ),
+              bottomNavigationBar: SafeArea(
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Padding(
@@ -350,17 +349,20 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (BuildContext context) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _downloadReportButton(
-                  context: context, label: 'Download Excel', isPdf: false),
-              const SizedBox(height: 12),
-              _downloadReportButton(
-                  context: context, label: "Download PDF", isPdf: true),
-            ],
+        return SafeArea(
+          bottom: true,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _downloadReportButton(
+                    context: context, label: 'Download Excel', isPdf: false),
+                const SizedBox(height: 12),
+                _downloadReportButton(
+                    context: context, label: "Download PDF", isPdf: true),
+              ],
+            ),
           ),
         );
       },
