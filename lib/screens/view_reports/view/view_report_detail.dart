@@ -6,12 +6,14 @@ import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as path;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:solar_cargo/screens/common/base64Image.dart';
 import 'package:solar_cargo/screens/common/string_extension.dart';
 import 'package:solar_cargo/screens/view_reports/view/widgets/view_report_checkboxes.dart';
 import 'package:solar_cargo/screens/view_reports/view/widgets/view_report_damages.dart';
 import 'package:solar_cargo/screens/view_reports/view/widgets/view_report_item_list.dart';
 import 'package:solar_cargo/screens/view_reports/view/widgets/view_report_multiple_images.dart';
 import 'package:solar_cargo/screens/view_reports/viewmodel/view_reports_view_model.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../../generated/l10n.dart';
 import '../../../services/api_response.dart';
@@ -20,6 +22,7 @@ import '../../common/flash_helper.dart';
 import '../../common/loading_widget.dart';
 import '../../common/logger.dart';
 import '../model/delivery_report.dart';
+import '../model/delivery_report_image.dart';
 
 class ViewReportDetailArguments {
   final DeliveryReport report;
@@ -58,13 +61,19 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
     super.initState();
     viewModel = Provider.of<ViewReportsViewModel>(context, listen: false)
       ..resetDownloadResponse();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      viewModel.fetchAndAssignImages(report: widget.report);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Selector<ViewReportsViewModel, ApiResponse>(
-      selector: (_, vm) => vm.downloadResponse,
-      builder: (context, downloadResponse, child) {
+    return Selector<ViewReportsViewModel, Tuple2<ApiResponse, ApiResponse>>(
+      selector: (_, vm) => Tuple2(vm.downloadResponse, vm.fetchImagesResponse),
+      builder: (context, tuple, child) {
+        final downloadResponse = tuple.item1;
+        final fetchImagesResponse = tuple.item2;
+
         if (downloadResponse.status == Status.ERROR) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             FlashHelper.errorMessage(context,
@@ -226,7 +235,8 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
             ),
 
             // Loading overlay on top of everything
-            if (downloadResponse.status == Status.LOADING) ...[
+            if (downloadResponse.status == Status.LOADING ||
+                fetchImagesResponse.status == Status.LOADING) ...[
               const ModalBarrier(
                 dismissible: false,
               ),
@@ -267,28 +277,6 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Pv project
-        // subcontractor - SHOWN
-        // supplier - SHOWN
-        // delivery slip number - SHOWN
-        // logistics company - SHOWN
-        // container number - SHOWN
-        // weaather conditions - SHOWN
-        // truck license plate - SHOWN
-        // trailer license plate - SHOWN
-        // comments - SHOWN
-        // items - SHOWN
-        // checkboxes - SHOWN
-
-        // damages description - SHOWN
-        // damages images - SHOWN
-
-        // truck license plate image - SHOWN
-        // trailer license plate image - SHOWN
-        // proof of delivery - SHOWN
-        // cmr image - SHOWN
-        // delivery slip images - SHOWN
-        // other images - SHOWN
         _buildGeneralFields(context),
         ViewReportItemList(
           report: widget.report,
@@ -424,7 +412,6 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
         S.of(context).cmrImage,
         widget.report.cmrImage,
       ),
-
     ];
   }
 
@@ -522,23 +509,12 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
     );
   }
 
-  Widget _buildImagePreview(BuildContext context, String label, String? image) {
-    if (image.isEmptyOrNull) {
+  Widget _buildImagePreview(
+      BuildContext context, String label, DeliveryReportImage? image) {
+    if (image?.content?.isEmptyOrNull ?? true) {
       return const SizedBox();
     }
-    final imageWidget = Image.network(
-      image!,
-      width: 220,
-      height: 150,
-      fit: BoxFit.cover,
-      errorBuilder: (context, error, stackTrace) => Container(
-        width: 220,
-        height: 150,
-        color: Colors.grey[300],
-        alignment: Alignment.center,
-        child: const Icon(Icons.broken_image, color: Colors.grey),
-      ),
-    );
+    final imageWidget = Base64ImageWidget(base64String: image!.content!);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6.0),
       child: Column(

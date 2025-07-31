@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../common/base64Image.dart';
+
 class ViewReportMultipleImages extends StatelessWidget {
-  final List images;
+  final List? images;
   final String label;
 
   const ViewReportMultipleImages({
@@ -12,7 +14,7 @@ class ViewReportMultipleImages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (images.isEmpty) return const SizedBox.shrink();
+    if (images?.isEmpty ?? true) return const SizedBox.shrink();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -39,21 +41,13 @@ class ViewReportMultipleImages extends StatelessWidget {
             height: 210,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: images.length,
+              itemCount: images!.length,
               separatorBuilder: (_, __) => const SizedBox(width: 12),
               itemBuilder: (context, index) {
-                return Image.network(
-                  images[index],
+                return Base64ImageWidget(
+                  base64String: images![index].content,
                   width: 220,
                   height: 210,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    width: 220,
-                    height: 210,
-                    color: Colors.grey[300],
-                    alignment: Alignment.center,
-                    child: const Icon(Icons.broken_image, color: Colors.grey),
-                  ),
                 );
               },
             ),

@@ -68,11 +68,8 @@ class DeliveryReport {
       containerNumber: json['container_number'],
       licencePlateTruck: json['licence_plate_truck'],
       licencePlateTrailer: json['licence_plate_trailer'],
-      truckLicencePlateImage: json['truck_license_plate_image'],
-      trailerLicencePlateImage: json['trailer_license_plate_image'],
       damagesDescription: json['damage_description'],
       weatherConditions: json['weather_conditions'],
-      proofOfDelivery: json['proof_of_delivery_image'],
       deliveryItems: (json['items'] != null)
           ? (json['items'] as List)
               .map((e) => DeliveryItem.fromJson(Map<String, dynamic>.from(e)))
@@ -80,18 +77,13 @@ class DeliveryReport {
           : [],
       comments: json['comments'],
       checkboxItems: CheckBoxItem.listFromFlatJson(json),
-      cmrImage: json['cmr_image'],
-      deliverySlipImages: (json['delivery_slip_images_urls'])?.map((e) => e['image']).toList() ??
-          [],
-      additionalImages:
-          (json['additional_images_urls'])?.map((e) => e['image']).toList() ??
-              [],
-      damagesImages:
-      (json['damage_images_urls'])?.map((e) => e['image']).toList() ??
-          [],
       userId: json['user'],
     );
   }
+
+
+
+
 
   String get buildHeaderText {
     final List<String> headerText = [];
