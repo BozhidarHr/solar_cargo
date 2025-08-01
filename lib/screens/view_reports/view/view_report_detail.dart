@@ -13,7 +13,6 @@ import 'package:solar_cargo/screens/view_reports/view/widgets/view_report_damage
 import 'package:solar_cargo/screens/view_reports/view/widgets/view_report_item_list.dart';
 import 'package:solar_cargo/screens/view_reports/view/widgets/view_report_multiple_images.dart';
 import 'package:solar_cargo/screens/view_reports/viewmodel/view_reports_view_model.dart';
-import 'package:tuple/tuple.dart';
 
 import '../../../generated/l10n.dart';
 import '../../../services/api_response.dart';
@@ -68,11 +67,9 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<ViewReportsViewModel, Tuple2<ApiResponse, ApiResponse>>(
-      selector: (_, vm) => Tuple2(vm.downloadResponse, vm.fetchImagesResponse),
-      builder: (context, tuple, child) {
-        final downloadResponse = tuple.item1;
-        final fetchImagesResponse = tuple.item2;
+    return Selector<ViewReportsViewModel, ApiResponse>(
+      selector: (_, vm) => vm.downloadResponse,
+      builder: (context, downloadResponse, child) {
 
         if (downloadResponse.status == Status.ERROR) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -235,8 +232,7 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
             ),
 
             // Loading overlay on top of everything
-            if (downloadResponse.status == Status.LOADING ||
-                fetchImagesResponse.status == Status.LOADING) ...[
+            if (downloadResponse.status == Status.LOADING) ...[
               const ModalBarrier(
                 dismissible: false,
               ),
@@ -287,7 +283,19 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
         ViewReportDamages(
           report: widget.report,
         ),
-        ..._buildImageFields(context),
+        Selector<ViewReportsViewModel, ApiResponse>(
+            selector: (_, vm) => vm.fetchImagesResponse,
+            builder: (context, res, child) {
+              if (res.status == Status.LOADING) {
+                return const LoadingWidget(
+                  showTint: true,
+                  text: "Loading images...",
+                );
+              }
+              return Column(
+                children: [..._buildImageFields(context)],
+              );
+            }),
         ViewReportMultipleImages(
           images: widget.report.deliverySlipImages,
           label: 'Delivery slip images',
