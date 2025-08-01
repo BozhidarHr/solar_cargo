@@ -11,7 +11,7 @@ const kLoadingLottie = 'assets/lottie/loading.json';
 const kFormFieldBackgroundColor = Color(0xFFDAD7CD);
 const kDeliveryItemFieldColor = Color(0xFF889E81);
 const maxAdditionalImages = 3;
-
+const versionUrl = 'https://raw.githubusercontent.com/BozhidarHr/solar_cargo/main/version.json';
 const fileTypes = {
   ".pdf": "application/pdf",
   ".xls": "application/vnd.ms-excel",

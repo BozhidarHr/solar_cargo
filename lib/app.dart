@@ -7,8 +7,10 @@ import 'package:solar_cargo/routes/routes.dart';
 import 'package:solar_cargo/screens/choose_location_screen.dart';
 import 'package:solar_cargo/screens/home_screen.dart';
 import 'package:solar_cargo/screens/login/view/login_screen.dart';
+import 'package:solar_cargo/services/update_checker.dart';
 
 import 'generated/l10n.dart';
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 /// The Widget that configures your application.
@@ -33,7 +35,7 @@ class _MyAppState extends State<MyApp> {
     return Consumer<AuthProvider>(
       builder: (context, auth, _) {
         return MaterialApp(
-          navigatorKey:  navigatorKey,
+          navigatorKey: navigatorKey,
           // If not logged in and not on the login page, redirect to login
 
           home: _resolveInitialScreen(auth),
@@ -95,16 +97,20 @@ class _MyAppState extends State<MyApp> {
 
   Widget _resolveInitialScreen(AuthProvider auth) {
     final user = auth.currentUser;
-    if (!auth.isLoggedIn || user == null) return const LoginScreen();
+    if (!auth.isLoggedIn || user == null) {
+      return const UpdateChecker(child: LoginScreen());
+    }
 
     if (user.locations.length == 1) {
       user.setUserLocation(user.locations.first);
     }
     if (user.currentLocation != null) {
-      return const HomeScreen();
+      return const UpdateChecker(child: HomeScreen());
     } else {
-      return ChooseLocationScreen(
-        user: user,
+      return UpdateChecker(
+        child: ChooseLocationScreen(
+          user: user,
+        ),
       );
     }
   }
