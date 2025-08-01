@@ -70,7 +70,6 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
     return Selector<ViewReportsViewModel, ApiResponse>(
       selector: (_, vm) => vm.downloadResponse,
       builder: (context, downloadResponse, child) {
-
         if (downloadResponse.status == Status.ERROR) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             FlashHelper.errorMessage(context,
@@ -105,7 +104,7 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
                             color: theme.secondaryHeaderColor),
                         const SizedBox(width: 8),
                         Text(
-                          'Open File',
+                          'Open File?',
                           style: theme.textTheme.headlineMedium?.copyWith(
                             color: theme.secondaryHeaderColor,
                             fontWeight: FontWeight.bold,
@@ -115,12 +114,38 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
                     ),
                     content: Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom: 12),
-                      child: Text(
-                        'Do you want to open the file?',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.secondaryHeaderColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 12),
+                        child: RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.secondaryHeaderColor,
+                            ),
+                            children: const [
+                              TextSpan(
+                                text: 'You may have to ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'navigate to Downloads folder ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 17,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'to find the file!',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
