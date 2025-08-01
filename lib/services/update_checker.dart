@@ -5,6 +5,9 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:solar_cargo/screens/common/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher_string.dart';
+
+import '../screens/common/logger.dart';
 
 
 class UpdateChecker extends StatefulWidget {
@@ -70,7 +73,7 @@ void _showUpdateDialog(BuildContext context, apkUrl, String changelog) {
     builder: (dialogContext) => AlertDialog(
       backgroundColor: kFormFieldBackgroundColor,
       title: const Text('Update Available'),
-      content:  Text('A new version is available.\n$changelog'),
+      content:  Text('A new version is available.\n\n$changelog'),
       actions: [
 
         Center(
@@ -87,9 +90,10 @@ void _showUpdateDialog(BuildContext context, apkUrl, String changelog) {
               ),
               onPressed: () async {
                 Navigator.pop(dialogContext);
-                final uri = Uri.parse(apkUrl);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                try {
+                  await launchUrlString(apkUrl, mode: LaunchMode.externalApplication);
+                } catch (e) {
+                  printLog('Failed to launch URL: $e');
                 }
               },
               child: Text(
