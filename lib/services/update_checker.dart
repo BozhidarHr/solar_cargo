@@ -74,17 +74,40 @@ Future<void> checkForUpdate(BuildContext context) async {
 }
 
 bool _isNewerVersion(String latest, String current) {
-  final latestParts = latest.split('.').map(int.parse).toList();
-  final currentParts = current.split('.').map(int.parse).toList();
-
-  for (int i = 0; i < latestParts.length; i++) {
-    if (i >= currentParts.length || latestParts[i] > currentParts[i]) {
-      return true;
-    }
-    if (latestParts[i] < currentParts[i]) return false;
+  // Split version and build number (e.g. "1.0.4+5")
+  List<String> splitVersion(String version) {
+    final parts = version.split('+');
+    return parts.length == 2 ? parts : [version, '0'];
   }
-  return false;
+
+  final latestParts = splitVersion(latest);
+  final currentParts = splitVersion(current);
+
+  // Parse main version numbers into int list
+  List<int> parseVersionNumbers(String version) =>
+      version.split('.').map(int.parse).toList();
+
+  final latestNums = parseVersionNumbers(latestParts[0]);
+  final currentNums = parseVersionNumbers(currentParts[0]);
+
+  final maxLength = latestNums.length > currentNums.length ? latestNums.length : currentNums.length;
+
+  // Compare main version parts
+  for (int i = 0; i < maxLength; i++) {
+    final latestNum = i < latestNums.length ? latestNums[i] : 0;
+    final currentNum = i < currentNums.length ? currentNums[i] : 0;
+
+    if (latestNum > currentNum) return true;
+    if (latestNum < currentNum) return false;
+  }
+
+  // If main versions equal, compare build number (after '+')
+  final latestBuild = int.tryParse(latestParts[1]) ?? 0;
+  final currentBuild = int.tryParse(currentParts[1]) ?? 0;
+
+  return latestBuild > currentBuild;
 }
+
 
 void _showUpdateDialog(BuildContext context, apkUrl, String changelog) {
   showDialog(
