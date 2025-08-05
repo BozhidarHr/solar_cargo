@@ -1,5 +1,5 @@
 {
-  "latest_version": "1.0.4",
-  "apk_url": "http://github.com/BozhidarHr/solar_cargo/releases/download/1.0.4/app-release.apk",
-  "changelog": "- Added update app functionality"
+  "latest_version": "1.0.5+5",
+  "apk_url": "http://github.com/BozhidarHr/solar_cargo/releases/download/1.0.5+5/app-release.apk",
+  "changelog": "- Raise version up to 1.0.5+5"
 }
