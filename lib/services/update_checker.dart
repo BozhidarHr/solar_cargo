@@ -56,8 +56,7 @@ Future<void> _checkAppVersionAndClearStorageIfNeeded() async {
 Future<void> checkForUpdate(BuildContext context) async {
   try {
     final packageInfo = await PackageInfo.fromPlatform();
-    final currentVersion = packageInfo.version;
-
+    final currentVersion = '${packageInfo.version}+${packageInfo.buildNumber}';
     final response = await http.get(Uri.parse(versionUrl));
     if (response.statusCode != 200) return;
 
