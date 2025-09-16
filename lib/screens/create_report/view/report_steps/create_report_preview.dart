@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:solar_cargo/screens/common/flash_helper.dart';
 import 'package:solar_cargo/screens/create_report/view/report_steps/create_report_damages.dart';
 
+import '../../../common/report_step.dart';
 import '../../../common/will_pop_scope.dart';
 import '../../viewmodel/create_report_view_model.dart';
 import 'create_report_step1.dart';
@@ -10,6 +10,9 @@ import 'create_report_step3.dart';
 import 'create_report_step4.dart';
 
 class CreateReportPreview extends StatelessWidget {
+
+
+
   final CreateReportViewModel viewModel;
   final List<GlobalKey<FormState>> formKeys;
   final VoidCallback onBack;
@@ -30,6 +33,21 @@ class CreateReportPreview extends StatelessWidget {
       thickness: 1.5,
     );
 
+  // Build widgets for display
+  final List<Widget> stepWidgets = [
+      Step1Form(formKey: formKeys[0], viewModel: viewModel),
+      Step2Form(formKey: formKeys[1], viewModel: viewModel, restrictBack: true),
+      Step3Form(formKey: formKeys[2], viewModel: viewModel, restrictBack: true),
+      Step4Form(formKey: formKeys[3], viewModel: viewModel, restrictBack: true),
+      CreateReportDamages(
+          formKey: formKeys[4], viewModel: viewModel, restrictBack: true),
+    ];
+
+  // Build the same list as ReportStep references for validation
+  final List<ReportStep> stepValidators = stepWidgets
+      .whereType<ReportStep>() // ensures only ReportStep instances
+      .toList();
+
     return WillPopScopeWidget(
       onWillPop: () async {
         onBack();
@@ -39,37 +57,13 @@ class CreateReportPreview extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(bottom: 90),
-            // Reserve space for buttons
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  Step1Form(
-                    formKey: formKeys[0],
-                    viewModel: viewModel,
-                  ),
-                  divider,
-                  CreateReportDamages(
-                    viewModel: viewModel,
-                    restrictBack: true,
-                  ),
-                  divider,
-                  Step2Form(
-                    formKey: formKeys[1],
-                    viewModel: viewModel,
-                    restrictBack: true,
-                  ),
-                  divider,
-                  Step3Form(
-                    formKey: formKeys[2],
-                    viewModel: viewModel,
-                    restrictBack: true,
-                  ),
-                  divider,
-                  Step4Form(
-                    formKey: formKeys[3],
-                    viewModel: viewModel,
-                    restrictBack: true,
-                  ),
+                for (int i = 0; i < stepWidgets.length; i++) ...[
+                  stepWidgets[i],
+                  if (i < stepWidgets.length - 1) divider,
+                  ],
                   const SizedBox(height: 16),
                 ],
               ),
@@ -115,7 +109,8 @@ class CreateReportPreview extends StatelessWidget {
                         ),
                       ),
                       onPressed: () async {
-                        if (_allValid(context)) {
+                      // Validate all steps
+                      if (stepValidators.every((step) => step.validate(context))) {
                           await viewModel.createDeliveryReport();
                         }
                       },
@@ -131,39 +126,40 @@ class CreateReportPreview extends StatelessWidget {
     );
   }
 
-  bool _allValid(BuildContext context) {
-    // Validate forms
-    final allFormsValid =
-        formKeys.every((key) => key.currentState?.validate() ?? false);
 
-    // Validate images using the same logic as in each step
-    final step1ImagesValid =
-        viewModel.newReport.truckLicencePlateImage != null &&
-            viewModel.newReport.trailerLicencePlateImage != null;
-    final step3ImagesValid = viewModel.newReport.proofOfDelivery != null;
-    final step4ImagesValid = viewModel.newReport.cmrImage != null &&
-        viewModel.newReport.deliverySlipImages != null;
-
-    if (!allFormsValid) {
-      FlashHelper.errorMessage(context,
-          message: 'Please complete all required fields.');
-      return false;
-    }
-    if (!step1ImagesValid) {
-      FlashHelper.errorMessage(context,
-          message: 'Please add license plate images.');
-      return false;
-    }
-    if (!step3ImagesValid) {
-      FlashHelper.errorMessage(context,
-          message: 'Please add proof of delivery image.');
-      return false;
-    }
-    if (!step4ImagesValid) {
-      FlashHelper.errorMessage(context,
-          message: 'Please add CMR/Delivery Slip images.');
-      return false;
-    }
-    return true;
-  }
+  // bool _allValid(BuildContext context) {
+  //   // Validate forms
+  //   final allFormsValid =
+  //       formKeys.every((key) => key.currentState?.validate() ?? false);
+  //
+  //   // Validate images using the same logic as in each step
+  //   final step1ImagesValid =
+  //       viewModel.newReport.truckLicencePlateImage != null &&
+  //           viewModel.newReport.trailerLicencePlateImage != null;
+  //   final step3ImagesValid = viewModel.newReport.proofOfDelivery != null;
+  //   final step4ImagesValid = viewModel.newReport.cmrImage != null &&
+  //       viewModel.newReport.deliverySlipImages != null;
+  //
+  //   if (!allFormsValid) {
+  //     FlashHelper.errorMessage(context,
+  //         message: 'Please complete all required fields.');
+  //     return false;
+  //   }
+  //   if (!step1ImagesValid) {
+  //     FlashHelper.errorMessage(context,
+  //         message: 'Please add license plate images.');
+  //     return false;
+  //   }
+  //   if (!step3ImagesValid) {
+  //     FlashHelper.errorMessage(context,
+  //         message: 'Please add proof of delivery image.');
+  //     return false;
+  //   }
+  //   if (!step4ImagesValid) {
+  //     FlashHelper.errorMessage(context,
+  //         message: 'Please add CMR/Delivery Slip images.');
+  //     return false;
+  //   }
+  //   return true;
+  // }
 }

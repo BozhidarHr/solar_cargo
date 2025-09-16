@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:solar_cargo/screens/common/report_step.dart';
 
 import '../../../common/flash_helper.dart';
 import '../../../common/will_pop_scope.dart';
@@ -7,7 +8,7 @@ import '../../models/checkbox_comment.dart';
 import '../../viewmodel/create_report_view_model.dart';
 import '../widgets/checklist_item.dart';
 
-class Step3Form extends StatelessWidget {
+class Step3Form extends StatelessWidget implements ReportStep {
   final GlobalKey<FormState> formKey;
   final CreateReportViewModel viewModel;
   final VoidCallback? onNext;
@@ -23,19 +24,23 @@ class Step3Form extends StatelessWidget {
     this.restrictBack = false,
   });
 
-  bool _validate(BuildContext context) {
+  @override
+  bool validate(BuildContext context) {
     final valid = formKey.currentState?.validate() ?? false;
     if (!valid) {
       FlashHelper.errorMessage(context,
-          message: 'Please complete all checklist items.');
+          message: 'Please complete all required fields in Step 3.');
+      return false;
     }
-    return valid;
-  }
 
-  void _handleNext(BuildContext context, VoidCallback onNext) {
-    if (_validate(context)) {
-      onNext();
+    final proof = viewModel.newReport.proofOfDelivery;
+    if (proof == null) {
+      FlashHelper.errorMessage(context,
+          message: 'Please add proof of delivery image in Step 3.');
+      return false;
     }
+
+    return true;
   }
 
   @override
@@ -127,7 +132,7 @@ class Step3Form extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            onPressed: () => _handleNext(context, onNext!),
+                            onPressed: onNext,
                             child: const Text('Next Step'),
                           ),
                         ),

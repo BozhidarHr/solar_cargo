@@ -9,12 +9,12 @@ import '../../../common/constants.dart';
 import '../../../common/flash_helper.dart';
 import '../../../common/loading_widget.dart';
 import '../../../common/multiple_images_selection_field.dart';
+import '../../../common/report_step.dart';
 import '../../../common/will_pop_scope.dart';
 import '../../viewmodel/create_report_view_model.dart';
 
-class Step4Form extends StatelessWidget {
+class Step4Form extends StatelessWidget implements ReportStep {
   final GlobalKey<FormState> formKey;
-
   final CreateReportViewModel viewModel;
   final VoidCallback? onNext;
   final VoidCallback? onBack;
@@ -29,22 +29,26 @@ class Step4Form extends StatelessWidget {
     this.restrictBack = false,
   });
 
-  bool _validate(BuildContext context) {
+  @override
+  bool validate(BuildContext context) {
     final valid = formKey.currentState?.validate() ?? false;
+    if (!valid) {
+      FlashHelper.errorMessage(context,
+          message: 'Please complete all required fields in Step 4.');
+      return false;
+    }
+
     final cmr = viewModel.newReport.cmrImage;
     final slip = viewModel.newReport.deliverySlipImages;
     if (cmr == null || slip == null) {
-      FlashHelper.errorMessage(context,
-          message: 'Please add CMR/Delivery Slip images.');
+      FlashHelper.errorMessage(
+        context,
+        message: 'Please add CMR/Delivery Slip images in Step 4.',
+      );
       return false;
     }
-    return valid;
-  }
 
-  void _handleSubmit(BuildContext context, VoidCallback onNext) {
-    if (_validate(context)) {
-      onNext();
-    }
+    return true;
   }
 
   @override
@@ -105,13 +109,13 @@ class Step4Form extends StatelessWidget {
                             viewModel.newReport.licencePlateTrailer = val,
                       ),
                       _buildFormField(
-                        label: S.of(context).comments,
-                        context: context,
-                        initialValue: viewModel.newReport.comments,
-                        maxLines: 4,
-                        onChanged: (val) => viewModel.newReport.comments = val,
-                        isValidated: false
-                      )
+                          label: S.of(context).comments,
+                          context: context,
+                          initialValue: viewModel.newReport.comments,
+                          maxLines: 4,
+                          onChanged: (val) =>
+                              viewModel.newReport.comments = val,
+                          isValidated: false)
                     ]),
                   ),
                   const SizedBox(
@@ -175,7 +179,7 @@ class Step4Form extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            onPressed: () => _handleSubmit(context, onNext!),
+                            onPressed: onNext,
                             child: const Text('Preview'),
                           ),
                         ),

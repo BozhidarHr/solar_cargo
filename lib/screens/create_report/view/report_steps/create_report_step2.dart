@@ -13,9 +13,10 @@ import 'package:solar_cargo/screens/common/will_pop_scope.dart';
 import '../../../../services/services.dart';
 import '../../../common/constants.dart';
 import '../../../common/flash_helper.dart';
+import '../../../common/report_step.dart';
 import '../../viewmodel/create_report_view_model.dart';
 
-class Step2Form extends StatelessWidget {
+class Step2Form extends StatelessWidget implements ReportStep {
   final GlobalKey<FormState> formKey;
   final CreateReportViewModel viewModel;
   final VoidCallback? onNext;
@@ -31,26 +32,25 @@ class Step2Form extends StatelessWidget {
     this.restrictBack = false,
   });
 
-  bool _validate(BuildContext context) {
-    final formValid = formKey.currentState?.validate() ?? false;
+  @override
+  bool validate(BuildContext context) {
+    final valid = formKey.currentState?.validate() ?? false;
+    if (!valid) {
+      FlashHelper.errorMessage(context,
+          message: 'Please complete all required fields in Step 2.');
+      return false;
+    }
+
     final proof = viewModel.newReport.proofOfDelivery;
-
-    if (!formValid) return false;
-
     if (proof == null) {
       FlashHelper.errorMessage(context,
-          message: 'Please add proof of delivery image.');
+          message: 'Please add proof of delivery image in Step 2.');
       return false;
     }
 
     return true;
   }
 
-  void _handleNext(BuildContext context, VoidCallback onNext) {
-    if (_validate(context)) {
-      onNext();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +137,6 @@ class Step2Form extends StatelessWidget {
                                       },
                                     ),
                                     suggestionsCallback: (pattern) async {
-
                                       final debounceKey =
                                           'item-name-debounce-$index';
 
@@ -320,7 +319,7 @@ class Step2Form extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            onPressed: () => _handleNext(context, onNext!),
+                            onPressed: onNext,
                             child: const Text('Next Step'),
                           ),
                         ),

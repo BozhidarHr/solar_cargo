@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +9,12 @@ import '../../../../services/services.dart';
 import '../../../common/constants.dart';
 import '../../../common/flash_helper.dart';
 import '../../../common/image_selection_field.dart';
+import '../../../common/report_step.dart';
 import '../../../common/typeahead_popup_item.dart';
 import '../../viewmodel/create_report_view_model.dart';
 import '../widgets/weather_dropdown.dart';
 
-class Step1Form extends StatelessWidget {
+class Step1Form extends StatelessWidget implements ReportStep {
   final GlobalKey<FormState> formKey;
   final CreateReportViewModel viewModel;
   final VoidCallback? onNext;
@@ -26,30 +26,25 @@ class Step1Form extends StatelessWidget {
     this.onNext,
   });
 
-  bool _validate(BuildContext context) {
+  @override
+  bool validate(BuildContext context) {
     final valid = formKey.currentState?.validate() ?? false;
+    if (!valid) {
+      FlashHelper.errorMessage(context,
+          message: 'Please complete all required fields in Step 1.');
+      return false;
+    }
+
     final truck = viewModel.newReport.truckLicencePlateImage;
     final trailer = viewModel.newReport.trailerLicencePlateImage;
     if (truck == null || trailer == null) {
       FlashHelper.errorMessage(
         context,
-        message: 'Please add license plate images.',
+        message: 'Please add license plate images in Step 1.',
       );
       return false;
     }
-    return valid;
-  }
-
-  void _handleNext({
-    required BuildContext context,
-    required VoidCallback onNext,
-    File? truckImage,
-    File? trailerImage,
-  }) {
-    if (_validate(context)) {
-      viewModel.recognisePlate(truckImage, trailerImage);
-      onNext();
-    }
+    return true;
   }
 
   @override
@@ -104,12 +99,7 @@ class Step1Form extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () => _handleNext(
-                    context: context,
-                    onNext: onNext!,
-                    truckImage: viewModel.newReport.truckLicencePlateImage,
-                    trailerImage: viewModel.newReport.trailerLicencePlateImage,
-                  ),
+                  onPressed: onNext,
                   child: const Text('Next Step'),
                 ),
               ),
@@ -203,7 +193,6 @@ class Step1Form extends StatelessWidget {
               },
             ),
             suggestionsCallback: (pattern) async {
-
               const debounceKey = 'item-name-debounce-supplier';
 
               // Cancel any previous completer for this key

@@ -22,7 +22,7 @@ class CreateReportStepper extends StatefulWidget {
 
 class _CreateReportStepperState extends State<CreateReportStepper> {
   final List<GlobalKey<FormState>> formKeys =
-      List.generate(4, (_) => GlobalKey<FormState>());
+      List.generate(5, (_) => GlobalKey<FormState>());
 
   int _currentStep = 0;
   late final CreateReportViewModel _viewModel;
@@ -57,11 +57,6 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
         viewModel: _viewModel,
         onNext: _nextStep,
       ),
-      CreateReportDamages(
-        viewModel: _viewModel,
-        onNext: _nextStep,
-        onBack: _previousStep,
-      ),
       Step2Form(
         formKey: formKeys[1],
         viewModel: _viewModel,
@@ -79,6 +74,12 @@ class _CreateReportStepperState extends State<CreateReportStepper> {
         viewModel: _viewModel,
         onBack: _previousStep,
         onNext: _nextStep,
+      ),
+      CreateReportDamages(
+        formKey: formKeys[4],
+        viewModel: _viewModel,
+        onNext: _nextStep,
+        onBack: _previousStep,
       ),
       CreateReportPreview(
         viewModel: _viewModel,
