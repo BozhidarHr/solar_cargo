@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:solar_cargo/providers/auth_provider.dart';
 import 'package:solar_cargo/screens/create_report/viewmodel/create_report_view_model.dart';
@@ -8,7 +9,8 @@ import 'app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  // Initialise hive
+  await Hive.initFlutter();
   // Initialize AuthProvider before runApp
   final authProvider = AuthProvider();
   await authProvider.initialize();

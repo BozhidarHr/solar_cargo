@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:solar_cargo/screens/create_report/models/checkbox_comment.dart';
 import 'package:solar_cargo/screens/view_reports/model/delivery_report.dart';
 
@@ -10,6 +11,7 @@ import '../../common/logger.dart';
 import '../models/delivery_item.dart';
 
 class CreateReportViewModel with ChangeNotifier {
+
   final Services _service = Services();
 
   // API response state
@@ -133,4 +135,19 @@ class CreateReportViewModel with ChangeNotifier {
       orElse: () => throw Exception("CheckBoxItem with name '$name' not found"),
     );
   }
+
+  Future<void> saveReportToStorage() async {
+    final box = await Hive.openBox('delivery_reports');
+    await box.put('current_report', newReport.toJson());
+  }
+
+  Future<void> loadReportFromStorage() async {
+    final box = await Hive.openBox('delivery_reports');
+    final saved = box.get('current_report');
+    if (saved != null) {
+      newReport = DeliveryReport.fromJson(Map<String, dynamic>.from(saved));
+      notifyListeners();
+    }
+  }
 }
+

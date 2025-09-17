@@ -42,9 +42,9 @@ class _Step3ChecklistItemState extends State<Step3ChecklistItem> {
     _wasCommentNull = widget.item.comment == null;
   }
   void _handleRemoveComment() {
-    _commentFocusNode.unfocus(); // Remove focus first
+    _commentFocusNode.unfocus();
     if (widget.onRemoveComment != null) {
-      widget.onRemoveComment!(); // Then call external handler which removes comment
+      widget.onRemoveComment!();
     }
   }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -5,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:solar_cargo/providers/auth_provider.dart';
 import 'package:solar_cargo/routes/routes.dart';
 import 'package:solar_cargo/screens/choose_location_screen.dart';
+import 'package:solar_cargo/screens/create_report/viewmodel/create_report_view_model.dart';
 import 'package:solar_cargo/screens/home_screen.dart';
 import 'package:solar_cargo/screens/login/view/login_screen.dart';
 import 'package:solar_cargo/services/update_checker.dart';
@@ -20,10 +23,42 @@ class MyApp extends StatefulWidget {
   });
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<MyApp> createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  Timer? _backgroundSaveTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    context.read<CreateReportViewModel>().loadReportFromStorage();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+      _backgroundSaveTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final viewModel = context.read<CreateReportViewModel>();
+
+    if (state == AppLifecycleState.paused) {
+      // Schedule delayed save
+      _backgroundSaveTimer?.cancel();
+      _backgroundSaveTimer = Timer(const Duration(seconds: 15), () {
+        viewModel.saveReportToStorage();
+      });
+    } else if (state == AppLifecycleState.resumed) {
+      // Cancel save if user returns quickly
+      _backgroundSaveTimer?.cancel();
+    }
+  }
+
   @override
   Widget build(
     BuildContext context,

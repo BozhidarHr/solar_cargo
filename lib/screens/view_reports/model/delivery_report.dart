@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:solar_cargo/screens/common/string_extension.dart';
 
 import '../../common/user_location.dart';
@@ -61,29 +63,34 @@ class DeliveryReport {
   factory DeliveryReport.fromJson(Map<String, dynamic> json) {
     return DeliveryReport(
       id: json['id'],
-      pvProject: UserLocation.fromJsonPVLocation(json),
+      pvProject: UserLocation.fromJson(json['pvProject'] ?? {}),
       supplier: json['supplier_name'],
       deliverySlipNumber: json['delivery_slip_number'],
       logisticCompany: json['logistic_company'],
       containerNumber: json['container_number'],
+      truckLicencePlateImage: json['truckLicencePlateImage'],
+      trailerLicencePlateImage: json['trailerLicencePlateImage'],
       licencePlateTruck: json['licence_plate_truck'],
       licencePlateTrailer: json['licence_plate_trailer'],
       damagesDescription: json['damage_description'],
       weatherConditions: json['weather_conditions'],
       deliveryItems: (json['items'] != null)
           ? (json['items'] as List)
-              .map((e) => DeliveryItem.fromJson(Map<String, dynamic>.from(e)))
+              .map((e) =>
+                  DeliveryItem.fromLocalJson(Map<String, dynamic>.from(e)))
               .toList()
           : [],
       comments: json['comments'],
+      proofOfDelivery: json['proofOfDelivery'],
+      cmrImage: json['cmrImage'],
+      deliverySlipImages: json['deliverySlipImages'],
+      additionalImages: json['additionalImages'],
+      damagesImages: json['damagesImages'],
       checkboxItems: CheckBoxItem.listFromFlatJson(json),
+      includesDamages: json['includesDamages'] ?? false,
       userId: json['user'],
     );
   }
-
-
-
-
 
   String get buildHeaderText {
     final List<String> headerText = [];
@@ -96,26 +103,60 @@ class DeliveryReport {
       headerText.add(supplier!);
     }
 
-    return headerText.join(
-      ' | ',
-    );
+    return headerText.join(' | ');
   }
 
-// String? get createdAtDate {
-//   if (createdAt == null) return null;
-//   try {
-//     return DateFormat('yy/MM/dd').format(DateTime.parse(createdAt!));
-//   } catch (_) {
-//     return null;
-//   }
-// }
-//
-// String? get updatedAtDate {
-//   if (updatedAt == null) return null;
-//   try {
-//     return DateFormat('yy/MM/dd').format(DateTime.parse(updatedAt!));
-//   } catch (_) {
-//     return null;
-//   }
-// }
+  /// Converts the DeliveryReport object to a JSON-serializable map
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> json = {
+      'id': id,
+      'pvProject': pvProject?.toJson(),
+      // Ensure UserLocation has a toJson method
+      'subcontractor': subcontractor,
+      'supplier_name': supplier,
+      'delivery_slip_number': deliverySlipNumber,
+      'logistic_company': logisticCompany,
+      'container_number': containerNumber,
+      'licence_plate_truck': licencePlateTruck,
+      'licence_plate_trailer': licencePlateTrailer,
+      'includesDamages': includesDamages,
+      'damage_description': damagesDescription,
+      'weather_conditions': weatherConditions,
+      'items': deliveryItems.map((e) => e.toJson()).toList(),
+      'comments': comments,
+      'user': userId,
+      'truckLicencePlateImage': _getFilePath(truckLicencePlateImage),
+      'trailerLicencePlateImage': _getFilePath(trailerLicencePlateImage),
+      'proofOfDelivery': _getFilePath(proofOfDelivery),
+      'cmrImage': _getFilePath(cmrImage),
+      'deliverySlipImages': _getFileListPaths(deliverySlipImages),
+      'additionalImages': _getFileListPaths(additionalImages),
+      'damagesImages': _getFileListPaths(damagesImages),
+    };
+
+    // Merge flat checkbox fields into root
+    json.addAll(CheckBoxItem.listToFlatJson(checkboxItems));
+
+    return json;
+  }
+
+  // Helper to get file path from dynamic field
+  String? _getFilePath(dynamic fileOrPath) {
+    if (fileOrPath == null) return null;
+    if (fileOrPath is File) return fileOrPath.path;
+    if (fileOrPath is String) return fileOrPath;
+    return null;
+  }
+
+  // Helper to get list of file paths from dynamic list
+  List<String>? _getFileListPaths(dynamic files) {
+    if (files == null) return null;
+    if (files is List) {
+      return files
+          .map((e) => _getFilePath(e) ?? '')
+          .where((e) => e.isNotEmpty)
+          .toList();
+    }
+    return null;
+  }
 }

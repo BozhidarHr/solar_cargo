@@ -1,6 +1,7 @@
 import 'dart:convert' as convert;
 import 'dart:io';
 
+import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:solar_cargo/screens/common/string_extension.dart';
@@ -89,7 +90,7 @@ class SolarServices {
     try {
       _refreshToken = await tokenStorage.read(StorageItem.refreshToken);
       if (_refreshToken == null || _refreshToken!.isEmpty) {
-        throw Exception('No refresh token available');
+        throw Exception('No refresh token available. Please logout and login again.');
       }
       var url = SolarHelper.buildUrl(
         domain,
@@ -421,6 +422,9 @@ class SolarServices {
         throw Exception(
             'Unknown error occurred with status code ${response.statusCode}');
       }
+      // ✅ If we got here, request succeeded → clear saved draft
+      final box = await Hive.openBox('delivery_reports');
+      await box.delete('current_report');
     } catch (e) {
       rethrow;
     }

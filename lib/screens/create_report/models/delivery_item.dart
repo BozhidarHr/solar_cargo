@@ -18,6 +18,16 @@ class DeliveryItem {
     );
   }
 
+  factory DeliveryItem.fromLocalJson(Map<String, dynamic> json) {
+    return DeliveryItem(
+      name: json['name'] as String?,
+      amount: json['quantity'] is int
+          ? json['quantity']
+          : int.tryParse(json['quantity']?.toString() ?? ''),
+    );
+  }
+
+
 
   Map<String, dynamic> toJson() {
     return {
