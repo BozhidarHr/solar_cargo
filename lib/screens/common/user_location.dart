@@ -7,7 +7,7 @@ class UserLocation {
     required this.name,
   });
 
-  UserLocation.fromJson(Map<String, dynamic> map)
+  UserLocation.fromJson(Map map)
       : id = map['id'],
         name = map['name'];
 

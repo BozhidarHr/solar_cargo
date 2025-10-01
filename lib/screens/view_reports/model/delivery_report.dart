@@ -63,29 +63,52 @@ class DeliveryReport {
   factory DeliveryReport.fromJson(Map<String, dynamic> json) {
     return DeliveryReport(
       id: json['id'],
-      pvProject: UserLocation.fromJson(json['pvProject'] ?? {}),
+      pvProject: UserLocation.fromJsonPVLocation(json),
       supplier: json['supplier_name'],
       deliverySlipNumber: json['delivery_slip_number'],
       logisticCompany: json['logistic_company'],
       containerNumber: json['container_number'],
-      truckLicencePlateImage: json['truckLicencePlateImage'],
-      trailerLicencePlateImage: json['trailerLicencePlateImage'],
       licencePlateTruck: json['licence_plate_truck'],
       licencePlateTrailer: json['licence_plate_trailer'],
       damagesDescription: json['damage_description'],
       weatherConditions: json['weather_conditions'],
       deliveryItems: (json['items'] != null)
           ? (json['items'] as List)
-              .map((e) =>
-                  DeliveryItem.fromLocalJson(Map<String, dynamic>.from(e)))
-              .toList()
+          .map((e) => DeliveryItem.fromJson(Map<String, dynamic>.from(e)))
+          .toList()
           : [],
       comments: json['comments'],
-      proofOfDelivery: json['proofOfDelivery'],
-      cmrImage: json['cmrImage'],
-      deliverySlipImages: json['deliverySlipImages'],
-      additionalImages: json['additionalImages'],
-      damagesImages: json['damagesImages'],
+      checkboxItems: CheckBoxItem.listFromFlatJson(json),
+      userId: json['user'],
+    );
+  }
+
+  factory DeliveryReport.fromLocalJson(Map<String, dynamic> json) {
+    return DeliveryReport(
+      id: json['id'],
+      pvProject: UserLocation.fromJson(json['pvProject'] ?? {}),
+      supplier: json['supplier_name'],
+      deliverySlipNumber: json['delivery_slip_number'],
+      logisticCompany: json['logistic_company'],
+      containerNumber: json['container_number'],
+      truckLicencePlateImage: _fileFromPath(json['truckLicencePlateImage']),
+      trailerLicencePlateImage: _fileFromPath(json['trailerLicencePlateImage']),
+      licencePlateTruck: json['licence_plate_truck'],
+      licencePlateTrailer: json['licence_plate_trailer'],
+      damagesDescription: json['damage_description'],
+      weatherConditions: json['weather_conditions'],
+      deliveryItems: (json['items'] != null)
+          ? (json['items'] as List)
+          .map((e) =>
+          DeliveryItem.fromLocalJson(Map<String, dynamic>.from(e)))
+          .toList()
+          : [],
+      comments: json['comments'],
+      proofOfDelivery: _fileFromPath(json['proofOfDelivery']),
+      cmrImage: _fileFromPath(json['cmrImage']),
+      deliverySlipImages: _fileListFromPaths(json['deliverySlipImages']),
+      additionalImages: _fileListFromPaths(json['additionalImages']),
+      damagesImages: _fileListFromPaths(json['damagesImages']),
       checkboxItems: CheckBoxItem.listFromFlatJson(json),
       includesDamages: json['includesDamages'] ?? false,
       userId: json['user'],
@@ -107,11 +130,10 @@ class DeliveryReport {
   }
 
   /// Converts the DeliveryReport object to a JSON-serializable map
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toLocalJson() {
     final Map<String, dynamic> json = {
       'id': id,
       'pvProject': pvProject?.toJson(),
-      // Ensure UserLocation has a toJson method
       'subcontractor': subcontractor,
       'supplier_name': supplier,
       'delivery_slip_number': deliverySlipNumber,
@@ -140,21 +162,40 @@ class DeliveryReport {
     return json;
   }
 
-  // Helper to get file path from dynamic field
-  String? _getFilePath(dynamic fileOrPath) {
+  // ---------- Helpers ----------
+
+  static String? _getFilePath(dynamic fileOrPath) {
     if (fileOrPath == null) return null;
     if (fileOrPath is File) return fileOrPath.path;
     if (fileOrPath is String) return fileOrPath;
     return null;
   }
 
-  // Helper to get list of file paths from dynamic list
-  List<String>? _getFileListPaths(dynamic files) {
+  static List<String>? _getFileListPaths(dynamic files) {
     if (files == null) return null;
     if (files is List) {
       return files
           .map((e) => _getFilePath(e) ?? '')
           .where((e) => e.isNotEmpty)
+          .toList();
+    }
+    return null;
+  }
+
+  static File? _fileFromPath(dynamic fileOrPath) {
+    if (fileOrPath == null) return null;
+    if (fileOrPath is String && fileOrPath.isNotEmpty) return File(fileOrPath);
+    if (fileOrPath is File) return fileOrPath;
+    return null;
+  }
+
+  static List<File>? _fileListFromPaths(dynamic paths) {
+    if (paths == null) return null;
+    if (paths is List) {
+      return paths
+          .map((e) => _fileFromPath(e))
+          .where((f) => f != null && (f as File).existsSync())
+          .cast<File>()
           .toList();
     }
     return null;
