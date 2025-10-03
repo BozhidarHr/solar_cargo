@@ -137,11 +137,13 @@ class CreateReportViewModel with ChangeNotifier {
   }
 
   Future<void> saveReportToStorage() async {
+    logger.f("Saving report!");
     final box = await Hive.openBox('delivery_reports');
     await box.put('current_report', newReport.toLocalJson());
   }
 
   Future<void> loadReportFromStorage() async {
+    logger.i("Loading report!");
     final box = await Hive.openBox('delivery_reports');
     final saved = box.get('current_report');
     if (saved != null) {

@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:solar_cargo/providers/auth_provider.dart';
 import 'package:solar_cargo/routes/routes.dart';
 import 'package:solar_cargo/screens/choose_location_screen.dart';
-import 'package:solar_cargo/screens/common/logger.dart';
 import 'package:solar_cargo/screens/create_report/viewmodel/create_report_view_model.dart';
 import 'package:solar_cargo/screens/home_screen.dart';
 import 'package:solar_cargo/screens/login/view/login_screen.dart';
@@ -43,25 +42,30 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       _backgroundSaveTimer?.cancel();
     super.dispose();
   }
+  bool _reportSaved = false;
+
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final viewModel = context.read<CreateReportViewModel>();
 
     if (state == AppLifecycleState.paused) {
-      // Schedule delayed save
       _backgroundSaveTimer?.cancel();
+      _reportSaved = false;
 
       _backgroundSaveTimer = Timer(const Duration(seconds: 30), () {
-        logger.f("Saving report!");
         viewModel.saveReportToStorage();
+        _reportSaved = true;
       });
     } else if (state == AppLifecycleState.resumed) {
-      // Cancel save if user returns quickly
       _backgroundSaveTimer?.cancel();
+
+      if (_reportSaved) {
+        viewModel.loadReportFromStorage();
+        _reportSaved = false;
+      }
     }
   }
-
   @override
   Widget build(
     BuildContext context,
