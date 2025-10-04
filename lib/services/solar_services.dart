@@ -279,10 +279,13 @@ class SolarServices {
 
   Future<void> createDeliveryReport(DeliveryReport newReport) async {
     try {
-      var url = SolarHelper.buildUrl(domain, '/delivery-reports/');
+    final url = SolarHelper.buildUrl(domain, '/delivery-reports/');
 
       final response = await sendWithAuth((token) async {
-        var request = http.MultipartRequest('POST', url!);
+      // ✅ Create a *fresh client* for each request
+      final client = http.Client();
+      try {
+        final request = http.MultipartRequest('POST', url!);
         request.headers[HttpHeaders.authorizationHeader] = 'Bearer $token';
 
         // Fields
@@ -411,9 +414,12 @@ class SolarServices {
         // Send request and get response
         var streamedResponse = await request.send();
         return await http.Response.fromStream(streamedResponse);
+      } finally {
+        client.close(); // always free sockets
+      }
       });
 
-      var responseBody = convert.jsonDecode(response.body);
+    final responseBody = convert.jsonDecode(response.body);
 
       if (response.statusCode != 200 && response.statusCode != 201) {
         if (responseBody is Map && responseBody['message'] != null) {

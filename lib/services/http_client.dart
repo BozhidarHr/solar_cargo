@@ -41,20 +41,50 @@ class HttpBase extends http.BaseClient {
 }
 
 Future<http.Response> sendWithAuth(RequestExecutor executor) async {
-  var services = Services();
+  final services = Services();
   String? token = services.api.customerToken;
-  http.Response response = await executor(token);
 
-  if (response.statusCode == 401) {
-    // Try to refresh token
-    final newToken = await services.api.updateToken();
-    services.api.setCustomerToken(newToken); // Add this setter in SolarServices
+  int attempt = 0;
+  const maxAttempts = 2; // first try + one retry
 
-    // Retry the request with new token
-    response = await executor(newToken);
+  while (attempt < maxAttempts) {
+    attempt++;
+    try {
+      final response = await executor(token);
+
+      // Handle 401 (expired token)
+      if (response.statusCode == 401 && attempt < maxAttempts) {
+        token = await services.api.updateToken();
+        services.api.setCustomerToken(token);
+        continue; // retry with new token
+      }
+
+      return response; // success or other HTTP error
+    } on SocketException catch (e) {
+      logger.f('SocketException caught on attempt $attempt: $e');
+
+      if (attempt < maxAttempts) {
+        // Refresh token before retry
+        token = await services.api.updateToken();
+        services.api.setCustomerToken(token);
+        continue; // retry
+      }
+
+      rethrow; // max attempts reached
+    } on http.ClientException catch (e) {
+      logger.f('ClientException caught on attempt $attempt: $e');
+
+      if (attempt < maxAttempts) {
+        token = await services.api.updateToken();
+        services.api.setCustomerToken(token);
+        continue; // retry
+      }
+
+      rethrow;
+    }
   }
 
-  return response;
+  throw Exception('sendWithAuth failed after $maxAttempts attempts');
 }
 
 Future<http.Response> _makeRequest(Future<http.Response> request) async {
