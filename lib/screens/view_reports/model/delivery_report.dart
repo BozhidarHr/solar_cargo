@@ -104,7 +104,7 @@ class DeliveryReport {
               .toList()
           : [],
       comments: json['comments'],
-      goodsContainerSeal: _fileFromPath(json['goodsContainerSeal']),
+      goodsContainerSeal: _fileListFromPaths(json['goodsContainerSeal']),
       cmrImage: _fileFromPath(json['cmrImage']),
       deliverySlipImages: _fileListFromPaths(json['deliverySlipImages']),
       additionalImages: _fileListFromPaths(json['additionalImages']),
@@ -149,7 +149,7 @@ class DeliveryReport {
       'user': userId,
       'truckLicencePlateImage': _getFilePath(truckLicencePlateImage),
       'trailerLicencePlateImage': _getFilePath(trailerLicencePlateImage),
-      'goodsContainerSeal': _getFilePath(goodsContainerSeal),
+      'goodsContainerSeal': _getFileListPaths(goodsContainerSeal),
       'cmrImage': _getFilePath(cmrImage),
       'deliverySlipImages': _getFileListPaths(deliverySlipImages),
       'additionalImages': _getFileListPaths(additionalImages),
