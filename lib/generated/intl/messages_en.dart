@@ -43,14 +43,14 @@ class MessageLookup extends MessageLookupByLibrary {
             "An error occurred, please try again."),
         "fillFieldsError":
             MessageLookupByLibrary.simpleMessage("Please fill in all fields."),
+        "goodsContainerSeal":
+            MessageLookupByLibrary.simpleMessage("Goods/Container/Seal"),
         "login": MessageLookupByLibrary.simpleMessage("Login"),
         "logisticsCompany":
             MessageLookupByLibrary.simpleMessage("Logistics company"),
         "noImageSelected":
             MessageLookupByLibrary.simpleMessage("No image selected"),
         "password": MessageLookupByLibrary.simpleMessage("Password"),
-        "proofOfDelivery":
-            MessageLookupByLibrary.simpleMessage("Proof of delivery"),
         "pvProject": MessageLookupByLibrary.simpleMessage("PV Project"),
         "step1Title": MessageLookupByLibrary.simpleMessage(
             "Step 1: Delivery Information"),

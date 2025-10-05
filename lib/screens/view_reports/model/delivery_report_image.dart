@@ -28,9 +28,9 @@ extension DeliveryReportImages on DeliveryReport {
       }
     }
 
-    proofOfDelivery = _parseSingleImage(json, 'delivery_proof');
     cmrImage = _parseSingleImage(json, 'cmr');
 
+    goodsContainerSeal = _parseImageList(json, 'goods_seal_container_proof_urls');
     deliverySlipImages = _parseImageList(json, 'delivery_slips');
     damagesImages = _parseImageList(json, 'damage_images');
     additionalImages = _parseImageList(json, 'additional');

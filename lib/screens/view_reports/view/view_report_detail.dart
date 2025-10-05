@@ -60,8 +60,8 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
     super.initState();
     viewModel = Provider.of<ViewReportsViewModel>(context, listen: false)
       ..resetDownloadResponse();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      viewModel.fetchAndAssignImages(report: widget.report);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await viewModel.fetchAndAssignImages(report: widget.report);
     });
   }
 
@@ -305,9 +305,7 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
         ViewReportCheckboxes(
           report: widget.report,
         ),
-        ViewReportDamages(
-          report: widget.report,
-        ),
+
         Selector<ViewReportsViewModel, ApiResponse>(
             selector: (_, vm) => vm.fetchImagesResponse,
             builder: (context, res, child) {
@@ -318,17 +316,26 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
                 );
               }
               return Column(
-                children: [..._buildImageFields(context)],
+                children: [
+                  ViewReportDamages(
+                    report: widget.report,
+                  ),
+                  ..._buildImageFields(context),
+                  ViewReportMultipleImages(
+                    images: widget.report.goodsContainerSeal,
+                    label: S.of(context).goodsContainerSeal,
+                  ),
+                  ViewReportMultipleImages(
+                    images: widget.report.deliverySlipImages,
+                    label: 'Delivery slip images',
+                  ),
+                  ViewReportMultipleImages(
+                    images: widget.report.additionalImages,
+                    label: S.of(context).additionalImages,
+                  ),
+                ],
               );
             }),
-        ViewReportMultipleImages(
-          images: widget.report.deliverySlipImages,
-          label: 'Delivery slip images',
-        ),
-        ViewReportMultipleImages(
-          images: widget.report.additionalImages,
-          label: S.of(context).additionalImages,
-        ),
       ],
     );
   }
@@ -434,11 +441,6 @@ class _ViewReportDetailState extends State<ViewReportDetail> {
         context,
         S.of(context).trailerLicensePlate,
         widget.report.trailerLicencePlateImage,
-      ),
-      _buildImagePreview(
-        context,
-        S.of(context).proofOfDelivery,
-        widget.report.proofOfDelivery,
       ),
       _buildImagePreview(
         context,

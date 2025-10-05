@@ -290,11 +290,11 @@ class S {
     );
   }
 
-  /// `Proof of delivery`
-  String get proofOfDelivery {
+  /// `Goods/Container/Seal`
+  String get goodsContainerSeal {
     return Intl.message(
-      'Proof of delivery',
-      name: 'proofOfDelivery',
+      'Goods/Container/Seal',
+      name: 'goodsContainerSeal',
       desc: '',
       args: [],
     );

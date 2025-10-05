@@ -90,7 +90,8 @@ class SolarServices {
     try {
       _refreshToken = await tokenStorage.read(StorageItem.refreshToken);
       if (_refreshToken == null || _refreshToken!.isEmpty) {
-        throw Exception('No refresh token available. Please logout and login again.');
+        throw Exception(
+            'No refresh token available. Please logout and login again.');
       }
       var url = SolarHelper.buildUrl(
         domain,
@@ -164,43 +165,41 @@ class SolarServices {
     }
   }
 
-  Future<Map> fetchReportImages({required int reportId,} )
-    async {
-      try {
-        // Build URL with page param
-        var url = SolarHelper.buildUrl(
-          domain,
-          'delivery-reports/$reportId/download-media/',includeApiPath: false
+  Future<Map> fetchReportImages({
+    required int reportId,
+  }) async {
+    try {
+      // Build URL with page param
+      var url = SolarHelper.buildUrl(
+          domain, 'delivery-reports/$reportId/download-media/',
+          includeApiPath: false);
+      // Make GET request
+      var response = await sendWithAuth((token) {
+        return http.get(
+          url!,
+          headers: {
+            HttpHeaders.authorizationHeader: 'Bearer $_customerToken',
+          },
         );
-        // Make GET request
-        var response = await sendWithAuth((token) {
-          return http.get(
-            url!,
-            headers: {
-              HttpHeaders.authorizationHeader: 'Bearer $_customerToken',
-            },
-          );
-        });
+      });
 
-        // Decode response
-        var responseBody = convert.jsonDecode(response.body);
+      // Decode response
+      var responseBody = convert.jsonDecode(response.body);
 
-        // Error handling
-        if (response.statusCode != 200) {
-          if (responseBody is Map && responseBody['message'] != null) {
-            throw Exception(SolarHelper.getErrorMessage(responseBody));
-          }
-          throw Exception(
-              'Unknown error occurred with status code ${response.statusCode}');
+      // Error handling
+      if (response.statusCode != 200) {
+        if (responseBody is Map && responseBody['message'] != null) {
+          throw Exception(SolarHelper.getErrorMessage(responseBody));
         }
-
-        // Parse and return paging response
-        return responseBody['media_data'];
-      } catch (e) {
-        rethrow;
+        throw Exception(
+            'Unknown error occurred with status code ${response.statusCode}');
       }
 
-
+      // Parse and return paging response
+      return responseBody['media_data'];
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<PagingResponse<DeliveryReport>> fetchDeliveryReports(
@@ -289,21 +288,28 @@ class SolarServices {
         request.fields['location'] = newReport.pvProject?.id.toString() ?? '6';
         request.fields['checking_company'] = newReport.subcontractor ?? '';
         request.fields['supplier_input'] = newReport.supplier ?? '';
-        request.fields['delivery_slip_number'] = newReport.deliverySlipNumber ?? '';
+        request.fields['delivery_slip_number'] =
+            newReport.deliverySlipNumber ?? '';
         request.fields['logistic_company'] = newReport.logisticCompany ?? '';
         request.fields['container_number'] = newReport.containerNumber ?? '';
-        request.fields['licence_plate_truck'] = newReport.licencePlateTruck ?? '';
-        request.fields['licence_plate_trailer'] = newReport.licencePlateTrailer ?? '';
+        request.fields['licence_plate_truck'] =
+            newReport.licencePlateTruck ?? '';
+        request.fields['licence_plate_trailer'] =
+            newReport.licencePlateTrailer ?? '';
         request.fields['comments'] = newReport.comments ?? '';
-        request.fields['weather_conditions'] = newReport.weatherConditions ?? '';
+        request.fields['weather_conditions'] =
+            newReport.weatherConditions ?? '';
         request.fields['user'] = newReport.userId.toString();
-        request.fields['damage_description'] = newReport.damagesDescription ?? '';
+        request.fields['damage_description'] =
+            newReport.damagesDescription ?? '';
         // Delivery items
-        final itemsJson = newReport.deliveryItems.map((e) => e.toJson()).toList();
+        final itemsJson =
+            newReport.deliveryItems.map((e) => e.toJson()).toList();
         request.fields['items_input'] = convert.jsonEncode(itemsJson);
 
         // Checkbox fields
-        final checkboxFields = CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
+        final checkboxFields =
+            CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
         checkboxFields.forEach((key, value) {
           request.fields[key] = value?.toString() ?? '';
         });
@@ -312,17 +318,18 @@ class SolarServices {
         final imageFields = {
           'truck_license_plate_image': newReport.truckLicencePlateImage,
           'trailer_license_plate_image': newReport.trailerLicencePlateImage,
-          'proof_of_delivery_image': newReport.proofOfDelivery,
           'cmr_image': newReport.cmrImage,
         };
 
         imageFields.forEach((field, file) async {
           if (file is File) {
-            request.files.add(await http.MultipartFile.fromPath(field, file.path));
+            request.files
+                .add(await http.MultipartFile.fromPath(field, file.path));
           }
         });
 
         final listImageFields = {
+          'goods_seal_container_proof': newReport.goodsContainerSeal,
           'delivery_slip_images_input': newReport.deliverySlipImages,
           'damage_images_input': newReport.damagesImages,
           'additional_images_input': newReport.additionalImages,
@@ -331,7 +338,8 @@ class SolarServices {
         listImageFields.forEach((field, files) async {
           if (files != null) {
             for (final file in files) {
-              request.files.add(await http.MultipartFile.fromPath(field, file.path));
+              request.files
+                  .add(await http.MultipartFile.fromPath(field, file.path));
             }
           }
         });
@@ -360,7 +368,8 @@ class SolarServices {
         if (responseBody is Map && responseBody['message'] != null) {
           throw Exception(SolarHelper.getErrorMessage(responseBody));
         }
-        throw Exception('Unknown error occurred with status code ${response.statusCode}');
+        throw Exception(
+            'Unknown error occurred with status code ${response.statusCode}');
       }
 
       // Clear saved draft
@@ -370,7 +379,6 @@ class SolarServices {
       rethrow;
     }
   }
-
 
   Future<Map<String, String>> plateRecognition({
     required File truckImage,
@@ -456,7 +464,8 @@ class SolarServices {
     }
   }
 
-  Future<List<String>?> searchItemsByLocation(int location, String query) async {
+  Future<List<String>?> searchItemsByLocation(
+      int location, String query) async {
     try {
       // Build URL with page param
       var url = SolarHelper.buildUrl(

@@ -27,7 +27,7 @@ class DeliveryReport {
   // File? or String?
   dynamic truckLicencePlateImage;
   dynamic trailerLicencePlateImage;
-  dynamic proofOfDelivery;
+  dynamic goodsContainerSeal;
   dynamic cmrImage;
   dynamic deliverySlipImages;
   dynamic additionalImages;
@@ -51,7 +51,7 @@ class DeliveryReport {
     this.userId,
     this.truckLicencePlateImage,
     this.trailerLicencePlateImage,
-    this.proofOfDelivery,
+    this.goodsContainerSeal,
     this.cmrImage,
     this.deliverySlipImages,
     this.additionalImages,
@@ -74,8 +74,8 @@ class DeliveryReport {
       weatherConditions: json['weather_conditions'],
       deliveryItems: (json['items'] != null)
           ? (json['items'] as List)
-          .map((e) => DeliveryItem.fromJson(Map<String, dynamic>.from(e)))
-          .toList()
+              .map((e) => DeliveryItem.fromJson(Map<String, dynamic>.from(e)))
+              .toList()
           : [],
       comments: json['comments'],
       checkboxItems: CheckBoxItem.listFromFlatJson(json),
@@ -99,12 +99,12 @@ class DeliveryReport {
       weatherConditions: json['weather_conditions'],
       deliveryItems: (json['items'] != null)
           ? (json['items'] as List)
-          .map((e) =>
-          DeliveryItem.fromLocalJson(Map<String, dynamic>.from(e)))
-          .toList()
+              .map((e) =>
+                  DeliveryItem.fromLocalJson(Map<String, dynamic>.from(e)))
+              .toList()
           : [],
       comments: json['comments'],
-      proofOfDelivery: _fileFromPath(json['proofOfDelivery']),
+      goodsContainerSeal: _fileFromPath(json['goodsContainerSeal']),
       cmrImage: _fileFromPath(json['cmrImage']),
       deliverySlipImages: _fileListFromPaths(json['deliverySlipImages']),
       additionalImages: _fileListFromPaths(json['additionalImages']),
@@ -149,7 +149,7 @@ class DeliveryReport {
       'user': userId,
       'truckLicencePlateImage': _getFilePath(truckLicencePlateImage),
       'trailerLicencePlateImage': _getFilePath(trailerLicencePlateImage),
-      'proofOfDelivery': _getFilePath(proofOfDelivery),
+      'goodsContainerSeal': _getFilePath(goodsContainerSeal),
       'cmrImage': _getFilePath(cmrImage),
       'deliverySlipImages': _getFileListPaths(deliverySlipImages),
       'additionalImages': _getFileListPaths(additionalImages),

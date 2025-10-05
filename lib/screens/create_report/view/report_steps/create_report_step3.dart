@@ -33,7 +33,7 @@ class Step3Form extends StatelessWidget implements ReportStep {
       return false;
     }
 
-    final proof = viewModel.newReport.proofOfDelivery;
+    final proof = viewModel.newReport.goodsContainerSeal;
     if (proof == null) {
       FlashHelper.errorMessage(context,
           message: 'Please add proof of delivery image in Step 3.');

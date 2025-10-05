@@ -6,13 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:provider/provider.dart';
-import 'package:solar_cargo/screens/common/image_selection_field.dart';
 import 'package:solar_cargo/screens/common/typeahead_popup_item.dart';
 import 'package:solar_cargo/screens/common/will_pop_scope.dart';
 
+import '../../../../generated/l10n.dart';
 import '../../../../services/services.dart';
 import '../../../common/constants.dart';
 import '../../../common/flash_helper.dart';
+import '../../../common/multiple_images_selection_field.dart';
 import '../../../common/report_step.dart';
 import '../../viewmodel/create_report_view_model.dart';
 
@@ -41,8 +42,8 @@ class Step2Form extends StatelessWidget implements ReportStep {
       return false;
     }
 
-    final proof = viewModel.newReport.proofOfDelivery;
-    if (proof == null) {
+    final proof = viewModel.newReport.goodsContainerSeal;
+    if (proof == null || proof.isEmpty) {
       FlashHelper.errorMessage(context,
           message: 'Please add proof of delivery image in Step 2.');
       return false;
@@ -50,7 +51,6 @@ class Step2Form extends StatelessWidget implements ReportStep {
 
     return true;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -276,11 +276,11 @@ class Step2Form extends StatelessWidget implements ReportStep {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  ImageSelectionField(
-                    label: 'Proof of delivery',
-                    initialImage: viewModel.newReport.proofOfDelivery,
-                    onImageSelected: (file) {
-                      viewModel.newReport.proofOfDelivery = file;
+                  MultiImageSelectionField(
+                    label: '${S.of(context).goodsContainerSeal} (multiple) (3 max.)',
+                    initialImages: viewModel.newReport.goodsContainerSeal,
+                    onImagesSelected: (images) {
+                      viewModel.newReport.goodsContainerSeal = images;
                     },
                   ),
                   const SizedBox(height: 24),

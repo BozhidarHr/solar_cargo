@@ -40,7 +40,8 @@ class Step4Form extends StatelessWidget implements ReportStep {
 
     final cmr = viewModel.newReport.cmrImage;
     final slip = viewModel.newReport.deliverySlipImages;
-    if (cmr == null || slip == null) {
+
+    if (cmr == null || slip == null || slip.isEmpty) {
       FlashHelper.errorMessage(
         context,
         message: 'Please add CMR/Delivery Slip images in Step 4.',
