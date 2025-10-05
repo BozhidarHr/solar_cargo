@@ -1,5 +1,5 @@
 {
-  "latest_version": "1.0.9+9",
-  "apk_url": "http://github.com/BozhidarHr/solar_cargo/releases/download/1.0.9+9/app-release.apk",
-  "changelog": "- Raise version up to 1.0.9+9\n- Skip steps validation -Move damages section to last step"
+  "latest_version": "1.0.11+11",
+  "apk_url": "http://github.com/BozhidarHr/solar_cargo/releases/download/1.0.11+11/app-release.apk",
+  "changelog": "- Add additional field goods/container/seal\n- Skip steps validation\n-Bug fixes"
 }

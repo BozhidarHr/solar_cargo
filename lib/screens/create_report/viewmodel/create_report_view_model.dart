@@ -28,13 +28,7 @@ class CreateReportViewModel with ChangeNotifier {
 
   /// Resets the view model state for a new report
   void resetReportData() {
-    resetResponse();
     newReport = DeliveryReport();
-  }
-
-  /// Resets API response state
-  void resetResponse() {
-    _createReportResponse = ApiResponse.initial('Empty data...');
   }
 
   Future<void> createDeliveryReport() async {
@@ -50,8 +44,11 @@ class CreateReportViewModel with ChangeNotifier {
       _createReportResponse = ApiResponse.error(e.toString());
       logger.w('createDeliveryReport(catch): ${e.toString()}');
     }
-
     notifyListeners();
+
+    Future.delayed(const Duration(seconds: 1), () {
+      _createReportResponse = ApiResponse.initial('Empty data.');
+    });
   }
 
 

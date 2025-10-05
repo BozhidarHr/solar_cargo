@@ -30,7 +30,7 @@ extension DeliveryReportImages on DeliveryReport {
 
     cmrImage = _parseSingleImage(json, 'cmr');
 
-    goodsContainerSeal = _parseImageList(json, 'goods_seal_container_proof_urls');
+    goodsContainerSeal = _parseImageList(json, 'gsc_proof');
     deliverySlipImages = _parseImageList(json, 'delivery_slips');
     damagesImages = _parseImageList(json, 'damage_images');
     additionalImages = _parseImageList(json, 'additional');
