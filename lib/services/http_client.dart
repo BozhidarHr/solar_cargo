@@ -9,6 +9,7 @@ import '../screens/common/logger.dart';
 
 /// enable network proxy
 const debugNetworkProxy = false;
+
 typedef RequestExecutor = Future<http.Response> Function(String? token);
 
 class HttpClientSetting {
@@ -20,7 +21,7 @@ class HttpClientSetting {
     if (foundation.kIsWeb &&
         '$url'.contains(HttpClientSetting.webProxy) == false) {
       final urlText =
-      '$url'.replaceAll('http://', '').replaceAll('https://', '');
+          '$url'.replaceAll('http://', '').replaceAll('https://', '');
 
       final proxyURL = '${HttpClientSetting.webProxy}$urlText';
       url = Uri.parse(proxyURL);
@@ -32,6 +33,7 @@ class HttpClientSetting {
 
 class HttpBase extends http.BaseClient {
   final http.Client _client = http.Client();
+
   HttpBase();
 
   @override
@@ -45,7 +47,7 @@ Future<http.Response> sendWithAuth(RequestExecutor executor) async {
   String? token = services.api.customerToken;
 
   int attempt = 0;
-  const maxAttempts = 2; // first try + one retry
+  const maxAttempts = 3;
 
   while (attempt < maxAttempts) {
     attempt++;
@@ -104,11 +106,11 @@ Future<http.Response> _makeRequest(Future<http.Response> request) async {
 
 /// The default http GET that support Logging
 Future<http.Response> httpGet(
-    Uri uri, {
-      Map<String, String>? headers,
-      bool enableDio = false,
-      bool refreshCache = false,
-    }) async {
+  Uri uri, {
+  Map<String, String>? headers,
+  bool enableDio = false,
+  bool refreshCache = false,
+}) async {
   final startTime = DateTime.now();
   var url = HttpClientSetting.settingProxy(uri);
 
@@ -122,7 +124,7 @@ Future<http.Response> httpGet(
     } on DioException catch (e) {
       if (e.response != null) {
         final response =
-        http.Response(e.response.toString(), e.response!.statusCode!);
+            http.Response(e.response.toString(), e.response!.statusCode!);
         return response;
       } else {
         // ignore: only_throw_errors
@@ -149,11 +151,11 @@ Future<http.Response> httpGet(
 
 /// The default http POST that support Logging
 Future<http.Response> httpPost(
-    Uri uri, {
-      Map<String, String>? headers,
-      Object? body,
-      bool enableDio = false,
-    }) async {
+  Uri uri, {
+  Map<String, String>? headers,
+  Object? body,
+  bool enableDio = false,
+}) async {
   final startTime = DateTime.now();
   var url = HttpClientSetting.settingProxy(uri);
 
@@ -179,7 +181,7 @@ Future<http.Response> httpPost(
     } on DioException catch (e) {
       if (e.response != null) {
         final response =
-        http.Response(e.response.toString(), e.response!.statusCode!);
+            http.Response(e.response.toString(), e.response!.statusCode!);
         return response;
       } else {
         // ignore: only_throw_errors
@@ -188,7 +190,7 @@ Future<http.Response> httpPost(
     }
   } else {
     var response =
-    await _makeRequest(http.post(url, headers: headers, body: body));
+        await _makeRequest(http.post(url, headers: headers, body: body));
     printLog('🔼 POST:$url', startTime);
     return response;
   }
@@ -197,8 +199,8 @@ Future<http.Response> httpPost(
 /// The default http PUT that support Logging
 Future<http.Response> httpPut(Uri uri,
     {Map<String, String>? headers,
-      Object? body,
-      bool enableDio = false}) async {
+    Object? body,
+    bool enableDio = false}) async {
   final startTime = DateTime.now();
   var url = HttpClientSetting.settingProxy(uri);
 
@@ -213,7 +215,7 @@ Future<http.Response> httpPut(Uri uri,
     } on DioException catch (e) {
       if (e.response != null) {
         final response =
-        http.Response(e.response.toString(), e.response!.statusCode!);
+            http.Response(e.response.toString(), e.response!.statusCode!);
         return response;
       } else {
         // ignore: only_throw_errors
@@ -222,7 +224,7 @@ Future<http.Response> httpPut(Uri uri,
     }
   } else {
     var response =
-    await _makeRequest(http.put(url, headers: headers, body: body));
+        await _makeRequest(http.put(url, headers: headers, body: body));
     printLog('🔼 PUT:$url', startTime);
 
     return response;
@@ -232,8 +234,8 @@ Future<http.Response> httpPut(Uri uri,
 /// The default http PUT that support Logging
 Future<http.Response> httpDelete(Uri uri,
     {Map<String, String>? headers,
-      Object? body,
-      bool enableDio = false}) async {
+    Object? body,
+    bool enableDio = false}) async {
   final startTime = DateTime.now();
   var url = HttpClientSetting.settingProxy(uri);
 
@@ -248,7 +250,7 @@ Future<http.Response> httpDelete(Uri uri,
     } on DioException catch (e) {
       if (e.response != null) {
         final response =
-        http.Response(e.response.toString(), e.response!.statusCode!);
+            http.Response(e.response.toString(), e.response!.statusCode!);
         return response;
       } else {
         // ignore: only_throw_errors
@@ -257,7 +259,7 @@ Future<http.Response> httpDelete(Uri uri,
     }
   } else {
     var response =
-    await _makeRequest(http.delete(url, headers: headers, body: body));
+        await _makeRequest(http.delete(url, headers: headers, body: body));
     printLog('DELETE:$url', startTime);
     return response;
   }
@@ -266,8 +268,8 @@ Future<http.Response> httpDelete(Uri uri,
 /// The default http PATCH that support Logging
 Future<http.Response> httpPatch(Uri uri,
     {Map<String, String>? headers,
-      Object? body,
-      bool enableDio = false}) async {
+    Object? body,
+    bool enableDio = false}) async {
   final startTime = DateTime.now();
   var url = HttpClientSetting.settingProxy(uri);
 
@@ -282,7 +284,7 @@ Future<http.Response> httpPatch(Uri uri,
     } on DioException catch (e) {
       if (e.response != null) {
         final response =
-        http.Response(e.response.toString(), e.response!.statusCode!);
+            http.Response(e.response.toString(), e.response!.statusCode!);
         return response;
       } else {
         // ignore: only_throw_errors
@@ -291,11 +293,9 @@ Future<http.Response> httpPatch(Uri uri,
     }
   } else {
     var response =
-    await _makeRequest(http.patch(url, headers: headers, body: body));
+        await _makeRequest(http.patch(url, headers: headers, body: body));
     printLog('PATCH:$url', startTime);
 
     return response;
   }
 }
-
-

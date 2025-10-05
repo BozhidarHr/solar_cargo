@@ -279,162 +279,98 @@ class SolarServices {
 
   Future<void> createDeliveryReport(DeliveryReport newReport) async {
     try {
-    final url = SolarHelper.buildUrl(domain, '/delivery-reports/');
+      final url = SolarHelper.buildUrl(domain, '/delivery-reports/');
 
       final response = await sendWithAuth((token) async {
-      // ✅ Create a *fresh client* for each request
-      final client = http.Client();
-      try {
         final request = http.MultipartRequest('POST', url!);
         request.headers[HttpHeaders.authorizationHeader] = 'Bearer $token';
 
         // Fields
-        // 6 is unknown location
         request.fields['location'] = newReport.pvProject?.id.toString() ?? '6';
-        // Subcontractor NEED TO BE REMOVED FROM API
         request.fields['checking_company'] = newReport.subcontractor ?? '';
         request.fields['supplier_input'] = newReport.supplier ?? '';
-        request.fields['delivery_slip_number'] =
-            newReport.deliverySlipNumber ?? '';
+        request.fields['delivery_slip_number'] = newReport.deliverySlipNumber ?? '';
         request.fields['logistic_company'] = newReport.logisticCompany ?? '';
         request.fields['container_number'] = newReport.containerNumber ?? '';
-        request.fields['licence_plate_truck'] =
-            newReport.licencePlateTruck ?? '';
-        request.fields['licence_plate_trailer'] =
-            newReport.licencePlateTrailer ?? '';
+        request.fields['licence_plate_truck'] = newReport.licencePlateTruck ?? '';
+        request.fields['licence_plate_trailer'] = newReport.licencePlateTrailer ?? '';
         request.fields['comments'] = newReport.comments ?? '';
-
-        // Truck licence plate image
-        if (newReport.truckLicencePlateImage is File) {
-          request.files.add(await http.MultipartFile.fromPath(
-            'truck_license_plate_image',
-            (newReport.truckLicencePlateImage as File).path,
-          ));
-        }
-
-        // Trailer licence plate image
-        if (newReport.trailerLicencePlateImage is File) {
-          request.files.add(await http.MultipartFile.fromPath(
-            'trailer_license_plate_image',
-            (newReport.trailerLicencePlateImage as File).path,
-          ));
-        }
-
-        request.fields['weather_conditions'] =
-            newReport.weatherConditions ?? '';
-
+        request.fields['weather_conditions'] = newReport.weatherConditions ?? '';
+        request.fields['user'] = newReport.userId.toString();
+        request.fields['damage_description'] = newReport.damagesDescription ?? '';
         // Delivery items
-        final itemsJson =
-            newReport.deliveryItems.map((e) => e.toJson()).toList();
+        final itemsJson = newReport.deliveryItems.map((e) => e.toJson()).toList();
         request.fields['items_input'] = convert.jsonEncode(itemsJson);
 
-        // Proof of delivery image
-        if (newReport.proofOfDelivery is File) {
-          request.files.add(await http.MultipartFile.fromPath(
-            'proof_of_delivery_image',
-            (newReport.proofOfDelivery as File).path,
-          ));
-        }
-
         // Checkbox fields
-        final checkboxFields =
-            CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
+        final checkboxFields = CheckBoxItem.listToFlatJson(newReport.checkboxItems.toList());
         checkboxFields.forEach((key, value) {
           request.fields[key] = value?.toString() ?? '';
         });
 
-        // CMR image
-        if (newReport.cmrImage is File) {
-          request.files.add(await http.MultipartFile.fromPath(
-            'cmr_image',
-            (newReport.cmrImage as File).path,
-          ));
-        }
+        // Add images if they exist
+        final imageFields = {
+          'truck_license_plate_image': newReport.truckLicencePlateImage,
+          'trailer_license_plate_image': newReport.trailerLicencePlateImage,
+          'proof_of_delivery_image': newReport.proofOfDelivery,
+          'cmr_image': newReport.cmrImage,
+        };
 
-        if (newReport.deliverySlipImages is List<File>) {
-          final images = newReport.deliverySlipImages as List<File>;
-          for (final file in images) {
-            request.files.add(await http.MultipartFile.fromPath(
-              'delivery_slip_images_input',
-              file.path,
-            ));
+        imageFields.forEach((field, file) async {
+          if (file is File) {
+            request.files.add(await http.MultipartFile.fromPath(field, file.path));
           }
-        }
+        });
 
-        // Damages description
-        request.fields['damage_description'] =
-            newReport.damagesDescription ?? '';
+        final listImageFields = {
+          'delivery_slip_images_input': newReport.deliverySlipImages,
+          'damage_images_input': newReport.damagesImages,
+          'additional_images_input': newReport.additionalImages,
+        };
 
-        // Damages images
-        if (newReport.damagesImages is List<File>) {
-          final images = newReport.damagesImages as List<File>;
-          for (final file in images) {
-            request.files.add(await http.MultipartFile.fromPath(
-              'damage_images_input',
-              file.path,
-            ));
+        listImageFields.forEach((field, files) async {
+          if (files != null) {
+            for (final file in files) {
+              request.files.add(await http.MultipartFile.fromPath(field, file.path));
+            }
           }
-        }
+        });
 
-        // Additional images
-        if (newReport.additionalImages is List<File>) {
-          final images = newReport.additionalImages as List<File>;
-          for (final file in images) {
-            request.files.add(await http.MultipartFile.fromPath(
-              'additional_images_input',
-              file.path,
-            ));
-          }
-        }
-
-        request.fields['user'] = newReport.userId.toString();
-
-        // Build and print cURL command
+        // Build cURL for debugging
         String curl = 'curl -X POST \'${url.toString()}\' \\\n';
-
-        // Add headers
         request.headers.forEach((key, value) {
           curl += '-H \'$key: $value\' \\\n';
         });
-
-        // Add fields
         request.fields.forEach((key, value) {
           final escapedValue = value.replaceAll('\'', '\\\'');
           curl += '-F \'$key=$escapedValue\' \\\n';
         });
-
-        // Add files (using filenames as paths)
         for (var file in request.files) {
-          // file.filename may only contain file name; use path if you want full path
           curl += '-F \'${file.field}=@${file.filename}\' \\\n';
         }
-
         printLog('cURL command:\n$curl');
 
-        // Send request and get response
-        var streamedResponse = await request.send();
+        // Send request
+        final streamedResponse = await request.send();
         return await http.Response.fromStream(streamedResponse);
-      } finally {
-        client.close(); // always free sockets
-      }
       });
 
-    final responseBody = convert.jsonDecode(response.body);
-
+      final responseBody = convert.jsonDecode(response.body);
       if (response.statusCode != 200 && response.statusCode != 201) {
         if (responseBody is Map && responseBody['message'] != null) {
           throw Exception(SolarHelper.getErrorMessage(responseBody));
         }
-        throw Exception(
-            'Unknown error occurred with status code ${response.statusCode}');
+        throw Exception('Unknown error occurred with status code ${response.statusCode}');
       }
-      // ✅ If we got here, request succeeded → clear saved draft
+
+      // Clear saved draft
       final box = await Hive.openBox('delivery_reports');
       await box.delete('current_report');
     } catch (e) {
       rethrow;
     }
   }
+
 
   Future<Map<String, String>> plateRecognition({
     required File truckImage,
